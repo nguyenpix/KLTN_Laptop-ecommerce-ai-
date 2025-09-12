@@ -2,34 +2,49 @@ import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
-// import { mapOrder } from './src/utils/sorts.js'
+import v1Routes from "./routes/v1/index.js";
+import { errorHandler, notFound } from "./middlewares/errorHandler.js";
 
 dotenv.config();
 
 const app = express();
-app.use(express.json());
+
+// Middleware
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
 const PORT = process.env.PORT || 5000;
 
+// Kết nối MongoDB
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log("✅ MongoDB connected"))
   .catch(err => console.error("❌ MongoDB error:", err));
 
-// Test API
+// Routes
 app.get("/", (req, res) => {
-    // console.log(mapOrder(
-    //     [ { id: 'id-1', name: 'One' },
-    //       { id: 'id-2', name: 'Two' },
-    //       { id: 'id-3', name: 'Three' },
-    //       { id: 'id-4', name: 'Four' },
-    //       { id: 'id-5', name: 'Five' } ],
-    //     ['id-5', 'id-4', 'id-2', 'id-3', 'id-1'],
-    //     'id'
-    //   ))
-      res.end('<h1>Hello World!</h1><hr>')
+  res.json({
+    success: true,
+    message: "Laptop E-commerce API",
+    version: "1.0.0",
+    endpoints: {
+      products: "/api/v1/products",
+      users: "/api/v1/users",
+      cart: "/api/v1/cart",
+      orders: "/api/v1/orders"
+    }
+  });
 });
 
+// Các route API
+app.use("/api/v1", v1Routes);
 
-app.listen(PORT, () => console.log(`✅ Backend running on port ${PORT}`));
+// Middleware xử lý lỗi
+app.use(notFound);
+app.use(errorHandler);
+
+app.listen(PORT, () => {
+  console.log(`✅ Backend running on port ${PORT}`);
+  
+});
 
