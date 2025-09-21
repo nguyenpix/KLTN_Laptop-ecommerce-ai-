@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "name": "Gaming",
+    "createdAt": "2025-09-13T11:40:36.540Z",
+    "updatedAt": "2025-09-13T11:40:36.540Z"
+  },
+  {
+    "id": 2,
+    "name": "Business",
+    "createdAt": "2025-09-13T11:40:36.540Z",
+    "updatedAt": "2025-09-13T11:40:36.540Z"
+  },
+  {
+    "id": 3,
+    "name": "Student",
+    "createdAt": "2025-09-13T11:40:36.540Z",
+    "updatedAt": "2025-09-13T11:40:36.540Z"
+  },
+  {
+    "id": 4,
+    "name": "Creative",
+    "createdAt": "2025-09-13T11:40:36.540Z",
+    "updatedAt": "2025-09-13T11:40:36.540Z"
+  },
+  {
+    "id": 5,
+    "name": "Ultrabook",
+    "createdAt": "2025-09-13T11:40:36.540Z",
+    "updatedAt": "2025-09-13T11:40:36.540Z"
+  }
+]

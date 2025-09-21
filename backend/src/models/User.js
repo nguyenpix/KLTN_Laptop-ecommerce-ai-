@@ -56,8 +56,8 @@ userSchema.pre('save', async function(next) {
 });
 
 // check mk 
-// userSchema.methods.comparePassword = async function(candidatePassword) {
-//   return bcrypt.compare(candidatePassword, this.password_hash);
-// };
+userSchema.methods.comparePassword = async function(candidatePassword) {
+  return bcrypt.compare(candidatePassword, this.password_hash);
+};
 
 export default mongoose.model('User', userSchema);

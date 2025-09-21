@@ -5,6 +5,20 @@ import cors from "cors";
 import v1Routes from "./routes/v1/index.js";
 import { errorHandler, notFound } from "./middlewares/errorHandler.js";
 
+// Import all models to ensure they are registered with Mongoose
+import "./models/Brand.js";
+import "./models/Cart.js";
+import "./models/CartItem.js";
+import "./models/Category.js";
+import "./models/Color.js";
+import "./models/Feedback.js";
+import "./models/News.js";
+import "./models/Order.js";
+import "./models/OrderItem.js";
+import "./models/Product.js";
+import "./models/ProductNews.js";
+import "./models/User.js";
+
 dotenv.config();
 
 const app = express();
