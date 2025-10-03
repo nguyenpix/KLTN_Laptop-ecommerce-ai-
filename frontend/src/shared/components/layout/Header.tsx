@@ -1,11 +1,10 @@
 import React from "react";
+import Link from "next/link";
 import { Button } from "../ui/button";
 import {
   ChevronDown,
   Clock,
   MapPin,
-  Phone,
-  Mail,
   Facebook,
   Instagram,
   Search,
@@ -119,10 +118,10 @@ const Header = () => {
 
       {/* Main Header */}
       <div className="container mx-auto flex items-center justify-between py-3">
-        <a href="/">
+        <Link href="/">
           {/* Giả sử logo nằm trong public/assets/image/Logo.jpg */}
           <img src={headerData.logoUrl} alt="Logo" className="h-16 w-auto" />
-        </a>
+        </Link>
 
         {isSearch ? (
           <div className="flex-grow mx-8 relative">
@@ -136,20 +135,20 @@ const Header = () => {
         ) : (
           <nav className="hidden lg:flex items-center gap-1 mx-4">
             {headerData.navItems.map((item) => (
-              <a
+              <Link
                 key={item.name}
                 href={item.url}
                 className="px-3 py-2 rounded-full font-semibold text-sm hover:bg-gray-100 transition-colors"
               >
                 {item.name}
-              </a>
+              </Link>
             ))}
-            <a
+            <Link
               href="/our-deals"
               className="px-7 py-1.5 rounded-full font-semibold text-sm text-blue-600 border-2 border-blue-600 hover:bg-blue-50 transition-colors"
             >
               Our Deals
-            </a>
+            </Link>
           </nav>
         )}
 
@@ -180,7 +179,7 @@ const Header = () => {
                 className="w-full border-blue-600 text-blue-600"
                 variant="outline"
               >
-                <a href="/cart">View or Edit Your Cart</a>
+                <Link href="/cart">View or Edit Your Cart</Link>
               </Button>
               {/* TODO: Map qua các sản phẩm trong giỏ hàng */}
               <div className="mt-4">

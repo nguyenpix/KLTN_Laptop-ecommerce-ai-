@@ -1,10 +1,11 @@
 import { create } from 'zustand';
+import { User } from '@/features/auth/types';
 
 interface AuthState {
   token: string | null;
-  user: any | null; // Sẽ thay thế 'any' bằng kiểu User cụ thể
+  user: User | null;
   isLoggedIn: boolean;
-  login: (token: string, user: any) => void;
+  login: (token: string, user: User) => void;
   logout: () => void;
 }
 

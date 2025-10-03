@@ -28,5 +28,5 @@ export interface Product {
   }[];
   part_number: string;
   series: string;
-  category_id: any[];
+  category_id: string[];
 }

@@ -21,7 +21,8 @@ export const register = async (req, res) => {
       email,
       password_hash: password, 
       phone,
-      address
+      address,
+      role: 'user'
     });
 
     await user.save();
@@ -43,7 +44,8 @@ export const register = async (req, res) => {
           email: user.email,
           phone: user.phone,
           address: user.address,
-          avatar_url: user.avatar_url
+          avatar_url: user.avatar_url,
+          role: user.role
         },
         token
       }

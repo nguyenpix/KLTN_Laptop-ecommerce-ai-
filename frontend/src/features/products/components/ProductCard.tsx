@@ -2,6 +2,7 @@ import { Star, ShoppingCart } from 'lucide-react';
 import Image from 'next/image';
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import Link from 'next/link';
 
 // CẬP NHẬT GIAO DIỆN KIỂU DỮ LIỆU ĐỂ PHÙ HỢP VỚI CẤU TRÚC JSON MỚI
 export interface Product {
@@ -107,9 +108,9 @@ const ProductCard = ({ product, layout = 'grid' }: ProductCardProps) => {
             </CardHeader>
             <CardContent className="p-4 flex-grow">
                 <div className="flex items-center mb-2">{renderStars(product.reviews)}</div>
-                <h3 className="font-semibold text-sm leading-tight h-10 overflow-hidden hover:text-blue-600 cursor-pointer">
-                    {product.name}
-                </h3>
+                <Link href={`/products/${product.id}`} className="font-semibold text-sm leading-tight h-10 overflow-hidden hover:text-blue-600 cursor-pointer">
+                    {product.title}
+                </Link>
             </CardContent>
             <CardFooter className="p-4 pt-0 flex flex-col items-start">
                 <div className="mb-3">

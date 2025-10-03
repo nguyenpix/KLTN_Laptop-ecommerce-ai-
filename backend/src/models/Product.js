@@ -5,7 +5,7 @@ const productSchema = new mongoose.Schema({
   title: { type: String, required: true, trim: true },
   name: { type: String, required: true },
   description: { type: String, required: true },
-
+  description_clean: { type: String },
   images: {
     mainImg: {
       url: { type: String, required: true },
@@ -16,7 +16,7 @@ const productSchema = new mongoose.Schema({
       alt_text: { type: String }
     }]
   },
-  
+
   price: { type: Number, required: true, min: 0 },
   color_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Color', required: true },
   brand_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Brand', required: true },
@@ -49,8 +49,8 @@ const productSchema = new mongoose.Schema({
   part_number: { type: String },
   series: { type: String },
   category_id: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: true }],
-
-
+  embedding: [Number],
+  tags: { type: [{ type: String }], default: [] }
 }, { timestamps: true });
 
 export default mongoose.model('Product', productSchema);
