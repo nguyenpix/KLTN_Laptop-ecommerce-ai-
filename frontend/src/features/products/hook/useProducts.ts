@@ -1,12 +1,12 @@
  import { useQuery } from "@tanstack/react-query";
 
   const API_URL = "http://localhost:5000/api/v1";
-
+  
   const fetchProducts = async (filters : Record<string, any>) => {
     const params = new URLSearchParams();
     if (filters) {
       Object.entries(filters).forEach(([key, value]) => {
-        if (value) {
+        if (value !== null && value !== undefined && value !== '') {
           params.append(key, value);
         }
       });

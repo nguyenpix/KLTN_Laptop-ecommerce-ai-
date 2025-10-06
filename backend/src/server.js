@@ -45,7 +45,12 @@ app.get("/", (req, res) => {
       products: "/api/v1/products",
       users: "/api/v1/users",
       cart: "/api/v1/cart",
-      orders: "/api/v1/orders"
+      orders: "/api/v1/orders",
+      categories: "/api/v1/categories",
+      colors: "/api/v1/colors",
+      brands: "/api/v1/brands",
+      // news: "/api/v1/news",
+      // feedbacks: "/api/v1/feedbacks"
     }
   });
 });

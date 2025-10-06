@@ -4,6 +4,7 @@ import HomeBanner from "@/features/products/components/HomeBanner";
 import ProductCard from "@/features/products/components/ProductCard";
 import { useProducts } from "@/features/products/hook/useProducts";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 export interface Product {
   id: number;
   title: string;
@@ -25,17 +26,24 @@ export interface Product {
 }
 
 export default function HomePage() {
-  const filters = { tags: "New" , limit: 5 };
-  const { data: apiResponse, isLoading, error } = useProducts(filters);
-  const products = apiResponse?.data;
+  // ✅ Đặt bộ lọc ở đây
+  const filters = { tags: "New", limit: 5 };
+
+  const { data, isLoading, error } = useProducts(filters);
 
   if (isLoading) {
-    return <div>Đang tải sản phẩm...</div>;
+    return <div className="text-center py-10">⏳ Đang tải sản phẩm...</div>;
   }
 
   if (error) {
-    return <div>Có lỗi xảy ra: {error.message}</div>;
+    return (
+      <div className="text-center py-10 text-red-500">
+        ❌ Có lỗi xảy ra: {(error as Error).message}
+      </div>
+    );
   }
+
+  const products: Product[] = data?.data || [];
   return (
     <main>
       {/* 1. Banner quảng cáo */}

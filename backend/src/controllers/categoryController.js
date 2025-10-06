@@ -77,3 +77,16 @@ export const deleteCategory = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+export const getCategoryByName = async (req, res) => {
+  try {
+    const category = await Category.findOne({ name: req.params.name }).populate('parent_id', 'name');
+    if (!category) {
+      return res.status(404).json({ success: false, message: 'Không tìm thấy danh mục' });
+    }
+    res.status(200).json({ success: true, data: category });
+  }
+  catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};

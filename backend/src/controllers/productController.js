@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import Product from '../models/Product.js';
 
 //  Tạo sản phẩm mới
@@ -14,11 +15,30 @@ export const createProduct = async (req, res) => {
 //  Lấy danh sách sản phẩm (có thể phân trang)
 export const getProducts = async (req, res) => {
   try {
-    const { page = 1, limit = 10, fields, sort, tags, ...otherFilters } = req.query;
-    
-    // 1. Lọc (Filtering)
-    const filters = { ...otherFilters };
-    
+    const { page = 1, limit = 20, fields, sort, tags, category, brand, color, minPrice, maxPrice } = req.query;
+
+    const filters = {};
+
+    if (brand) {
+      filters.brand_id = brand;
+    }
+    if (category) {
+      filters.category_id = category;
+    }
+    if (color) {
+      filters.color_id = color;
+    }
+
+    if (minPrice || maxPrice) {
+      filters.price = {};
+      if (minPrice) {
+        filters.price.$gte = Number(minPrice);
+      }
+      if (maxPrice) {
+        filters.price.$lte = Number(maxPrice);
+      }
+    }
+
     // Xử lý lọc cho tags (tìm sản phẩm chứa TẤT CẢ các tags được cung cấp)
     if (tags) {
         filters.tags = { $all: tags.split(',') };
