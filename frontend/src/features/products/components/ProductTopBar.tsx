@@ -1,7 +1,8 @@
-'use client';
-import React from 'react';
-import { Button } from '@/shared/components/ui/button';
-import { ChevronUp, ChevronDown } from 'lucide-react';
+"use client";
+import React from "react";
+import { Button } from "@/shared/components/ui/button";
+import { ChevronUp, ChevronDown, ShoppingCart } from "lucide-react";
+import { useCartStore } from "@/store/cartStore";
 
 interface ProductTopBarProps {
   activeIndex: number;
@@ -25,17 +26,32 @@ export function ProductTopBar({
         <div className="flex gap-8 font-semibold">
           <button
             onClick={() => setActiveIndex(0)}
-            className={`pb-2 transition-colors ${activeIndex === 0 ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-black'}`}>
+            className={`pb-2 transition-colors ${
+              activeIndex === 0
+                ? "text-blue-600 border-b-2 border-blue-600"
+                : "text-gray-500 hover:text-black"
+            }`}
+          >
             About Product
           </button>
           <button
             onClick={() => setActiveIndex(1)}
-            className={`pb-2 transition-colors ${activeIndex === 1 ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-black'}`}>
+            className={`pb-2 transition-colors ${
+              activeIndex === 1
+                ? "text-blue-600 border-b-2 border-blue-600"
+                : "text-gray-500 hover:text-black"
+            }`}
+          >
             Details
           </button>
           <button
             onClick={() => setActiveIndex(2)}
-            className={`pb-2 transition-colors ${activeIndex === 2 ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-black'}`}>
+            className={`pb-2 transition-colors ${
+              activeIndex === 2
+                ? "text-blue-600 border-b-2 border-blue-600"
+                : "text-gray-500 hover:text-black"
+            }`}
+          >
             Specs
           </button>
         </div>
@@ -44,16 +60,33 @@ export function ProductTopBar({
         <div className="flex items-center gap-4">
           <div className="text-right">
             <span className="text-sm text-gray-600">Total</span>
-            <p className="font-bold text-lg">{totalPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</p>
+            <p className="font-bold text-lg">
+              {totalPrice.toLocaleString("vi-VN", {
+                style: "currency",
+                currency: "VND",
+              })}
+            </p>
           </div>
           <div className="flex items-center gap-2 rounded-full bg-gray-100 p-2">
             <span className="px-4 font-semibold text-lg">{quantity}</span>
             <div className="flex flex-col">
-              <ChevronUp className="h-5 w-5 cursor-pointer text-gray-600 hover:text-black" onClick={() => setQuantity(q => q + 1)} />
-              <ChevronDown className="h-5 w-5 cursor-pointer text-gray-600 hover:text-black" onClick={() => setQuantity(q => (q > 1 ? q - 1 : 1))} />
+              <ChevronUp
+                className="h-5 w-5 cursor-pointer text-gray-600 hover:text-black"
+                onClick={() => setQuantity((q) => q + 1)}
+              />
+              <ChevronDown
+                className="h-5 w-5 cursor-pointer text-gray-600 hover:text-black"
+                onClick={() => setQuantity((q) => (q > 1 ? q - 1 : 1))}
+              />
             </div>
           </div>
-          <Button>Add to Cart</Button>
+          <Button
+            className="w-full"
+            size="sm"
+            onClick={() => useCartStore.getState().addToCart(product, 1)}
+          >
+            Thêm vào giỏ hàng
+          </Button>
           <Button variant="outline">
             <img src="/assets/icon/paypal.svg" alt="Paypal" className="h-6" />
           </Button>

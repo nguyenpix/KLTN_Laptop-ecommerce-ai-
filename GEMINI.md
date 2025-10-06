@@ -10,7 +10,14 @@ Phần backend cung cấp các API cho website thương mại điện tử bán 
 
 ### Tính năng chính
 
-*   **Đăng nhập/Đăng ký & phân quyền**: Sử dụng JWT để quản lý tài khoản và phân quyền người dùng.
+*   **Đăng nhập/Đăng ký & phân quyền**: Sử dụng JWT để quản lý tài khoản và phân quyền người dùng.  
+    -> Logic	Mô tả chi tiết
+Nhận Request	Server nhận POST request chứa email và password từ client.
+Xác thực User	Tìm User: Truy vấn Database để tìm user khớp với email. Nếu không tìm thấy, trả về lỗi 401.
+Xác minh Mật khẩu	So sánh mật khẩu đã gửi với mật khẩu được hash lưu trong DB (sử dụng thư viện như bcrypt). Nếu không khớp, trả về lỗi 401.
+Tạo Token (JWT)	Nếu xác thực thành công, server tạo một JSON Web Token (JWT). Token này chứa thông tin cơ bản của user (như user_id, role, thời gian hết hạn exp).
+Thiết lập Phiên (Session)	Tùy vào kiến trúc: Stateless (JWT): Trả Token về client. Stateful (Session): Lưu phiên vào Redis/DB và thiết lập Cookie phiên (session cookie).
+Phản hồi (Response)	Trả về phản hồi 200 OK, bao gồm thông tin user cơ bản và Token JWT (để client lưu lại).
 *   **Quản lý sản phẩm**: Thêm, sửa, xóa, lấy danh sách laptop.
 *   **Giỏ hàng**: Thêm/xóa sản phẩm, cập nhật số lượng trong giỏ hàng.
 *   **Đơn hàng**: Tạo đơn hàng, theo dõi trạng thái đơn hàng.
@@ -306,6 +313,17 @@ Phần frontend tuân theo kiến trúc FDD (Feature-Driven Development) với c
 *   **Product**: Trang hiển thị chi tiết sản phẩm, danh sách sản phẩm.
 *   **Search**: Chức năng tìm kiếm sản phẩm.
 *   **Profile**: Trang quản lý thông tin người dùng.
+ ->Thành phần	Logic (Công nghệ: react-hook-form, zod)
+Xác thực Form	Sử dụng zod để kiểm tra định dạng email và đảm bảo mật khẩu không trống trước khi gửi dữ liệu lên server.
+Xử lý Submission	Bắt sự kiện onSubmit (handleSubmit(onSubmit)), thu thập dữ liệu email và password.
+Trạng thái (UI)	Hiển thị trạng thái tải (isPending hoặc isSubmitting) trên nút "Sign in" để tránh gửi nhiều lần.
+Giao tiếp API	Gọi hàm mutation (ví dụ: loginUser trong useLogin hook của bạn) để gửi POST request đến endpoint đăng nhập của server.
+Xử lý Kết quả	Thành công: Lưu trữ token xác thực (JWT) vào cookie hoặc LocalStorage (và bộ nhớ cache của client như zustand/Redux). Chuyển hướng (router.push) người dùng đến trang chủ hoặc trang trước đó.
+Thất bại: Hiển thị thông báo lỗi (dùng toast như bạn đã làm) cho người dùng, ví dụ: "Email hoặc mật khẩu không đúng."
+*   **Login**: Trang đăng nhập người dùng.
+*   **SignIn **: Trang đăng kí người dùng.
+
+
 
 ### Xây dựng và chạy
 

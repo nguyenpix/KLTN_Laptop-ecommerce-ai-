@@ -12,15 +12,14 @@ export const getCart = async (req, res) => {
       await cart.save();
     }
 
-    const cartItems = await CartItem.find({ cart_id: cart._id })
-      .populate('laptop_id', 'name price')
-      .populate({
-        path: 'laptop_id',
-        populate: {
-          path: 'brand_id',
-          select: 'name'
-        }
-      });
+    const cartItems = await CartItem.find({ cart_id: cart._id }).populate({
+      path: "laptop_id",
+      select: "name price images", // Thêm images vào đây
+      populate: {
+        path: "brand_id",
+        select: "name",
+      },
+    });
 
     const totalAmount = cartItems.reduce((total, item) => {
       return total + (parseFloat(item.price) * item.quantity);
@@ -160,9 +159,91 @@ export const removeFromCart = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: 'Lỗi khi xóa sản phẩm',
       error: error.message
     });
   }
 };
+
+// Xóa toàn bộ giỏ hàng của người dùng
+export const clearUserCart = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    // Tìm giỏ hàng của người dùng
+    const cart = await Cart.findOne({ user_id: userId });
+
+    if (!cart) {
+      return res.status(404).json({
+        success: false,
+        message: 'Không tìm thấy giỏ hàng của người dùng.'
+      });
+    }
+
+    // Xóa tất cả các CartItem liên quan đến giỏ hàng này
+    await CartItem.deleteMany({ cart_id: cart._id });
+
+    res.json({
+      success: true,
+      message: 'Giỏ hàng đã được xóa thành công.'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Lỗi khi xóa giỏ hàng',
+      error: error.message
+    });
+  }
+};
+
+// Cập nhật toàn bộ giỏ hàng của người dùng
+export const updateUserCart = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { items } = req.body; // items là một mảng các { laptop_id, quantity }
+
+    // Tìm giỏ hàng của người dùng
+    let cart = await Cart.findOne({ user_id: userId });
+
+    if (!cart) {
+      cart = new Cart({ user_id: userId });
+      await cart.save();
+    }
+
+    // Xóa tất cả các CartItem hiện có của giỏ hàng này
+    await CartItem.deleteMany({ cart_id: cart._id });
+
+    // Thêm các CartItem mới
+    const newCartItems = [];
+    for (const item of items) {
+      const product = await Product.findById(item.laptop_id);
+      if (!product) {
+        // Nếu sản phẩm không tồn tại, bỏ qua hoặc trả về lỗi
+        console.warn(`Product with ID ${item.laptop_id} not found. Skipping.`);
+        continue;
+      }
+      newCartItems.push({
+        cart_id: cart._id,
+        laptop_id: item.laptop_id,
+        quantity: item.quantity,
+        price: product.price // Lấy giá hiện tại của sản phẩm
+      });
+    }
+
+    if (newCartItems.length > 0) {
+      await CartItem.insertMany(newCartItems);
+    }
+
+    res.json({
+      success: true,
+      message: 'Giỏ hàng đã được cập nhật thành công.'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Lỗi khi cập nhật giỏ hàng',
+      error: error.message
+    });
+  }
+};
+
 

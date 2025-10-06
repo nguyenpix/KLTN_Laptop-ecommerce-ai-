@@ -6,6 +6,7 @@ import "./globals.css";
 // Import the new Client Component provider
 import { QueryProvider } from "@/providers/QueryProvider";
 import { AuthProvider } from "@/providers/AuthProvider";
+import { Toaster } from 'sonner';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,6 +26,7 @@ export default function RootLayout({
         <QueryProvider>
           <AuthProvider>
             {children}
+            <Toaster richColors />
           </AuthProvider>
         </QueryProvider>
       </body>
