@@ -251,6 +251,12 @@ const Header = () => {
                         <span>My Account</span>
                       </DropdownMenuItem>
                     </Link>
+                    <Link href="/profile/orders" passHref>
+                      <DropdownMenuItem>
+                        <Clock className="mr-2 h-4 w-4" />
+                        <span>Lịch sử đơn hàng</span>
+                      </DropdownMenuItem>
+                    </Link>
                     <Link href="/wishlist" passHref>
                       <DropdownMenuItem>
                         <Heart className="mr-2 h-4 w-4" />

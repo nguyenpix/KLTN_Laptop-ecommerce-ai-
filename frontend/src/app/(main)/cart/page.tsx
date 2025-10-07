@@ -143,9 +143,11 @@ export default function CartPage() {
               <span>Tổng cộng:</span>
               <span>{getTotalPrice().toLocaleString('vi-VN')}đ</span>
             </div>
-            <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground text-lg py-3">
-              Tiến hành thanh toán
-            </Button>
+            <Link href="/checkout">
+              <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground text-lg py-3">
+                Tiến hành thanh toán
+              </Button>
+            </Link>
 
           </div>
         </div>
