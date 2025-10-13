@@ -1,20 +1,73 @@
-// models/UserProfile.js
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
-const userProfileSchema = new mongoose.Schema({
-  userId: { type: String, required: true, unique: true },
+const userRecommendationProfileSchema = new mongoose.Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+    unique: true
+  },
+
   profile: {
     preferences: {
-        price: { type: Number, default: {}},
-        brands: { type: Map, of: Number, default: {} }, // e.g., { "Dell": 10, "Asus": 5 }
-        categories: { type: Map, of: Number, default: {} }, // e.g., { "laptop_gaming": 10 }
-        gpu_specs: { type: Map, of: Number, default: {} },
-        cpu_specs: { type: Map, of: Number, default: {} },
-        ram_specs: { type: Map, of: Number, default: {} },
-        display_specs: { type: Map, of: Number, default: {} },
-        storage_specs: { type: Map, of: Number, default: {} }
-    }
-  }
-}, { timestamps: true });
+      brands: {
+        type: mongoose.Schema.Types.Mixed,
+        default: {}
+      },
 
-module.exports = mongoose.model('UserProfile', userProfileSchema);
+      categories: {
+        type: mongoose.Schema.Types.Mixed,
+        default: {}
+      },
+
+      cpu_specs: {
+        type: mongoose.Schema.Types.Mixed,
+        default: {}
+      },
+
+      gpu_specs: {
+        type: mongoose.Schema.Types.Mixed,
+        default: {}
+      },
+
+      ram_specs: {
+        type: mongoose.Schema.Types.Mixed,
+        default: {}
+      },
+      price_range: {
+        type: mongoose.Schema.Types.Mixed,
+        default: {}
+      },
+      display_specs: {
+        type: mongoose.Schema.Types.Mixed,
+        default: {}
+      },
+      storage_type_specs: {
+        type: mongoose.Schema.Types.Mixed,
+        default: {}
+      },
+      storage_capacity_specs: {
+        type: mongoose.Schema.Types.Mixed,
+        default: {}
+      }
+    },
+    timestamps: true
+  }
+});
+
+// Index để query nhanh
+userRecommendationProfileSchema.index({ userId: 1 });
+
+export default mongoose.model('UserRecommendationProfile', userRecommendationProfileSchema);
+
+// ex
+// {
+//   "userId": "u_001",
+//   "profile": {
+//     "preferences": {
+//       "brands": { "Dell": 10, "Asus": 3 },
+//       "categories": { "laptop_gaming": 10 },
+//       "gpu_specs": { "RTX 3060": 10 }...
+//     }
+//   }
+// }

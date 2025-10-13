@@ -27,7 +27,12 @@ const productSchema = new mongoose.Schema({
     display: { type: String },
     webcam: { type: String },
     ram: { type: String },
-    storage: { type: String },
+    storage_type: {
+      type: String // SSD, HDD
+    },
+    storage_capacity: {
+      type: String // 512GB, 1TB
+    },
     ports: { type: String },
     audio: { type: String },
     connectivity: { type: String },
