@@ -98,10 +98,18 @@ export const getProducts = async (req, res) => {
   }
 };
 
-//  Lấy chi tiết sản phẩm theo ID
+//  Lấy chi tiết sản phẩm theo ID (dùng _id - MongoDB ObjectId)
 export const getProductById = async (req, res) => {
   try {
-    let query = Product.findOne({ id: req.params.id });
+    // Validate ObjectId
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ 
+        success: false, 
+        message: "ID sản phẩm không hợp lệ" 
+      });
+    }
+
+    let query = Product.findById(req.params.id);
 
     // Xử lý lựa chọn trường và populate có điều kiện
     if (req.query.fields) {

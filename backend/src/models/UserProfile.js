@@ -50,9 +50,53 @@ const userRecommendationProfileSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.Mixed,
         default: {}
       }
+    }
+  },
+
+  // ═══════════════════════════════════════════════════════
+  // USER EMBEDDING (NEW - để dùng với Vector Search)
+  // ═══════════════════════════════════════════════════════
+  user_embedding: {
+    type: [Number],
+    validate: {
+      validator: function(v) {
+        return !v || v.length === 0 || v.length === 384;
+      },
+      message: 'User embedding must have 384 dimensions'
+    }
+  },
+
+  embedding_metadata: {
+    model: {
+      type: String,
+      default: 'weighted-average-from-interactions'
     },
-    timestamps: true
+    dimensions: {
+      type: Number,
+      default: 384
+    },
+    generated_at: Date,
+    quality: {
+      type: String,
+      enum: ['default', 'low', 'medium', 'high'],
+      default: 'low'
+      // default: từ popular products (lazy init)
+      // low: < 5 interactions
+      // medium: 5-20 interactions
+      // high: > 20 interactions
+    },
+    num_interactions: {
+      type: Number,
+      default: 0
+    },
+    last_updated: Date,
+    source: String, // 'popular_products', 'newest_products', 'interactions'
+    base_product_ids: [mongoose.Schema.Types.ObjectId],
+    base_product_count: Number
   }
+
+}, { 
+  timestamps: true 
 });
 
 // Index để query nhanh

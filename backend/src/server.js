@@ -32,8 +32,8 @@ const PORT = process.env.PORT || 5000;
 
 // Kết nối MongoDB
 mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log("✅ MongoDB connected"))
-  .catch(err => console.error("❌ MongoDB error:", err));
+  .then(() => console.log(" MongoDB connected"))
+  .catch(err => console.error(" MongoDB error:", err));
 
 // Routes
 app.get("/", (req, res) => {
@@ -63,7 +63,7 @@ app.use(notFound);
 app.use(errorHandler);
 
 app.listen(PORT, () => {
-  console.log(`✅ Backend running on port ${PORT}`);
+  console.log(` Backend running on port ${PORT}`);
   
 });
 

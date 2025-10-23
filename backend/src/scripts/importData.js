@@ -17,9 +17,9 @@ const dataDir = path.join(process.cwd(), 'src', 'data');
 async function connectDB() {
   try {
     await mongoose.connect(MONGODB_URI);
-    console.log('✅ Connected to MongoDB');
+    console.log(' Connected to MongoDB');
   } catch (error) {
-    console.error('❌ MongoDB connection error:', error);
+    console.error(' MongoDB connection error:', error);
     process.exit(1);
   }
 }
@@ -33,10 +33,10 @@ async function importColors() {
     
     // Insert new colors
     const colors = await Color.insertMany(colorsData);
-    console.log(`✅ Imported ${colors.length} colors`);
+    console.log(` Imported ${colors.length} colors`);
     return colors;
   } catch (error) {
-    console.error('❌ Error importing colors:', error);
+    console.error(' Error importing colors:', error);
     throw error;
   }
 }
@@ -50,10 +50,10 @@ async function importBrands() {
     
     // Insert new brands
     const brands = await Brand.insertMany(brandsData);
-    console.log(`✅ Imported ${brands.length} brands`);
+    console.log(` Imported ${brands.length} brands`);
     return brands;
   } catch (error) {
-    console.error('❌ Error importing brands:', error);
+    console.error(' Error importing brands:', error);
     throw error;
   }
 }
@@ -67,10 +67,10 @@ async function importCategories() {
     
     // Insert new categories
     const categories = await Category.insertMany(categoriesData);
-    console.log(`✅ Imported ${categories.length} categories`);
+    console.log(` Imported ${categories.length} categories`);
     return categories;
   } catch (error) {
-    console.error('❌ Error importing categories:', error);
+    console.error(' Error importing categories:', error);
     throw error;
   }
 }
@@ -110,10 +110,10 @@ async function importProducts() {
     
     // Insert new products
     const products = await Product.insertMany(mappedProducts);
-    console.log(`✅ Imported ${products.length} products`);
+    console.log(` Imported ${products.length} products`);
     return products;
   } catch (error) {
-    console.error('❌ Error importing products:', error);
+    console.error(' Error importing products:', error);
     throw error;
   }
 }
@@ -140,10 +140,10 @@ async function importProductSpecifications() {
     
     // Insert new specifications
     const specifications = await ProductSpecification.insertMany(mappedSpecifications);
-    console.log(`✅ Imported ${specifications.length} product specifications`);
+    console.log(` Imported ${specifications.length} product specifications`);
     return specifications;
   } catch (error) {
-    console.error('❌ Error importing product specifications:', error);
+    console.error(' Error importing product specifications:', error);
     throw error;
   }
 }
@@ -174,7 +174,7 @@ async function main() {
     console.log('\n🎉 Data import completed successfully!');
     
   } catch (error) {
-    console.error('❌ Import failed:', error);
+    console.error(' Import failed:', error);
   } finally {
     // Close database connection
     await mongoose.connection.close();

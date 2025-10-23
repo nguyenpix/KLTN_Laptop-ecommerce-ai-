@@ -55,10 +55,10 @@ try {
   const newProductsPath = path.join(dataDir, 'mergedProducts.json');
   fs.writeFileSync(newProductsPath, JSON.stringify(mergedProducts, null, 2), 'utf8');
 
-  console.log('✅ Đã gộp dữ liệu thành công!');
+  console.log(' Đã gộp dữ liệu thành công!');
   console.log(`📁 Số lượng sản phẩm mới: ${mergedProducts.length} items`);
   console.log(`📂 File được lưu tại: ${newProductsPath}`);
 
 } catch (error) {
-  console.error('❌ Đã xảy ra lỗi khi gộp dữ liệu:', error);
+  console.error(' Đã xảy ra lỗi khi gộp dữ liệu:', error);
 }

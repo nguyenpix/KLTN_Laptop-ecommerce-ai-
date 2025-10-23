@@ -7,6 +7,7 @@ import ProductFilters from "@/features/products/components/ProductFilters";
 import ProductSort from "@/features/products/components/ProductSort";
 import { useProducts } from "@/features/products/hook/useProducts";
 import { usePagination, DOTS } from "@/hooks/usePagination";
+import { Product } from "@/features/products/types";
 import {
   Pagination,
   PaginationContent,
@@ -24,27 +25,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-
-// (Product interface remains the same)
-export interface Product {
-  id: number;
-  title: string;
-  name: string;
-  description?: string;
-  price: number;
-  priceDiscount?: number;
-  images: {
-    mainImg: {
-      url: string;
-      alt_text: string;
-    };
-    sliderImg: Array<{
-      url: string;
-      alt_text: string;
-    }>;
-  };
-  reviews?: number;
-}
 
 export default function ProductPage() {
   const [filters, setFilters] = useState({
@@ -86,7 +66,7 @@ export default function ProductPage() {
   const products: Product[] = data?.data || [];
 
   return (
-    <main className="container py-8">
+    <main className="container py-8 px-4">
       <Breadcrumb className="mb-8">
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -101,37 +81,41 @@ export default function ProductPage() {
         </BreadcrumbList>
       </Breadcrumb>
 
-      <div className="flex flex-col lg:flex-row gap-8">
-        {/* Sidebar for Filters */}
-        <aside className="w-full lg:w-1/4">
-          <div className="space-y-6">
-            <ProductFilters onFilterChange={handleFilterChange} />
-          </div>
+      {/* Title and Count */}
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold mb-2">MSI PS Series ({totalCount})</h1>
+        <div className="flex justify-between items-center">
+          <p className="text-sm text-gray-600">
+            Hiển thị {products.length} trên {totalCount} sản phẩm
+          </p>
+          <ProductSort onSortChange={handleFilterChange} />
+        </div>
+      </div>
+
+      <div className="flex gap-8">
+        {/* Sidebar Filters */}
+        <aside className="w-64 flex-shrink-0">
+          <ProductFilters onFilterChange={handleFilterChange} />
         </aside>
 
-        {/* Main Content */}
-        <section className="w-full lg:w-3/4">
-          <div className="flex justify-between items-center mb-4">
-            <p className="text-sm text-gray-500">
-              Hiển thị {products.length} trên {totalCount} sản phẩm
-            </p>
-            <ProductSort onSortChange={handleFilterChange} />
-          </div>
-
+        {/* Products Grid */}
+        <section className="flex-1">
           {isLoading ? (
-            <div className="text-center py-10">⏳ Đang tải sản phẩm...</div>
+            <div className="text-center py-20">⏳ Đang tải sản phẩm...</div>
           ) : error ? (
-            <div className="text-center py-10 text-red-500">
-              ❌ Có lỗi xảy ra: {(error as Error).message}
+            <div className="text-center py-20 text-red-500">
+               Có lỗi xảy ra: {(error as Error).message}
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+              {/* Grid Layout - 4 columns */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
                 {products.map((product) => (
                   <ProductCard key={product.id} product={product} layout="grid" />
                 ))}
               </div>
 
+              {/* Pagination */}
               <Pagination className="mt-8">
                 <PaginationContent>
                   <PaginationItem>

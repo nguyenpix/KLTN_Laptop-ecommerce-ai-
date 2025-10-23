@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, use } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
 // Types & API
@@ -7,6 +7,8 @@ import { Product } from '@/features/products/types';
 import { ProductTopBar } from '@/features/products/components/ProductTopBar';
 import { ProductDetails } from '@/features/products/components/ProductDetails';
 import { ProductGallery } from '@/features/products/components/ProductGallery';
+import { RecommendationsList } from '@/features/recommendations';
+import { useTrackInteraction } from '@/features/recommendations/hooks';
 
 // API fetcher function
 const fetchProductById = async (id: string): Promise<Product> => {
@@ -21,13 +23,14 @@ const fetchProductById = async (id: string): Promise<Product> => {
 };
 
 interface ProductDetailPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default function ProductDetailPage({ params }: ProductDetailPageProps) {
-  const { id } = params;
+  const { id } = use(params);
+  const { trackView } = useTrackInteraction();
 
   const { data: product, isLoading, isError } = useQuery<Product>({
     queryKey: ['product', id],
@@ -37,6 +40,13 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
 
   const [quantity, setQuantity] = useState(1);
   const [activeIndex, setActiveIndex] = useState(0);
+
+  // Track product view when product loads
+  React.useEffect(() => {
+    if (product?._id) {
+      trackView(product._id, 5000); // Track 5 seconds view
+    }
+  }, [product, trackView]);
 
   if (isLoading) {
     return <div className="container mx-auto my-20 text-center">Loading product...</div>;
@@ -67,6 +77,15 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           <ProductDetails product={product} activeIndex={activeIndex} />
           <ProductGallery images={allImages} productTitle={product.title} />
+        </div>
+
+        {/* Recommendations Section */}
+        <div className="mt-16 border-t pt-12">
+          <RecommendationsList 
+            limit={8}
+            title="Sản phẩm liên quan có thể bạn thích"
+            showMetadata={false}
+          />
         </div>
       </main>
     </>

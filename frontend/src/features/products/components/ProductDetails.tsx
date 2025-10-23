@@ -34,8 +34,8 @@ export function ProductDetails({ product, activeIndex }: ProductDetailsProps) {
       case 2: // Specs (using FAQs for content)
         return (
           <div className="mt-4 space-y-4">
-            {faqs.map(faq => (
-              <div key={faq._id}>
+            {faqs.map((faq, index) => (
+              <div key={faq._id || `faq-${index}`}>
                 <p className="font-semibold">{faq.question}</p>
                 <p className="text-gray-600 mt-1">{faq.answer}</p>
               </div>

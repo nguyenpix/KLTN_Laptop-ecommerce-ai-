@@ -3,30 +3,13 @@
 import HomeBanner from "@/features/products/components/HomeBanner";
 import ProductCard from "@/features/products/components/ProductCard";
 import { useProducts } from "@/features/products/hook/useProducts";
+import { RecommendationsList } from "@/features/recommendations";
+import { Product } from "@/features/products/types";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-export interface Product {
-  id: number;
-  title: string;
-  name: string;
-  description?: string;
-  price: number;
-  priceDiscount?: number;
-  images: {
-    mainImg: {
-      url: string;
-      alt_text: string;
-    };
-    sliderImg: Array<{
-      url: string;
-      alt_text: string;
-    }>;
-  };
-  reviews?: number;
-}
 
 export default function HomePage() {
-  // ✅ Đặt bộ lọc ở đây
+  //  Đặt bộ lọc ở đây
   const filters = { tags: "New", limit: 5 };
 
   const { data, isLoading, error } = useProducts(filters);
@@ -38,7 +21,7 @@ export default function HomePage() {
   if (error) {
     return (
       <div className="text-center py-10 text-red-500">
-        ❌ Có lỗi xảy ra: {(error as Error).message}
+         Có lỗi xảy ra: {(error as Error).message}
       </div>
     );
   }
@@ -49,7 +32,7 @@ export default function HomePage() {
       {/* 1. Banner quảng cáo */}
       <HomeBanner />
 
-      {/* 2. Phần sản phẩm mới */}
+      {/* 3. Phần sản phẩm mới */}
       <section className="container py-8">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold">Sản phẩm mới</h2>

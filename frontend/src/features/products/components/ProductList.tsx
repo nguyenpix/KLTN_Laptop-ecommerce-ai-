@@ -1,31 +1,10 @@
-
-"use client";
-import { useQuery } from "@tanstack/react-query";
+﻿"use client";
 import { useState } from "react";
 import { useProducts } from "../hook/useProducts";
+import { Product } from "@/features/products/types";
 import ProductCard from "./ProductCard";
 import { LayoutGrid, List } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
-export interface Product {
-    id: number;
-    title: string;
-    name: string;
-    description?: string;
-    price: number;
-    priceDiscount?: number;
-    images: {
-        mainImg: {
-            url: string;
-            alt_text: string;
-        };
-        sliderImg: Array<{
-            url: string;
-            alt_text: string;
-        }>;
-    };
-    reviews?: number; 
-}
 
 const ProductList = () => {
     const [layout, setLayout] = useState<"grid" | "list">("grid");

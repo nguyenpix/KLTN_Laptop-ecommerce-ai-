@@ -27,6 +27,7 @@ import {
   Heart,
   GitCompareArrows,
   LogOut,
+  Sparkles,
 } from "lucide-react";
 
 // Dữ liệu tĩnh, tương tự file dataHeader.ts của bạn
@@ -249,6 +250,12 @@ const Header = () => {
                       <DropdownMenuItem>
                         <User className="mr-2 h-4 w-4" />
                         <span>My Account</span>
+                      </DropdownMenuItem>
+                    </Link>
+                    <Link href="/profile/recommendations" passHref>
+                      <DropdownMenuItem>
+                        <Sparkles className="mr-2 h-4 w-4" />
+                        <span>Gợi ý sản phẩm</span>
                       </DropdownMenuItem>
                     </Link>
                     <Link href="/profile/orders" passHref>

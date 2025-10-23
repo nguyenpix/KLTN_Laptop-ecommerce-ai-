@@ -51,10 +51,13 @@ class ProfileUpdateService {
       // 5. Recalculate price range preferences
       await this.updatePriceRangePreferences(userId);
 
-      console.log(`✅ Updated profile for user ${userId} with ${interactionType} on ${product.name}`);
+      // 6. Trigger user embedding update (async cho important interactions)
+      this.triggerEmbeddingUpdate(userId, interactionType);
+
+      console.log(` Updated profile for user ${userId} with ${interactionType} on ${product.name}`);
       
     } catch (error) {
-      console.error('❌ Error updating user profile:', error);
+      console.error(' Error updating user profile:', error);
       throw error;
     }
   }
@@ -63,7 +66,7 @@ class ProfileUpdateService {
    * Tính weight đã điều chỉnh dựa trên metadata
    */
   calculateAdjustedWeight(interactionType, metadata) {
-    let weight = this.INTERACTION_WEIGHTS[interactionType] || 1;
+    let weight = ProfileUpdateService.INTERACTION_WEIGHTS[interactionType] || 1;
 
     // Adjustment cho view duration
     if (interactionType === 'view' && metadata.duration) {
@@ -216,10 +219,10 @@ class ProfileUpdateService {
         { $inc: priceUpdateOps }
       );
 
-      console.log(`✅ Updated price range preferences for user ${userId}`);
+      console.log(` Updated price range preferences for user ${userId}`);
 
     } catch (error) {
-      console.error('❌ Error updating price range preferences:', error);
+      console.error(' Error updating price range preferences:', error);
     }
   }
 
@@ -236,6 +239,7 @@ class ProfileUpdateService {
 
       // Normalize weights trong từng category
       const normalized = {
+        userId: userId, // ADD userId for embedding lookup
         brands: this.normalizeWeights(profile.profile.preferences.brands || {}),
         categories: this.normalizeWeights(profile.profile.preferences.categories || {}),
         cpu_specs: this.normalizeWeights(profile.profile.preferences.cpu_specs || {}),
@@ -250,7 +254,7 @@ class ProfileUpdateService {
       return normalized;
 
     } catch (error) {
-      console.error('❌ Error getting normalized profile:', error);
+      console.error(' Error getting normalized profile:', error);
       return null;
     }
   }
@@ -279,9 +283,9 @@ class ProfileUpdateService {
   async resetUserProfile(userId) {
     try {
       await UserRecommendationProfile.deleteOne({ userId });
-      console.log(`✅ Reset profile for user ${userId}`);
+      console.log(` Reset profile for user ${userId}`);
     } catch (error) {
-      console.error('❌ Error resetting user profile:', error);
+      console.error(' Error resetting user profile:', error);
       throw error;
     }
   }
@@ -322,7 +326,7 @@ class ProfileUpdateService {
       };
 
     } catch (error) {
-      console.error('❌ Error getting profile stats:', error);
+      console.error(' Error getting profile stats:', error);
       return null;
     }
   }
@@ -335,6 +339,259 @@ class ProfileUpdateService {
       .sort(([,a], [,b]) => b - a)
       .slice(0, limit)
       .map(([key, weight]) => ({ name: key, weight }));
+  }
+
+  /**
+   * ═══════════════════════════════════════════════════════
+   * CẬP NHẬT USER EMBEDDING (NEW - for Vector Search)
+   * ═══════════════════════════════════════════════════════
+   * Tính user embedding từ weighted average của products đã tương tác
+   */
+  async updateUserEmbedding(userId) {
+    try {
+      console.log(`🔄 Updating user embedding for ${userId}...`);
+
+      // 1. Lấy tất cả interactions của user
+      const interactions = await Interaction.find({ userId })
+        .populate({
+          path: 'productId',
+          select: 'embedding name',
+          match: { embedding: { $exists: true, $ne: null } }
+        })
+        .sort({ createdAt: -1 })
+        .limit(100); // Chỉ lấy 100 interactions gần nhất
+
+      // Filter out null products (không có embedding)
+      const validInteractions = interactions.filter(i => i.productId && i.productId.embedding);
+
+      if (validInteractions.length === 0) {
+        console.log('⚠️  No valid interactions with embeddings found');
+        return null;
+      }
+
+      console.log(`   Found ${validInteractions.length} interactions with embeddings`);
+
+      // 2. Tạo weighted embeddings list
+      const weightedEmbeddings = validInteractions.map(interaction => ({
+        embedding: interaction.productId.embedding,
+        weight: interaction.weight || 1,
+        type: interaction.type,
+        productName: interaction.productId.name
+      }));
+
+      // 3. Tính weighted average embedding
+      const userEmbedding = new Array(384).fill(0);
+      let totalWeight = 0;
+
+      for (const item of weightedEmbeddings) {
+        const weight = item.weight;
+        totalWeight += weight;
+
+        for (let i = 0; i < 384; i++) {
+          userEmbedding[i] += item.embedding[i] * weight;
+        }
+      }
+
+      // Normalize by total weight
+      if (totalWeight > 0) {
+        for (let i = 0; i < 384; i++) {
+          userEmbedding[i] /= totalWeight;
+        }
+      }
+
+      // 4. Determine quality based on number of interactions
+      let quality = 'low';
+      if (validInteractions.length >= 20) {
+        quality = 'high';
+      } else if (validInteractions.length >= 5) {
+        quality = 'medium';
+      }
+
+      // 5. Update user profile
+      await UserRecommendationProfile.updateOne(
+        { userId },
+        {
+          $set: {
+            user_embedding: userEmbedding,
+            'embedding_metadata.generated_at': new Date(),
+            'embedding_metadata.quality': quality,
+            'embedding_metadata.num_interactions': validInteractions.length,
+            'embedding_metadata.last_updated': new Date()
+          }
+        },
+        { upsert: true }
+      );
+
+      console.log(` Updated user embedding (quality: ${quality}, ${validInteractions.length} interactions)`);
+
+      return {
+        embedding: userEmbedding,
+        quality,
+        num_interactions: validInteractions.length
+      };
+
+    } catch (error) {
+      console.error(' Error updating user embedding:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Trigger update user embedding (gọi sau mỗi interaction quan trọng)
+   */
+  async triggerEmbeddingUpdate(userId, interactionType) {
+    try {
+      // Chỉ update embedding sau interactions quan trọng
+      const importantTypes = ['purchase', 'rating', 'add_to_cart'];
+      
+      if (importantTypes.includes(interactionType)) {
+        // Update async (không chờ)
+        this.updateUserEmbedding(userId).catch(err => {
+          console.error('Error in background embedding update:', err);
+        });
+      }
+    } catch (error) {
+      console.error('Error triggering embedding update:', error);
+    }
+  }
+
+  /**
+   * 🚀 PHASE 2: LAZY INITIALIZATION
+   * Tạo user profile mặc định với embedding từ popular products
+   * @param {ObjectId} userId - ID của user
+   * @returns {Promise<Object|null>} - User profile hoặc null nếu thất bại
+   */
+  async createDefaultUserProfile(userId) {
+    try {
+      console.log(`🚀 Creating default profile for user: ${userId}`);
+
+      // 1️⃣ Lấy top 10 sản phẩm phổ biến nhất (dựa trên interactions)
+      const popularProductIds = await Interaction.aggregate([
+        {
+          $group: {
+            _id: '$productId',
+            interactionCount: { $sum: 1 },
+            avgWeight: { $avg: '$weight' }
+          }
+        },
+        { $sort: { interactionCount: -1, avgWeight: -1 } },
+        { $limit: 10 }
+      ]);
+
+      if (popularProductIds.length === 0) {
+        // Fallback: Lấy 10 products mới nhất nếu chưa có interactions
+        console.log('⚠️ No interactions yet, using newest products');
+        const newestProducts = await Product.find({
+          stock: { $gt: 0 },
+          embedding: { $exists: true, $ne: null }
+        })
+        .sort({ createdAt: -1 })
+        .limit(10);
+
+        if (newestProducts.length === 0) {
+          console.log(' No products available for default profile');
+          return null;
+        }
+
+        return await this.createProfileFromProducts(userId, newestProducts, 'newest_products');
+      }
+
+      // 2️⃣ Lấy thông tin chi tiết của popular products
+      const productIds = popularProductIds.map(p => p._id);
+      const popularProducts = await Product.find({ 
+        _id: { $in: productIds },
+        embedding: { $exists: true, $ne: null }
+      });
+
+      if (popularProducts.length === 0) {
+        console.log(' No valid products found');
+        return null;
+      }
+
+      console.log(`📊 Found ${popularProducts.length} popular products for default profile`);
+
+      return await this.createProfileFromProducts(userId, popularProducts, 'popular_products');
+
+    } catch (error) {
+      console.error(' Error creating default profile:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Helper: Tạo profile từ danh sách products
+   */
+  async createProfileFromProducts(userId, products, source) {
+    try {
+      // 1️⃣ Lấy embeddings của các products
+      const embeddings = products
+        .map(p => p.embedding)
+        .filter(e => Array.isArray(e) && e.length === 384);
+
+      if (embeddings.length === 0) {
+        console.log('⚠️ No valid embeddings found');
+        return null;
+      }
+
+      // 2️⃣ Tính embedding TRUNG BÌNH (average)
+      const avgEmbedding = new Array(384).fill(0);
+      
+      embeddings.forEach(emb => {
+        emb.forEach((val, idx) => {
+          avgEmbedding[idx] += val / embeddings.length;
+        });
+      });
+
+      // 3️⃣ Normalize vector (chuẩn hóa về độ dài = 1)
+      const magnitude = Math.sqrt(
+        avgEmbedding.reduce((sum, val) => sum + val * val, 0)
+      );
+      
+      if (magnitude === 0) {
+        console.log('⚠️ Invalid embedding magnitude');
+        return null;
+      }
+
+      const normalizedEmbedding = avgEmbedding.map(val => val / magnitude);
+
+      // 4️⃣ Tạo profile với embedding mặc định
+      const profile = await UserRecommendationProfile.create({
+        userId,
+        profile: {
+          preferences: {
+            brands: {},
+            cpu_specs: {},
+            gpu_specs: {},
+            ram_specs: {},
+            storage_type_specs: {},
+            storage_capacity_specs: {},
+            screen_size_specs: {},
+            price_range: {},
+            categories: {}
+          }
+        },
+        user_embedding: normalizedEmbedding,
+        embedding_metadata: {
+          quality: 'default',
+          interaction_count: 0,
+          last_updated: new Date(),
+          source: source,
+          base_product_ids: products.map(p => p._id),
+          base_product_count: products.length
+        }
+      });
+
+      console.log(' Created default profile with embedding');
+      console.log(`   - Source: ${source}`);
+      console.log(`   - Based on ${products.length} products`);
+      console.log(`   - Quality: default`);
+
+      return profile;
+
+    } catch (error) {
+      console.error(' Error in createProfileFromProducts:', error);
+      return null;
+    }
   }
 }
 
