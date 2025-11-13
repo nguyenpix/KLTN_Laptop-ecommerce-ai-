@@ -192,7 +192,12 @@ export const useCartStore = create<CartState>()(
       },
 
       getTotalPrice: () => {
-        return get().items.reduce((total, item) => total + item.product.price * item.quantity, 0);
+        return get().items.reduce((total, item) => {
+          if (item.product && typeof item.product.price === 'number') {
+            return total + item.product.price * item.quantity;
+          }
+          return total;
+        }, 0);
       },
     }),
     {
