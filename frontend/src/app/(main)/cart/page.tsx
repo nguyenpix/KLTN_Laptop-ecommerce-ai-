@@ -78,82 +78,87 @@ export default function CartPage() {
 
             {/* Cart Items */}
             <div className="space-y-4">
-              {items.map((item) => (
-                <div key={item.product._id} className="grid grid-cols-1 md:grid-cols-12 gap-4 border border-border rounded-lg p-4 items-center">
-                  {/* Item (Image + Name + Actions) */}
-                  <div className="col-span-12 md:col-span-6 flex items-center gap-4">
-                    <div className="relative w-20 h-20 flex-shrink-0">
-                      <Image
-                        src={item.product.images.mainImg.url}
-                        alt={item.product.name}
-                        fill
-                        className="object-cover rounded-md"
-                      />
-                    </div>
-                    <div className="flex-grow">
-                      <h2 className="font-medium line-clamp-2 mb-2">{item.product.name}</h2>
-                      <div className="flex gap-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="text-blue-600 hover:text-blue-700 p-0 h-auto"
-                        >
-                          <Edit className="w-3 h-3 mr-1" />
-                          Edit
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => removeFromCart(item.product._id)}
-                          className="text-destructive hover:text-destructive/90 p-0 h-auto"
-                        >
-                          <Trash2 className="w-3 h-3 mr-1" />
-                          Remove
-                        </Button>
+              {items.map((item) => {
+                if (!item || !item.product || !item.product.images || !item.product.images.mainImg) {
+                  return null;
+                }
+                return (
+                  <div key={item.product._id} className="grid grid-cols-1 md:grid-cols-12 gap-4 border border-border rounded-lg p-4 items-center">
+                    {/* Item (Image + Name + Actions) */}
+                    <div className="col-span-12 md:col-span-6 flex items-center gap-4">
+                      <div className="relative w-20 h-20 flex-shrink-0">
+                        <Image
+                          src={item.product.images.mainImg.url}
+                          alt={item.product.name}
+                          fill
+                          className="object-cover rounded-md"
+                        />
+                      </div>
+                      <div className="flex-grow">
+                        <h2 className="font-medium line-clamp-2 mb-2">{item.product.name}</h2>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-blue-600 hover:text-blue-700 p-0 h-auto"
+                          >
+                            <Edit className="w-3 h-3 mr-1" />
+                            Edit
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => removeFromCart(item.product._id)}
+                            className="text-destructive hover:text-destructive/90 p-0 h-auto"
+                          >
+                            <Trash2 className="w-3 h-3 mr-1" />
+                            Remove
+                          </Button>
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  {/* Price */}
-                  <div className="col-span-4 md:col-span-2 text-center">
-                    <span className="md:hidden font-semibold mr-2">Price:</span>
-                    {item.product.price.toLocaleString('vi-VN')}đ
-                  </div>
+                    {/* Price */}
+                    <div className="col-span-4 md:col-span-2 text-center">
+                      <span className="md:hidden font-semibold mr-2">Price:</span>
+                      {item.product.price.toLocaleString('vi-VN')}đ
+                    </div>
 
-                  {/* Quantity */}
-                  <div className="col-span-4 md:col-span-2 flex justify-center items-center gap-2">
-                    <span className="md:hidden font-semibold mr-2">Qty:</span>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="h-8 w-8"
-                      onClick={() => handleQuantityChange(item.product._id, item.quantity - 1)}
-                    >
-                      -
-                    </Button>
-                    <Input
-                      type="number"
-                      value={item.quantity}
-                      onChange={(e) => handleQuantityChange(item.product._id, parseInt(e.target.value))}
-                      className="w-16 text-center h-8"
-                    />
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="h-8 w-8"
-                      onClick={() => handleQuantityChange(item.product._id, item.quantity + 1)}
-                    >
-                      +
-                    </Button>
-                  </div>
+                    {/* Quantity */}
+                    <div className="col-span-4 md:col-span-2 flex justify-center items-center gap-2">
+                      <span className="md:hidden font-semibold mr-2">Qty:</span>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={() => handleQuantityChange(item.product._id, item.quantity - 1)}
+                      >
+                        -
+                      </Button>
+                      <Input
+                        type="number"
+                        value={item.quantity}
+                        onChange={(e) => handleQuantityChange(item.product._id, parseInt(e.target.value))}
+                        className="w-16 text-center h-8"
+                      />
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={() => handleQuantityChange(item.product._id, item.quantity + 1)}
+                      >
+                        +
+                      </Button>
+                    </div>
 
-                  {/* Subtotal */}
-                  <div className="col-span-4 md:col-span-2 text-right font-bold">
-                    <span className="md:hidden font-semibold mr-2">Subtotal:</span>
-                    {(item.product.price * item.quantity).toLocaleString('vi-VN')}đ
+                    {/* Subtotal */}
+                    <div className="col-span-4 md:col-span-2 text-right font-bold">
+                      <span className="md:hidden font-semibold mr-2">Subtotal:</span>
+                      {(item.product.price * item.quantity).toLocaleString('vi-VN')}đ
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             {/* Action Buttons */}

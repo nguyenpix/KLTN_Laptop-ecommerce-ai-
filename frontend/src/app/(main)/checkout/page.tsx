@@ -302,22 +302,27 @@ export default function CheckoutPage() {
               <CardTitle>Sản phẩm trong giỏ</CardTitle>
             </CardHeader>
             <CardContent>
-              {items.map((item) => (
-                <div key={item.product._id} className="flex items-center justify-between mb-4">
-                  <div className="flex items-center">
-                    <img
-                      src={item.product.images.mainImg.url}
-                      alt={item.product.name}
-                      className="w-16 h-16 object-cover rounded-md mr-4"
-                    />
-                    <div>
-                      <p className="font-semibold">{item.product.name}</p>
-                      <p className="text-sm text-gray-500">Số lượng: {item.quantity}</p>
+              {items.map((item) => {
+                if (!item || !item.product || !item.product.images || !item.product.images.mainImg) {
+                  return null;
+                }
+                return (
+                  <div key={item.product._id} className="flex items-center justify-between mb-4">
+                    <div className="flex items-center">
+                      <img
+                        src={item.product.images.mainImg.url}
+                        alt={item.product.name}
+                        className="w-16 h-16 object-cover rounded-md mr-4"
+                      />
+                      <div>
+                        <p className="font-semibold">{item.product.name}</p>
+                        <p className="text-sm text-gray-500">Số lượng: {item.quantity}</p>
+                      </div>
                     </div>
+                    <p className="font-semibold">{(item.product.price * item.quantity).toLocaleString('vi-VN')}đ</p>
                   </div>
-                  <p className="font-semibold">{(item.product.price * item.quantity).toLocaleString('vi-VN')}đ</p>
-                </div>
-              ))}
+                );
+              })}
               <Separator />
               <div className="space-y-2 mt-4">
                 <div className="flex justify-between">

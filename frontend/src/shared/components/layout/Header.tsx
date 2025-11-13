@@ -228,15 +228,20 @@ const Header = () => {
                 {items.length === 0 ? (
                   <p className="text-center text-gray-400">Your cart is empty.</p>
                 ) : (
-                  items.map((item) => (
-                    <div key={item.product._id} className="flex items-center mb-3">
-                      <img src={item.product.images.mainImg.url} alt={item.product.name} className="w-12 h-12 object-cover mr-3" />
-                      <div className="flex-grow">
-                        <p className="font-semibold text-sm line-clamp-1">{item.product.name}</p>
-                        <p className="text-xs text-gray-500">{item.quantity} x {item.product.price.toLocaleString('vi-VN')}đ</p>
+                  items.map((item) => {
+                    if (!item || !item.product || !item.product.images || !item.product.images.mainImg) {
+                      return null;
+                    }
+                    return (
+                      <div key={item.product._id} className="flex items-center mb-3">
+                        <img src={item.product.images.mainImg.url} alt={item.product.name} className="w-12 h-12 object-cover mr-3" />
+                        <div className="flex-grow">
+                          <p className="font-semibold text-sm line-clamp-1">{item.product.name}</p>
+                          <p className="text-xs text-gray-500">{item.quantity} x {item.product.price.toLocaleString('vi-VN')}đ</p>
+                        </div>
                       </div>
-                    </div>
-                  ))
+                    );
+                  })
                 )}
               </div>
               <hr className="my-3" />
