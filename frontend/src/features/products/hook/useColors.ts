@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-
-const API_URL = "http://localhost:5000/api/v1";
+import { API_URL } from "@/constants/api-url";
 
 const fetchColors = async () => {
   const res = await fetch(`${API_URL}/colors`);
