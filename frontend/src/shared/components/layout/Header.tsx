@@ -39,13 +39,7 @@ const headerData = {
   email: "NguyenDangNguyen1606@gmail.com",
   logoUrl: "/assets/image/Logo.jpg", // Bạn cần đảm bảo có ảnh này trong thư mục public
   navItems: [
-    { url: "/laptops", name: "Laptops" },
-    { url: "/desktops", name: "Desktop PCs" },
-    { url: "/networking", name: "Networking Devices" },
-    { url: "/printers", name: "Printers & Scanners" },
-    { url: "/pc-parts", name: "PC Parts" },
-    { url: "/other-products", name: "All Other Products" },
-    { url: "/repairs", name: "Repairs" },
+    { url: "/products", name: "Laptops" },
   ],
 };
 
