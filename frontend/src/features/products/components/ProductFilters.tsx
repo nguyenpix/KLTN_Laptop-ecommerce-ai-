@@ -10,6 +10,21 @@ interface ProductFiltersProps {
   onFilterChange: (filterName: string, value: string | number) => void;
 }
 
+interface Category {
+  _id: string;
+  name: string;
+}
+
+interface Brand {
+  _id: string;
+  name: string;
+}
+
+interface Color {
+  _id: string;
+  name: string;
+}
+
 const priceRanges = [
   { value: 'all', label: 'Tất cả' },
   { value: '0-10000000', label: 'Dưới 10 triệu' },
@@ -49,7 +64,7 @@ export default function ProductFilters({ onFilterChange }: ProductFiltersProps) 
             <RadioGroupItem value="" id="cat-all" />
             <Label htmlFor="cat-all" className="font-normal cursor-pointer">Tất cả</Label>
           </div>
-          {categories.map((category: any) => (
+          {categories.map((category: Category) => (
             <div key={category._id} className="flex items-center space-x-2">
               <RadioGroupItem value={category._id} id={category._id} />
               <Label htmlFor={category._id} className="font-normal cursor-pointer">
@@ -68,7 +83,7 @@ export default function ProductFilters({ onFilterChange }: ProductFiltersProps) 
             <RadioGroupItem value="" id="brand-all" />
             <Label htmlFor="brand-all" className="font-normal cursor-pointer">Tất cả</Label>
           </div>
-          {brands.map((brand: any) => (
+          {brands.map((brand: Brand) => (
             <div key={brand._id} className="flex items-center space-x-2">
               <RadioGroupItem value={brand._id} id={brand._id} />
               <Label htmlFor={brand._id} className="font-normal cursor-pointer">{brand.name}</Label>
@@ -85,7 +100,7 @@ export default function ProductFilters({ onFilterChange }: ProductFiltersProps) 
             <RadioGroupItem value="" id="color-all" />
             <Label htmlFor="color-all" className="font-normal cursor-pointer">Tất cả</Label>
           </div>
-          {colors.map((color: any) => (
+          {colors.map((color: Color) => (
             <div key={color._id} className="flex items-center space-x-2">
               <RadioGroupItem value={color._id} id={color._id} />
               <Label htmlFor={color._id} className="font-normal cursor-pointer">{color.name}</Label>

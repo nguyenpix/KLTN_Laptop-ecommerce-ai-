@@ -13,7 +13,7 @@ export interface RegisterPayload {
 export interface RegisterResponse {
   success: boolean;
   message: string;
-  data: any; 
+  data: Record<string, unknown>; 
 }
 
 const registerUser = async (payload: RegisterPayload): Promise<RegisterResponse> => {

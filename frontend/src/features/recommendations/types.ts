@@ -96,7 +96,7 @@ export interface UserInteraction {
   };
   type: 'view' | 'like' | 'add_to_cart' | 'remove_from_cart' | 'rating' | 'purchase';
   weight: number;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   createdAt: string;
 }
 

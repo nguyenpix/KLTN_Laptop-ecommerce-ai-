@@ -16,7 +16,6 @@ const fetchProducts = async (filters?: ProductFilters) => {
   }
 
   const res = await fetch(`${API_URL}/products?${params.toString()}`);
-
   if (!res.ok) {
     throw new Error("Network response was not ok");
   }
