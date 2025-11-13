@@ -3,8 +3,10 @@ import React from "react";
 import { Button } from "@/shared/components/ui/button";
 import { ChevronUp, ChevronDown, ShoppingCart } from "lucide-react";
 import { useCartStore } from "@/store/cartStore";
+import { Product } from "@/features/products/types";
 
 interface ProductTopBarProps {
+  product: Product;
   activeIndex: number;
   setActiveIndex: (index: number) => void;
   totalPrice: number;
@@ -13,6 +15,7 @@ interface ProductTopBarProps {
 }
 
 export function ProductTopBar({
+  product,
   activeIndex,
   setActiveIndex,
   totalPrice,
