@@ -1,0 +1,86 @@
+[
+  {
+    "id": 1,
+    "name": "Đen",
+    "slug": "den",
+    "createdAt": "2025-09-13T11:40:36.533Z",
+    "updatedAt": "2025-09-13T11:40:36.533Z"
+  },
+  {
+    "id": 2,
+    "name": "Trắng",
+    "slug": "trang",
+    "createdAt": "2025-09-13T11:40:36.533Z",
+    "updatedAt": "2025-09-13T11:40:36.533Z"
+  },
+  {
+    "id": 3,
+    "name": "Xám",
+    "slug": "xam",
+    "createdAt": "2025-09-13T11:40:36.533Z",
+    "updatedAt": "2025-09-13T11:40:36.533Z"
+  },
+  {
+    "id": 4,
+    "name": "Xanh",
+    "slug": "xanh",
+    "createdAt": "2025-09-13T11:40:36.533Z",
+    "updatedAt": "2025-09-13T11:40:36.533Z"
+  },
+  {
+    "id": 5,
+    "name": "Đen ánh bạc",
+    "slug": "den-anh-bac",
+    "createdAt": "2025-09-13T11:40:36.533Z",
+    "updatedAt": "2025-09-13T11:40:36.533Z"
+  },
+  {
+    "id": 6,
+    "name": "Xám",
+    "slug": "xam-1",
+    "createdAt": "2025-09-13T11:40:36.533Z",
+    "updatedAt": "2025-09-13T11:40:36.533Z"
+  },
+  {
+    "id": 7,
+    "name": "Bạc",
+    "slug": "bac",
+    "createdAt": "2025-09-13T11:40:36.533Z",
+    "updatedAt": "2025-09-13T11:40:36.533Z"
+  },
+  {
+    "id": 8,
+    "name": "Xám đen",
+    "slug": "xam-den",
+    "createdAt": "2025-09-13T11:40:36.533Z",
+    "updatedAt": "2025-09-13T11:40:36.533Z"
+  },
+  {
+    "id": 9,
+    "name": "Gold",
+    "slug": "gold",
+    "createdAt": "2025-09-13T11:40:36.533Z",
+    "updatedAt": "2025-09-13T11:40:36.533Z"
+  },
+  {
+    "id": 10,
+    "name": "Be",
+    "slug": "be",
+    "createdAt": "2025-09-13T11:40:36.534Z",
+    "updatedAt": "2025-09-13T11:40:36.534Z"
+  },
+  {
+    "id": 11,
+    "name": "Bạc Đen",
+    "slug": "bac-den",
+    "createdAt": "2025-09-13T11:40:36.534Z",
+    "updatedAt": "2025-09-13T11:40:36.534Z"
+  },
+  {
+    "id": 12,
+    "name": "Vàng đồng",
+    "slug": "vang-dong",
+    "createdAt": "2025-09-13T11:40:36.534Z",
+    "updatedAt": "2025-09-13T11:40:36.534Z"
+  }
+]

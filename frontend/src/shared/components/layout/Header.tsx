@@ -1,17 +1,33 @@
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import { useAuthStore } from "@/store/authStore";
+import { useCartStore } from "@/store/cartStore";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Button } from "../ui/button";
 import {
   ChevronDown,
   Clock,
   MapPin,
-  Phone,
-  Mail,
   Facebook,
   Instagram,
   Search,
   ShoppingCart,
   User,
   X,
+  Heart,
+  GitCompareArrows,
+  LogOut,
+  Sparkles,
 } from "lucide-react";
 
 // Dữ liệu tĩnh, tương tự file dataHeader.ts của bạn
@@ -33,6 +49,15 @@ const headerData = {
 };
 
 const Header = () => {
+  const { isLoggedIn, user, logout } = useAuthStore();
+  const { items, getTotalItems, getTotalPrice, loadCartFromServer } = useCartStore();
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+    loadCartFromServer();
+  }, [isLoggedIn, loadCartFromServer]);
+
   // TODO: Thêm state cho isSearch, isShopInfoOpen, isCartOpen
   const isSearch = false; // Placeholder
 
@@ -119,10 +144,10 @@ const Header = () => {
 
       {/* Main Header */}
       <div className="container mx-auto flex items-center justify-between py-3">
-        <a href="/">
+        <Link href="/">
           {/* Giả sử logo nằm trong public/assets/image/Logo.jpg */}
           <img src={headerData.logoUrl} alt="Logo" className="h-16 w-auto" />
-        </a>
+        </Link>
 
         {isSearch ? (
           <div className="flex-grow mx-8 relative">
@@ -136,20 +161,20 @@ const Header = () => {
         ) : (
           <nav className="hidden lg:flex items-center gap-1 mx-4">
             {headerData.navItems.map((item) => (
-              <a
+              <Link
                 key={item.name}
                 href={item.url}
                 className="px-3 py-2 rounded-full font-semibold text-sm hover:bg-gray-100 transition-colors"
               >
                 {item.name}
-              </a>
+              </Link>
             ))}
-            <a
+            <Link
               href="/our-deals"
               className="px-7 py-1.5 rounded-full font-semibold text-sm text-blue-600 border-2 border-blue-600 hover:bg-blue-50 transition-colors"
             >
               Our Deals
-            </a>
+            </Link>
           </nav>
         )}
 
@@ -165,31 +190,40 @@ const Header = () => {
           <div className="relative group">
             <button className="relative">
               <ShoppingCart className="w-7 h-7" />
-              {/* TODO: Lấy số lượng từ state */}
               <span className="absolute -top-1 -right-2 bg-blue-600 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
-                0
+                {isClient ? getTotalItems() : 0}
               </span>
             </button>
-            {/* TODO: Logic hiển thị dropdown giỏ hàng */}
             <div className="absolute top-full right-0 mt-2 w-80 bg-white shadow-lg rounded-md p-4 z-10 hidden group-hover:block">
               <div className="absolute -top-2 right-4 w-0 h-0 border-l-8 border-l-transparent border-r-8 border-r-transparent border-b-8 border-b-gray-200"></div>
               <h3 className="font-bold text-lg">My Cart</h3>
-              <p className="text-sm text-gray-500 mb-4">0 item in cart</p>
+              <p className="text-sm text-gray-500 mb-4">{getTotalItems()} item(s) in cart</p>
               <Button
                 asChild
                 className="w-full border-blue-600 text-blue-600"
                 variant="outline"
               >
-                <a href="/cart">View or Edit Your Cart</a>
+                <Link href="/cart">View or Edit Your Cart</Link>
               </Button>
-              {/* TODO: Map qua các sản phẩm trong giỏ hàng */}
-              <div className="mt-4">
-                <p className="text-center text-gray-400">Your cart is empty.</p>
+              <div className="mt-4 max-h-60 overflow-y-auto">
+                {items.length === 0 ? (
+                  <p className="text-center text-gray-400">Your cart is empty.</p>
+                ) : (
+                  items.map((item) => (
+                    <div key={item.product._id} className="flex items-center mb-3">
+                      <img src={item.product.images.mainImg.url} alt={item.product.name} className="w-12 h-12 object-cover mr-3" />
+                      <div className="flex-grow">
+                        <p className="font-semibold text-sm line-clamp-1">{item.product.name}</p>
+                        <p className="text-xs text-gray-500">{item.quantity} x {item.product.price.toLocaleString('vi-VN')}đ</p>
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
               <hr className="my-3" />
               <div className="flex justify-between font-bold">
                 <span>Subtotal:</span>
-                <span>0đ</span>
+                <span>{getTotalPrice().toLocaleString('vi-VN')}đ</span>
               </div>
               <Button className="w-full mt-3 bg-blue-600 hover:bg-blue-700">
                 Go to Checkout
@@ -197,9 +231,65 @@ const Header = () => {
             </div>
           </div>
 
-          <button>
-            <User className="w-7 h-7" />
-          </button>
+          <div className="flex items-center gap-2">
+            {isLoggedIn && user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Avatar className="cursor-pointer">
+                    <AvatarImage src={user.avatar_url || ""} alt={user.name} />
+                    <AvatarFallback>
+                      {user.name.charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56" align="end">
+                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuGroup>
+                    <Link href="/profile" passHref>
+                      <DropdownMenuItem>
+                        <User className="mr-2 h-4 w-4" />
+                        <span>My Account</span>
+                      </DropdownMenuItem>
+                    </Link>
+                    <Link href="/profile/recommendations" passHref>
+                      <DropdownMenuItem>
+                        <Sparkles className="mr-2 h-4 w-4" />
+                        <span>Gợi ý sản phẩm</span>
+                      </DropdownMenuItem>
+                    </Link>
+                    <Link href="/profile/orders" passHref>
+                      <DropdownMenuItem>
+                        <Clock className="mr-2 h-4 w-4" />
+                        <span>Lịch sử đơn hàng</span>
+                      </DropdownMenuItem>
+                    </Link>
+                    <Link href="/wishlist" passHref>
+                      <DropdownMenuItem>
+                        <Heart className="mr-2 h-4 w-4" />
+                        <span>My Wish List (0)</span>
+                      </DropdownMenuItem>
+                    </Link>
+                    <Link href="/compare" passHref>
+                      <DropdownMenuItem>
+                        <GitCompareArrows className="mr-2 h-4 w-4" />
+                        <span>Compare (0)</span>
+                      </DropdownMenuItem>
+                    </Link>
+                  </DropdownMenuGroup>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={logout}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Logout</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Link href="/login">
+                <Button variant="ghost">Login</Button>
+              </Link>
+            )}
+          </div>
         </div>
       </div>
     </header>

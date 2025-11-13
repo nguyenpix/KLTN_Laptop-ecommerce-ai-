@@ -1,17 +1,33 @@
 import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
+import { Button } from '@/shared/components/ui/button';
+import Link from 'next/link';
 import LoginForm from '../components/LoginForm';
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/shared/components/ui/breadcrumb';
 
 const AuthPage = () => {
   return (
     <div className="container mx-auto p-4">
       <div className="mb-6">
-        <div className="text-sm text-gray-500 mb-2">
-          <Link to="/" className="hover:underline">Home</Link>
-          <span className="mx-1"> &gt; </span>
-          <span className="font-semibold">Customer Login</span>
-        </div>
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink asChild>
+                <Link href="/">Home</Link>
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Customer Login</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
         <h2 className="text-3xl font-bold">Customer Login</h2>
       </div>
       <section className="flex justify-center">
@@ -30,7 +46,9 @@ const AuthPage = () => {
                 <li>Faster checkout</li>
                 <li>Save multiple shipping addresses</li>
             </ul>
-            <Button className="w-full bg-blue-600 hover:bg-blue-700">Create an Account</Button>
+            <Link href="/register">
+              <Button className="w-full bg-blue-600 hover:bg-blue-700">Create an Account</Button>
+            </Link>
         </div>
       </section>
     </div>

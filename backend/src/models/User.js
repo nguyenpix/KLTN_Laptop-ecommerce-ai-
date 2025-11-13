@@ -30,6 +30,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: ''
   },
+  role: {
+    type: String,
+    enum: ['user', 'admin'],
+    default: 'user'
+  },
   created_at: {
     type: Date,
     default: Date.now
@@ -56,8 +61,8 @@ userSchema.pre('save', async function(next) {
 });
 
 // check mk 
-// userSchema.methods.comparePassword = async function(candidatePassword) {
-//   return bcrypt.compare(candidatePassword, this.password_hash);
-// };
+userSchema.methods.comparePassword = async function(candidatePassword) {
+  return bcrypt.compare(candidatePassword, this.password_hash);
+};
 
 export default mongoose.model('User', userSchema);

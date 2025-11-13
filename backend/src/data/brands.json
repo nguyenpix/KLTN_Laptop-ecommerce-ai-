@@ -1,0 +1,65 @@
+[
+  {
+    "id": 1,
+    "name": "Acer",
+    "slug": "acer",
+    "createdAt": "2025-09-13T11:40:36.539Z",
+    "updatedAt": "2025-09-13T11:40:36.539Z"
+  },
+  {
+    "id": 2,
+    "name": "Msi",
+    "slug": "msi",
+    "createdAt": "2025-09-13T11:40:36.539Z",
+    "updatedAt": "2025-09-13T11:40:36.539Z"
+  },
+  {
+    "id": 3,
+    "name": "Asus",
+    "slug": "asus",
+    "createdAt": "2025-09-13T11:40:36.539Z",
+    "updatedAt": "2025-09-13T11:40:36.539Z"
+  },
+  {
+    "id": 4,
+    "name": "HP",
+    "slug": "hp",
+    "createdAt": "2025-09-13T11:40:36.539Z",
+    "updatedAt": "2025-09-13T11:40:36.539Z"
+  },
+  {
+    "id": 5,
+    "name": "Lenovo",
+    "slug": "lenovo",
+    "createdAt": "2025-09-13T11:40:36.539Z",
+    "updatedAt": "2025-09-13T11:40:36.539Z"
+  },
+  {
+    "id": 6,
+    "name": "Dell",
+    "slug": "dell",
+    "createdAt": "2025-09-13T11:40:36.539Z",
+    "updatedAt": "2025-09-13T11:40:36.539Z"
+  },
+  {
+    "id": 7,
+    "name": "LG",
+    "slug": "lg",
+    "createdAt": "2025-09-13T11:40:36.539Z",
+    "updatedAt": "2025-09-13T11:40:36.539Z"
+  },
+  {
+    "id": 8,
+    "name": "Gigabyte",
+    "slug": "gigabyte",
+    "createdAt": "2025-09-13T11:40:36.539Z",
+    "updatedAt": "2025-09-13T11:40:36.539Z"
+  },
+  {
+    "id": 9,
+    "name": "Apple",
+    "slug": "apple",
+    "createdAt": "2025-09-13T11:40:36.539Z",
+    "updatedAt": "2025-09-13T11:40:36.539Z"
+  }
+]
