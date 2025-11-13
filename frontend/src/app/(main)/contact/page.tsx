@@ -119,7 +119,7 @@ export default function ContactUsPage() {
               {/* Message */}
               <div>
                 <label className="block text-sm font-medium mb-2">
-                  What's on your mind? <span className="text-red-500">*</span>
+                  What&rsquo;s on your mind? <span className="text-red-500">*</span>
                 </label>
                 <Textarea
                   name="message"

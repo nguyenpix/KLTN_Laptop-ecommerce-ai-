@@ -64,7 +64,7 @@ export default function CheckoutPage() {
 // ... (component code)
 
   const { mutate: createOrder, isPending } = useMutation({
-    mutationFn: async (orderData: any) => {
+    mutationFn: async (orderData: Record<string, unknown>) => {
       const response = await fetch(`${API_URL}/orders`, {
         method: 'POST',
         headers: {
@@ -84,8 +84,9 @@ export default function CheckoutPage() {
       queryClient.invalidateQueries({ queryKey: ['cart'] });
       router.push('/order-success');
     },
-    onError: (error: any) => {
-      toast.error(error.message || 'Đã có lỗi xảy ra. Vui lòng thử lại.');
+    onError: (error: unknown) => {
+      const errorMessage = error instanceof Error ? error.message : 'Đã có lỗi xảy ra. Vui lòng thử lại.';
+      toast.error(errorMessage);
     },
   });
 

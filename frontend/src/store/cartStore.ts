@@ -52,8 +52,8 @@ export const useCartStore = create<CartState>()(
           }
 
           const data = await response.json();
-          const serverItems = data.data.items.map((item: any) => ({
-            product: item.laptop_id, // Backend returns populated laptop_id as product
+          const serverItems = data.data.items.map((item: CartItem) => ({
+            product: item.product, // Backend returns populated laptop_id as product
             quantity: item.quantity,
           }));
           set({ items: serverItems });

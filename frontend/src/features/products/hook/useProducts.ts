@@ -1,32 +1,35 @@
  import { useQuery } from "@tanstack/react-query";
 
-  const API_URL = "http://localhost:5000/api/v1";
-  
-  const fetchProducts = async (filters : Record<string, any>) => {
-    const params = new URLSearchParams();
-    if (filters) {
-      Object.entries(filters).forEach(([key, value]) => {
-        if (value !== null && value !== undefined && value !== '') {
-          params.append(key, value);
-        }
-      });
-    }
+const API_URL = "http://localhost:5000/api/v1";
 
-    const res = await fetch(`${API_URL}/products?${params.toString()}`);
+interface ProductFilters {
+  [key: string]: string | number | undefined | null;
+}
 
-    if (!res.ok) {
-      throw new Error("Network response was not ok");
-    }
-    return res.json();
-  };
-
- export function useProducts(filters?: Record<string, any>) {
-    return useQuery({
-  
-      queryKey: ["products", filters],
-      queryFn: () => fetchProducts(filters as Record<string, any>),
+const fetchProducts = async (filters?: ProductFilters) => {
+  const params = new URLSearchParams();
+  if (filters) {
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value !== null && value !== undefined && value !== '') {
+        params.append(key, String(value));
+      }
     });
   }
+
+  const res = await fetch(`${API_URL}/products?${params.toString()}`);
+
+  if (!res.ok) {
+    throw new Error("Network response was not ok");
+  }
+  return res.json();
+};
+
+export function useProducts(filters?: ProductFilters) {
+  return useQuery({
+    queryKey: ["products", filters],
+    queryFn: () => fetchProducts(filters),
+  });
+}
 
 
   /**     `useProducts(filters)`:
