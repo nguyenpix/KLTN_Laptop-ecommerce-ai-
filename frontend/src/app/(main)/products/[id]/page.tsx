@@ -12,8 +12,8 @@ import { useTrackInteraction } from '@/features/recommendations/hooks';
 
 // API fetcher function
 const fetchProductById = async (id: string): Promise<Product> => {
-  // The user's API seems to use the numeric ID in the path, not the MongoDB _id
-  const res = await fetch(`http://localhost:5000/api/v1/products/${id}`);
+  const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000/api/v1";
+  const res = await fetch(`${apiUrl}/products/${id}`);
   if (!res.ok) {
     throw new Error('Network response was not ok');
   }
@@ -66,6 +66,7 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
   return (
     <>
       <ProductTopBar
+        product={product}
         activeIndex={activeIndex}
         setActiveIndex={setActiveIndex}
         totalPrice={totalPrice}

@@ -1,6 +1,6 @@
 import { LoginPayload, RegisterPayload, AuthResponse } from "./types";
 
-const API_BASE_URL = "http://localhost:5000/api/v1/users"; // Sửa lại cho đúng với backend của bạn
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ? `${process.env.NEXT_PUBLIC_API_BASE_URL}/users` : "http://localhost:5000/api/v1/users";
 
 export const meApi = async (token: string) => {
   const res = await fetch(`${API_BASE_URL}/profile`, { // Giả sử endpoint là /profile

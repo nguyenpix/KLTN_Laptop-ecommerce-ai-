@@ -10,7 +10,7 @@ export function useRegister() {
     mutationFn: registerApi,
     onSuccess: (data) => {
       // Tự động đăng nhập sau khi đăng ký thành công
-      login(data.token, data.user);
+      login(data.data.token, data.data.user);
     },
   });
 }

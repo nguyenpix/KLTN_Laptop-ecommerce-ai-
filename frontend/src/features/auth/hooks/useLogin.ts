@@ -10,7 +10,7 @@ export function useLogin() {
     mutationFn: loginApi, 
     onSuccess: (data) => {
       // Khi API trả về thành công, gọi action `login` của store
-      login(data.token, data.user);
+      login(data.data.token, data.data.user);
     },
   });
 }
