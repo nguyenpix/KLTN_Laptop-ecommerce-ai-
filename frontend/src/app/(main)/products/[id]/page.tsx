@@ -66,6 +66,7 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
   return (
     <>
       <ProductTopBar
+        product={product}
         activeIndex={activeIndex}
         setActiveIndex={setActiveIndex}
         totalPrice={totalPrice}

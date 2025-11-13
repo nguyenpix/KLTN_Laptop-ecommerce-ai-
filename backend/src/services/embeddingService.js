@@ -78,7 +78,6 @@ class EmbeddingService {
       
       // Retry logic cho rate limit errors
       if (error.message.includes('rate limit') || error.message.includes('429')) {
-        console.log('⏳ Rate limited, waiting 5 seconds...');
         await new Promise(resolve => setTimeout(resolve, 5000));
         return this.createEmbedding(text); // Retry
       }

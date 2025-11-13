@@ -11,6 +11,7 @@ import feedbackRoutes from './feedbackRoutes.js';
 import newsRoutes from './newsRoutes.js';
 import commentRoutes from './commentRoutes.js';
 import recommendationRoutes from './recommendationRoutes.js';
+import chatRoutes from './chatRoutes.js';
 const router = express.Router();
 
 router.use('/brands', brandRoutes);
@@ -27,6 +28,7 @@ router.use('/interactions', interactionRoutes);
 router.use('/feedbacks', feedbackRoutes);
 router.use('/news', newsRoutes);
 router.use('/comments', commentRoutes);
+router.use('/chat', chatRoutes);
 
 
 export default router;

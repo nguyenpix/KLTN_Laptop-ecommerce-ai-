@@ -128,3 +128,4 @@ export const adminAuth = async (req, res, next) => {
 
 // Alias exports for backwards compatibility
 export const auth = authenticateToken;
+export const protect = authenticateToken;

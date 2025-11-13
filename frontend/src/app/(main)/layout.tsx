@@ -1,6 +1,7 @@
 // src/app/(main)/layout.tsx
 import Header from "@/shared/components/layout/Header"
 import Footer from "@/shared/components/layout/Footer";
+import { ChatBox } from "@/features/chat";
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -8,6 +9,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
       <Header />
       <main className="flex-grow">{children}</main>
       <Footer />
+      <ChatBox />
     </div>
   );
 }

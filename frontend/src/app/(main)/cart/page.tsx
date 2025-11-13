@@ -21,35 +21,13 @@ import {
 
 export default function CartPage() {
   const router = useRouter();
-  const { items, removeFromCart, updateQuantity, getTotalPrice, clearCart, updateCartOnServer, isCartDirty, setIsCartDirty } = useCartStore();
+  const { items, removeFromCart, updateQuantity, getTotalPrice, clearCart } = useCartStore();
 
-  const [initialItems, setInitialItems] = useState(items);
   const [discountCode, setDiscountCode] = useState('');
-
-  useEffect(() => {
-    setInitialItems(items);
-  }, []);
-
-  useEffect(() => {
-    const hasChanged = JSON.stringify(items) !== JSON.stringify(initialItems);
-    setIsCartDirty(hasChanged);
-  }, [items, initialItems, setIsCartDirty]);
 
   const handleQuantityChange = (productId: string, newQuantity: number) => {
     if (newQuantity < 1) newQuantity = 1; // Ensure quantity is at least 1
     updateQuantity(productId, newQuantity);
-  };
-
-  const handleUpdateCart = async () => {
-    try {
-      await updateCartOnServer(items);
-      setInitialItems(items); // Reset initial items after successful update
-      setIsCartDirty(false);
-      toast.success('Giỏ hàng đã được cập nhật thành công!');
-    } catch (error) {
-      toast.error('Cập nhật giỏ hàng thất bại. Vui lòng thử lại.');
-      console.error('Failed to update cart:', error);
-    }
   };
 
   const handleClearCart = () => {
@@ -189,13 +167,6 @@ export default function CartPage() {
                 onClick={handleClearCart}
               >
                 Clear Shopping Cart
-              </Button>
-              <Button
-                className="rounded-full ml-auto"
-                disabled={!isCartDirty}
-                onClick={handleUpdateCart}
-              >
-                Update Shopping Cart
               </Button>
             </div>
           </div>

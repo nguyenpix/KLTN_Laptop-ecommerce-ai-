@@ -71,22 +71,35 @@ export const getProductFeedbacks = async (req, res) => {
 export const createFeedback = async (req, res) => {
     try {
         const { product_id, rating, comment, wishlist } = req.body;
-        const user_id = req.user.userId;
+        const user_id = req.user._id || req.user.userId; // Support both formats
 
-        // Validate required fields
-        if (!product_id || !rating || !comment) {
-            return res.status(400).json({
-                success: false,
-                message: 'Product ID, rating, and comment are required'
-            });
-        }
+        // If it's just a wishlist (no review), allow minimal data
+        const isWishlistOnly = wishlist && (!rating || rating === 0);
 
-        // Validate rating range
-        if (rating < 1 || rating > 5) {
-            return res.status(400).json({
-                success: false,
-                message: 'Rating must be between 1 and 5'
-            });
+        // Validate required fields (except for wishlist-only items)
+        if (!isWishlistOnly) {
+            if (!product_id || !rating || !comment) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Product ID, rating, and comment are required'
+                });
+            }
+
+            // Validate rating range
+            if (rating < 1 || rating > 5) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Rating must be between 1 and 5'
+                });
+            }
+        } else {
+            // For wishlist-only, only product_id is required
+            if (!product_id) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Product ID is required'
+                });
+            }
         }
 
         // Check if product exists
@@ -107,7 +120,7 @@ export const createFeedback = async (req, res) => {
         if (existingFeedback) {
             return res.status(400).json({
                 success: false,
-                message: 'You have already reviewed this product'
+                message: 'You have already reviewed this product. Use update instead.'
             });
         }
 
@@ -115,8 +128,8 @@ export const createFeedback = async (req, res) => {
         const feedback = new Feedback({
             user_id,
             product_id,
-            rating,
-            comment,
+            rating: isWishlistOnly ? 0 : rating,
+            comment: isWishlistOnly ? '' : comment,
             wishlist: wishlist || false
         });
 
@@ -124,6 +137,7 @@ export const createFeedback = async (req, res) => {
 
         // Populate user info before sending response
         await feedback.populate('user_id', 'username email');
+        await feedback.populate('product_id', 'name price images');
 
         res.status(201).json({
             success: true,
@@ -145,7 +159,7 @@ export const updateFeedback = async (req, res) => {
     try {
         const { feedbackId } = req.params;
         const { rating, comment, wishlist } = req.body;
-        const user_id = req.user.userId;
+        const user_id = req.user._id || req.user.userId;
 
         // Find feedback
         const feedback = await Feedback.findById(feedbackId);
@@ -200,7 +214,7 @@ export const updateFeedback = async (req, res) => {
 export const deleteFeedback = async (req, res) => {
     try {
         const { feedbackId } = req.params;
-        const user_id = req.user.userId;
+        const user_id = req.user._id || req.user.userId;
 
         // Find feedback
         const feedback = await Feedback.findById(feedbackId);
@@ -239,7 +253,7 @@ export const deleteFeedback = async (req, res) => {
 // Get all feedbacks by current user
 export const getUserFeedbacks = async (req, res) => {
     try {
-        const user_id = req.user.userId;
+        const user_id = req.user._id || req.user.userId;
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
         const skip = (page - 1) * limit;
@@ -277,7 +291,7 @@ export const getUserFeedbacks = async (req, res) => {
 // Get wishlist from feedbacks (products marked as wishlist)
 export const getWishlistFromFeedbacks = async (req, res) => {
     try {
-        const user_id = req.user.userId;
+        const user_id = req.user._id || req.user.userId;
 
         const wishlistFeedbacks = await Feedback.find({
             user_id,
@@ -307,7 +321,7 @@ export const getWishlistFromFeedbacks = async (req, res) => {
 export const toggleWishlist = async (req, res) => {
     try {
         const { feedbackId } = req.params;
-        const user_id = req.user.userId;
+        const user_id = req.user._id || req.user.userId;
 
         // Find feedback
         const feedback = await Feedback.findById(feedbackId);

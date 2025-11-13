@@ -66,91 +66,95 @@ export default function ProductPage() {
   const products: Product[] = data?.data || [];
 
   return (
-    <main className="container py-8 px-4">
-      <Breadcrumb className="mb-8">
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink asChild>
-              <Link href="/">Trang chủ</Link>
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbPage>Sản phẩm</BreadcrumbPage>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
+    <main className="min-h-screen bg-gray-50">
+      <div className="container mx-auto py-8 px-4">
+        <Breadcrumb className="mb-6">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink asChild>
+                <Link href="/">Trang chủ</Link>
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Sản phẩm</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
 
-      {/* Title and Count */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold mb-2">MSI PS Series ({totalCount})</h1>
-        <div className="flex justify-between items-center">
-          <p className="text-sm text-gray-600">
-            Hiển thị {products.length} trên {totalCount} sản phẩm
-          </p>
-          <ProductSort onSortChange={handleFilterChange} />
+        {/* Title and Count */}
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">MSI PS Series ({totalCount})</h1>
+          <div className="flex justify-between items-center">
+            <p className="text-sm text-gray-600">
+              Hiển thị {products.length} trên {totalCount} sản phẩm
+            </p>
+            <ProductSort onSortChange={handleFilterChange} />
+          </div>
         </div>
-      </div>
 
-      <div className="flex gap-8">
-        {/* Sidebar Filters */}
-        <aside className="w-64 flex-shrink-0">
-          <ProductFilters onFilterChange={handleFilterChange} />
-        </aside>
+        <div className="flex gap-8">
+          {/* Sidebar Filters */}
+          <aside className="w-64 flex-shrink-0">
+            <ProductFilters onFilterChange={handleFilterChange} />
+          </aside>
 
-        {/* Products Grid */}
-        <section className="flex-1">
-          {isLoading ? (
-            <div className="text-center py-20">⏳ Đang tải sản phẩm...</div>
-          ) : error ? (
-            <div className="text-center py-20 text-red-500">
-               Có lỗi xảy ra: {(error as Error).message}
-            </div>
-          ) : (
-            <>
-              {/* Grid Layout - 4 columns */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
-                {products.map((product) => (
-                  <ProductCard key={product.id} product={product} layout="grid" />
-                ))}
+          {/* Products Grid */}
+          <section className="flex-1">
+            {isLoading ? (
+              <div className="text-center py-20">Đang tải sản phẩm...</div>
+            ) : error ? (
+              <div className="text-center py-20 text-red-500">
+                ⚠️ Có lỗi xảy ra: {(error as Error).message}
               </div>
+            ) : (
+              <>
+                {/* Grid Layout - 4 columns responsive */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8">
+                  {products.map((product) => (
+                    <ProductCard key={product.id} product={product} layout="grid" />
+                  ))}
+                </div>
 
-              {/* Pagination */}
-              <Pagination className="mt-8">
-                <PaginationContent>
-                  <PaginationItem>
-                    <PaginationPrevious
-                      onClick={() => handlePageChange(currentPage - 1)}
-                      className={currentPage <= 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
-                    />
-                  </PaginationItem>
-                  {paginationRange?.map((pageNumber, index) => {
-                    if (pageNumber === DOTS) {
-                      return <PaginationItem key={index}><PaginationEllipsis /></PaginationItem>;
-                    }
-                    return (
-                      <PaginationItem key={index}>
-                        <PaginationLink
-                          onClick={() => handlePageChange(pageNumber as number)}
-                          isActive={pageNumber === currentPage}
-                          className="cursor-pointer"
-                        >
-                          {pageNumber}
-                        </PaginationLink>
+                {/* Pagination */}
+                {totalPages > 1 && (
+                  <Pagination className="mt-8">
+                    <PaginationContent>
+                      <PaginationItem>
+                        <PaginationPrevious
+                          onClick={() => handlePageChange(currentPage - 1)}
+                          className={currentPage <= 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                        />
                       </PaginationItem>
-                    );
-                  })}
-                  <PaginationItem>
-                    <PaginationNext
-                      onClick={() => handlePageChange(currentPage + 1)}
-                      className={currentPage >= totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
-                    />
-                  </PaginationItem>
-                </PaginationContent>
-              </Pagination>
-            </>
-          )}
-        </section>
+                      {paginationRange?.map((pageNumber, index) => {
+                        if (pageNumber === DOTS) {
+                          return <PaginationItem key={index}><PaginationEllipsis /></PaginationItem>;
+                        }
+                        return (
+                          <PaginationItem key={index}>
+                            <PaginationLink
+                              onClick={() => handlePageChange(pageNumber as number)}
+                              isActive={pageNumber === currentPage}
+                              className="cursor-pointer"
+                            >
+                              {pageNumber}
+                            </PaginationLink>
+                          </PaginationItem>
+                        );
+                      })}
+                      <PaginationItem>
+                        <PaginationNext
+                          onClick={() => handlePageChange(currentPage + 1)}
+                          className={currentPage >= totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                        />
+                      </PaginationItem>
+                    </PaginationContent>
+                  </Pagination>
+                )}
+              </>
+            )}
+          </section>
+        </div>
       </div>
     </main>
   );

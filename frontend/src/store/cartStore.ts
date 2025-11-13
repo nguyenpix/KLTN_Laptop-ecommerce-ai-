@@ -12,8 +12,6 @@ interface CartItem {
 
 interface CartState {
   items: CartItem[];
-  isCartDirty: boolean;
-  setIsCartDirty: (dirty: boolean) => void;
   addToCart: (product: Product, quantity: number) => Promise<void>;
   removeFromCart: (productId: string) => Promise<void>;
   updateQuantity: (productId: string, quantity: number) => Promise<void>;
@@ -28,13 +26,11 @@ export const useCartStore = create<CartState>()(
   persist(
     (set, get) => ({
       items: [],
-      isCartDirty: false,
-      setIsCartDirty: (dirty: boolean) => set({ isCartDirty: dirty }),
 
       loadCartFromServer: async () => {
         const token = useAuthStore.getState().token;
         if (!token) {
-          set({ items: [] });
+          // Nếu không có token, giữ nguyên giỏ hàng local (không xóa)
           return;
         }
 
@@ -56,10 +52,14 @@ export const useCartStore = create<CartState>()(
             product: item.laptop_id, // Backend returns populated laptop_id as product
             quantity: item.quantity,
           }));
-          set({ items: serverItems });
+          
+          // Chỉ cập nhật nếu có dữ liệu từ server
+          if (serverItems.length > 0) {
+            set({ items: serverItems });
+          }
         } catch (error) {
           console.error("Error loading cart from server:", error);
-          set({ items: [] });
+          // Không xóa giỏ hàng local khi có lỗi
         }
       },
 
@@ -79,15 +79,34 @@ export const useCartStore = create<CartState>()(
         }
 
         set({ items: updatedItems });
-        get().setIsCartDirty(true);
         toast.success("Sản phẩm đã được thêm vào giỏ hàng!");
+        
+        // Tự động đồng bộ lên server nếu user đã đăng nhập
+        const token = useAuthStore.getState().token;
+        if (token) {
+          try {
+            await get().updateCartOnServer(updatedItems);
+          } catch (error) {
+            console.error("Failed to sync cart to server:", error);
+            // Vẫn giữ items trong local state
+          }
+        }
       },
 
       removeFromCart: async (productId) => {
         const state = get();
         const updatedItems = state.items.filter(item => item.product._id !== productId);
         set({ items: updatedItems });
-        get().setIsCartDirty(true);
+        
+        // Tự động đồng bộ lên server nếu user đã đăng nhập
+        const token = useAuthStore.getState().token;
+        if (token) {
+          try {
+            await get().updateCartOnServer(updatedItems);
+          } catch (error) {
+            console.error("Failed to sync cart to server:", error);
+          }
+        }
       },
 
       updateQuantity: async (productId, quantity) => {
@@ -107,7 +126,16 @@ export const useCartStore = create<CartState>()(
             );
           }
           set({ items: updatedItems });
-          get().setIsCartDirty(true);
+          
+          // Tự động đồng bộ lên server nếu user đã đăng nhập
+          const token = useAuthStore.getState().token;
+          if (token) {
+            try {
+              await get().updateCartOnServer(updatedItems);
+            } catch (error) {
+              console.error("Failed to sync cart to server:", error);
+            }
+          }
         } else {
           console.warn("Attempted to update quantity for a non-existent item.");
         }
@@ -115,7 +143,16 @@ export const useCartStore = create<CartState>()(
 
       clearCart: async () => {
         set({ items: [] });
-        get().setIsCartDirty(true);
+        
+        // Tự động đồng bộ lên server nếu user đã đăng nhập
+        const token = useAuthStore.getState().token;
+        if (token) {
+          try {
+            await get().updateCartOnServer([]);
+          } catch (error) {
+            console.error("Failed to sync cart to server:", error);
+          }
+        }
       },
 
       updateCartOnServer: async (items: CartItem[]) => {
@@ -144,8 +181,6 @@ export const useCartStore = create<CartState>()(
             const errorData = await response.json();
             throw new Error(errorData.message || 'Failed to update cart on server.');
           }
-
-          get().setIsCartDirty(false); // Reset dirty state after successful update
         } catch (error) {
           console.error("Error updating cart on server:", error);
           throw error;

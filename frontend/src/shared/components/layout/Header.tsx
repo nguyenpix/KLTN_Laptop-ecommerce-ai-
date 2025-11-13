@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useAuthStore } from "@/store/authStore";
 import { useCartStore } from "@/store/cartStore";
+import { useWishlistStore } from "@/store/wishlistStore";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -51,12 +52,30 @@ const headerData = {
 const Header = () => {
   const { isLoggedIn, user, logout } = useAuthStore();
   const { items, getTotalItems, getTotalPrice, loadCartFromServer } = useCartStore();
+  const { items: wishlistItems, getTotalItems: getTotalWishlistItems, loadWishlistFromServer } = useWishlistStore();
   const [isClient, setIsClient] = useState(false);
+  const [hasLoadedCart, setHasLoadedCart] = useState(false);
+  const [hasLoadedWishlist, setHasLoadedWishlist] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
-    loadCartFromServer();
-  }, [isLoggedIn, loadCartFromServer]);
+  }, []);
+
+  // Chỉ load cart từ server một lần khi user đăng nhập
+  useEffect(() => {
+    if (isLoggedIn && !hasLoadedCart) {
+      loadCartFromServer();
+      setHasLoadedCart(true);
+    }
+  }, [isLoggedIn, hasLoadedCart, loadCartFromServer]);
+
+  // Load wishlist khi user đăng nhập
+  useEffect(() => {
+    if (isLoggedIn && !hasLoadedWishlist) {
+      loadWishlistFromServer();
+      setHasLoadedWishlist(true);
+    }
+  }, [isLoggedIn, hasLoadedWishlist, loadWishlistFromServer]);
 
   // TODO: Thêm state cho isSearch, isShopInfoOpen, isCartOpen
   const isSearch = false; // Placeholder
@@ -267,7 +286,7 @@ const Header = () => {
                     <Link href="/wishlist" passHref>
                       <DropdownMenuItem>
                         <Heart className="mr-2 h-4 w-4" />
-                        <span>My Wish List (0)</span>
+                        <span>Danh sách yêu thích ({isClient ? getTotalWishlistItems() : 0})</span>
                       </DropdownMenuItem>
                     </Link>
                     <Link href="/compare" passHref>

@@ -1,10 +1,13 @@
 "use client";
 import React from "react";
 import { Button } from "@/shared/components/ui/button";
-import { ChevronUp, ChevronDown, ShoppingCart } from "lucide-react";
+import { ChevronUp, ChevronDown, ShoppingCart, Heart } from "lucide-react";
 import { useCartStore } from "@/store/cartStore";
+import { useWishlistStore } from "@/store/wishlistStore";
+import { Product } from "@/features/products/types";
 
 interface ProductTopBarProps {
+  product: Product;
   activeIndex: number;
   setActiveIndex: (index: number) => void;
   totalPrice: number;
@@ -13,12 +16,16 @@ interface ProductTopBarProps {
 }
 
 export function ProductTopBar({
+  product,
   activeIndex,
   setActiveIndex,
   totalPrice,
   quantity,
   setQuantity,
 }: ProductTopBarProps) {
+  const { isInWishlist, toggleWishlist } = useWishlistStore();
+  const isWishlisted = isInWishlist(product._id);
+
   return (
     <div className="border-b sticky top-0 bg-white/95 backdrop-blur-sm z-10">
       <div className="container mx-auto flex justify-between items-center py-4">
@@ -81,13 +88,24 @@ export function ProductTopBar({
             </div>
           </div>
           <Button
-            className="w-full"
+            className="bg-blue-600 hover:bg-blue-700"
             size="sm"
-            onClick={() => useCartStore.getState().addToCart(product, 1)}
+            onClick={() => useCartStore.getState().addToCart(product, quantity)}
           >
+            <ShoppingCart className="w-4 h-4 mr-2" />
             Thêm vào giỏ hàng
           </Button>
-          <Button variant="outline">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => toggleWishlist(product._id)}
+            className={isWishlisted ? 'border-red-500 bg-red-50' : ''}
+          >
+            <Heart 
+              className={`w-4 h-4 ${isWishlisted ? 'fill-red-500 text-red-500' : ''}`}
+            />
+          </Button>
+          <Button variant="outline" size="sm">
             <img src="/assets/icon/paypal.svg" alt="Paypal" className="h-6" />
           </Button>
         </div>
