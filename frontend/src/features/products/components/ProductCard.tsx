@@ -20,6 +20,9 @@ interface ProductCardProps {
 }
 
 const ProductCard = ({ product, layout = "grid", badge }: ProductCardProps) => {
+  if (!product || !product.images || !product.images.mainImg) {
+    return null; // or a loading skeleton
+  }
   const { isInWishlist, toggleWishlist } = useWishlistStore();
   const isWishlisted = isInWishlist(product._id);
 
