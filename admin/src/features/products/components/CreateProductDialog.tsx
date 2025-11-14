@@ -4,8 +4,8 @@ import React, { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ProductFormData } from '@/shared/types';
 import { createProduct } from '@/features/products/api';
-import { getCategories } from '@/features/categories/api';
-import { getColors } from '@/features/colors/api';
+import { getCategories } from '@/features/categories/api/index';
+import { getColors } from '@/features/colors/api/index';
 import { getBrands } from '@/features/brands/api';
 
 import {
