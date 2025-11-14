@@ -4,6 +4,9 @@ import React, { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ProductFormData } from '@/shared/types';
 import { createProduct } from '@/features/products/api';
+import { getCategories } from '@/features/categories/api';
+import { getColors } from '@/features/colors/api';
+import { getBrands } from '@/features/brands/api';
 
 import {
   Dialog,
@@ -13,10 +16,18 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/shared/components/ui/dialog';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/shared/components/ui/select';
 import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
 import { Label } from '@/shared/components/ui/label';
 import { Textarea } from '@/shared/components/ui/textarea';
+import { Checkbox } from '@/shared/components/ui/checkbox';
 import { toast } from '@/hooks/use-toast';
 import { Loader2, Plus, X } from 'lucide-react';
 
@@ -27,6 +38,22 @@ interface CreateProductDialogProps {
 
 export function CreateProductDialog({ open, onOpenChange }: CreateProductDialogProps) {
   const queryClient = useQueryClient();
+
+  // Fetch categories, colors, brands
+  const { data: categories = [] } = useQuery({
+    queryKey: ['categories'],
+    queryFn: getCategories,
+  });
+
+  const { data: colors = [] } = useQuery({
+    queryKey: ['colors'],
+    queryFn: getColors,
+  });
+
+  const { data: brands = [] } = useQuery({
+    queryKey: ['brands'],
+    queryFn: getBrands,
+  });
 
   
   const [formData, setFormData] = useState<Partial<ProductFormData>>({
@@ -190,7 +217,6 @@ export function CreateProductDialog({ open, onOpenChange }: CreateProductDialogP
         </DialogHeader>
 
         <div className="space-y-6 py-4">
-          {}
           <div className="space-y-4">
             <h3 className="font-semibold text-lg">Thông tin cơ bản</h3>
             
@@ -233,40 +259,89 @@ export function CreateProductDialog({ open, onOpenChange }: CreateProductDialogP
 
               <div className="space-y-2">
                 <Label htmlFor="brand_id">
-                  Brand ID <span className="text-destructive">*</span>
+                  Thương hiệu <span className="text-destructive">*</span>
                 </Label>
-                <Input
-                  id="brand_id"
+                <Select
                   value={formData.brand_id}
-                  onChange={(e) => handleFieldChange('brand_id', e.target.value)}
-                  placeholder="ID của thương hiệu"
-                />
+                  onValueChange={(value) => handleFieldChange('brand_id', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Chọn thương hiệu" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {brands.map((brand) => (
+                      <SelectItem key={brand._id} value={brand._id}>
+                        {brand.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="color_id">
-                  Color ID <span className="text-destructive">*</span>
+                  Màu sắc <span className="text-destructive">*</span>
                 </Label>
-                <Input
-                  id="color_id"
+                <Select
                   value={formData.color_id}
-                  onChange={(e) => handleFieldChange('color_id', e.target.value)}
-                  placeholder="ID của màu sắc"
-                />
+                  onValueChange={(value) => handleFieldChange('color_id', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Chọn màu sắc" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {colors.map((color) => (
+                      <SelectItem key={color._id} value={color._id}>
+                        <div className="flex items-center gap-2">
+                          {color.hex && (
+                            <div
+                              className="w-4 h-4 rounded-full border"
+                              style={{ backgroundColor: color.hex }}
+                            />
+                          )}
+                          {color.name}
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
+            </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="category_id">
-                  Category IDs (comma-separated) <span className="text-destructive">*</span>
-                </Label>
-                <Input
-                  id="category_id"
-                  value={formData.category_id?.join(', ') || ''}
-                  onChange={(e) => handleFieldChange('category_id', e.target.value.split(',').map(s => s.trim()))}
-                  placeholder="ID danh mục, cách nhau bằng dấu phẩy"
-                />
-              </div>
+            <div className="space-y-2">
+              <Label>
+                Danh mục <span className="text-destructive">*</span>
+              </Label>
+              <div className="grid grid-cols-2 gap-2 border rounded-md p-3 max-h-40 overflow-y-auto">
+                {categories.map((category) => (
+                  <div key={category._id} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`cat-${category._id}`}
+                      checked={formData.category_id?.includes(category._id)}
+                      onCheckedChange={(checked) => {
+                        const currentCategories = formData.category_id || [];
+                        if (checked) {
+                          handleFieldChange('category_id', [...currentCategories, category._id]);
+                        } else {
+                          handleFieldChange(
+                            'category_id',
+                            currentCategories.filter((id) => id !== category._id)
+                          );
+                        }
+                      }}
+                    />
+                    <label
+                      htmlFor={`cat-${category._id}`}
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                    >
+                      {category.name}
+                    </label>
+                  </div>
+                ))}
+            </div>
+          </div>
 
+            <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="price">
                   Giá <span className="text-destructive">*</span>
@@ -293,12 +368,7 @@ export function CreateProductDialog({ open, onOpenChange }: CreateProductDialogP
                 />
               </div>
             </div>
-          </div>
-
-
-
-          {}
-          <div className="space-y-4">
+          </div>          <div className="space-y-4">
             <h3 className="font-semibold text-lg">Hình ảnh</h3>
             
             <div className="space-y-2">
@@ -454,7 +524,6 @@ export function CreateProductDialog({ open, onOpenChange }: CreateProductDialogP
             </div>
           </div>
         </div>
-
         <DialogFooter>
           <Button
             type="button"

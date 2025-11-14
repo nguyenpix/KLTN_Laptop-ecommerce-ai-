@@ -38,12 +38,12 @@ export default function ProductDetailPage() {
   
   const { data: categoriesData } = useQuery({
     queryKey: ['categories'],
-    queryFn: () => getCategories({ limit: 100 }),
+    queryFn: getCategories,
   });
 
   const { data: colorsData } = useQuery({
     queryKey: ['colors'],
-    queryFn: () => getColors({ limit: 100 }),
+    queryFn: getColors,
   });
 
   const categories = categoriesData || [];
@@ -66,9 +66,12 @@ export default function ProductDetailPage() {
         category_id: Array.isArray(data.category_id) 
           ? data.category_id.map(cat => typeof cat === 'string' ? cat : cat._id)
           : undefined,
-        color_id: Array.isArray(data.color_id) 
-          ? data.color_id.map(col => typeof col === 'string' ? col : col._id)
-          : undefined,
+        color_id: typeof data.color_id === 'object' && data.color_id && '_id' in data.color_id
+          ? data.color_id._id
+          : data.color_id,
+        brand_id: typeof data.brand_id === 'object' && data.brand_id && '_id' in data.brand_id
+          ? data.brand_id._id
+          : data.brand_id,
       };
       return updateProduct(id, formattedData);
     },
@@ -102,25 +105,6 @@ export default function ProductDetailPage() {
         [field]: value,
       },
     }));
-    setHasChanges(true);
-  };
-
-  const handleDescriptionChange = (index: number, field: 'title' | 'description', value: string) => {
-    const newDescriptions = [...(formData.description || [])];
-    newDescriptions[index] = { ...newDescriptions[index], [field]: value };
-    setFormData(prev => ({ ...prev, description: newDescriptions }));
-    setHasChanges(true);
-  };
-
-  const handleAddDescription = () => {
-    const newDescriptions = [...(formData.description || []), { title: '', description: '' }];
-    setFormData(prev => ({ ...prev, description: newDescriptions }));
-    setHasChanges(true);
-  };
-
-  const handleRemoveDescription = (index: number) => {
-    const newDescriptions = (formData.description || []).filter((_, i) => i !== index);
-    setFormData(prev => ({ ...prev, description: newDescriptions }));
     setHasChanges(true);
   };
 
@@ -213,23 +197,38 @@ export default function ProductDetailPage() {
 
   
   const getCategoryNames = () => {
-    if (!product.category_id || product.category_id.length === 0) return 'Chưa phân loại';
-    return product.category_id
-      .map(cat => typeof cat === 'string' ? cat : cat.category)
-      .join(', ');
+    if (!product.category_id) return 'Chưa phân loại';
+    
+    // category_id có thể là array hoặc single value
+    if (Array.isArray(product.category_id)) {
+      if (product.category_id.length === 0) return 'Chưa phân loại';
+      return product.category_id
+        .map(cat => typeof cat === 'string' ? cat : cat.name)
+        .join(', ');
+    }
+    
+    // Nếu là single value
+    if (typeof product.category_id === 'object' && product.category_id && 'name' in product.category_id) {
+      return (product.category_id as any).name;
+    }
+    
+    return typeof product.category_id === 'string' ? product.category_id : 'Chưa phân loại';
   };
 
   
   const getColorNames = () => {
-    if (!product.color_id || product.color_id.length === 0) return 'Chưa xác định';
-    return product.color_id
-      .map(col => typeof col === 'string' ? col : col.color)
-      .join(', ');
+    if (!product.color_id) return 'Chưa xác định';
+    
+    // color_id là object hoặc string, không phải array
+    if (typeof product.color_id === 'object' && 'name' in product.color_id) {
+      return product.color_id.name;
+    }
+    
+    return typeof product.color_id === 'string' ? product.color_id : 'Chưa xác định';
   };
 
   return (
     <div className="space-y-6">
-      {}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Button 
@@ -337,46 +336,6 @@ export default function ProductDetailPage() {
                 )}
               </div>
 
-              {}
-              <div className="flex items-center gap-2">
-                <DollarSign className="h-4 w-4 text-muted-foreground" />
-                <span className="font-semibold min-w-[100px]">Giá khuyến mãi:</span>
-                {isEditing ? (
-                  <div className="flex items-center gap-2">
-                    <Input
-                      type="number"
-                      value={formData.sale_price || ''}
-                      onChange={(e) => {
-                        const value = e.target.value === '' ? null : Number(e.target.value);
-                        handleFieldChange('sale_price', value);
-                      }}
-                      className="max-w-[200px]"
-                      placeholder="Để trống nếu không giảm giá"
-                    />
-                    {formData.sale_price && formData.price && formData.sale_price < formData.price && (
-                      <Badge variant="destructive">
-                        -{Math.round((1 - formData.sale_price / formData.price) * 100)}%
-                      </Badge>
-                    )}
-                  </div>
-                ) : product.sale_price ? (
-                  <div className="flex items-center gap-2">
-                    <span className="text-2xl font-bold text-destructive">
-                      {product.sale_price.toLocaleString('vi-VN')}đ
-                    </span>
-                    <Badge variant="destructive">
-                      -{Math.round((1 - product.sale_price / product.price) * 100)}%
-                    </Badge>
-                    <span className="text-sm line-through text-muted-foreground">
-                      {product.price.toLocaleString('vi-VN')}đ
-                    </span>
-                  </div>
-                ) : (
-                  <span className="text-sm text-muted-foreground">Không có</span>
-                )}
-              </div>
-
-              {}
               <div className="flex items-center gap-2">
                 <Package className="h-4 w-4 text-muted-foreground" />
                 <span className="font-semibold min-w-[100px]">Tồn kho:</span>
@@ -397,58 +356,15 @@ export default function ProductDetailPage() {
               <div className="flex items-center gap-2">
                 <Hash className="h-4 w-4 text-muted-foreground" />
                 <span className="font-semibold min-w-[100px]">ID:</span>
-                <span>{product.id}</span>
+                <span>{product._id}</span>
               </div>
 
-              {}
               <div className="flex items-center gap-2">
                 <Tag className="h-4 w-4 text-muted-foreground" />
                 <span className="font-semibold min-w-[100px]">Thương hiệu:</span>
-                {isEditing ? (
-                  <Input
-                    value={formData.brand || ''}
-                    onChange={(e) => handleFieldChange('brand', e.target.value)}
-                    className="max-w-[300px]"
-                  />
-                ) : (
-                  <span>{product.brand}</span>
-                )}
+                <span>{typeof product.brand_id === 'object' && 'name' in product.brand_id ? product.brand_id.name : product.brand_id}</span>
               </div>
 
-              {}
-              <div className="flex items-center gap-2">
-                <User className="h-4 w-4 text-muted-foreground" />
-                <span className="font-semibold min-w-[100px]">Giới tính:</span>
-                {isEditing ? (
-                  <select
-                    value={formData.gender || ''}
-                    onChange={(e) => handleFieldChange('gender', e.target.value as 'Nam' | 'Nữ')}
-                    className="flex h-10 w-[200px] rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                  >
-                    <option value="Nam">Nam</option>
-                    <option value="Nữ">Nữ</option>
-                  </select>
-                ) : (
-                  <Badge variant="outline">{product.gender}</Badge>
-                )}
-              </div>
-
-              {}
-              <div className="flex items-center gap-2">
-                <MapPin className="h-4 w-4 text-muted-foreground" />
-                <span className="font-semibold min-w-[100px]">Xuất xứ:</span>
-                {isEditing ? (
-                  <Input
-                    value={formData.origin || ''}
-                    onChange={(e) => handleFieldChange('origin', e.target.value)}
-                    className="max-w-[300px]"
-                  />
-                ) : (
-                  <span>{product.origin}</span>
-                )}
-              </div>
-
-              {}
               <div className="flex items-start gap-2">
                 <Tag className="h-4 w-4 text-muted-foreground mt-1" />
                 <div className="flex-1">
@@ -571,55 +487,23 @@ export default function ProductDetailPage() {
       </div>
 
       {}
-      {((product.description && product.description.length > 0) || isEditing) && (
+      {(product.description || isEditing) && (
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
+          <CardHeader>
             <CardTitle>Mô tả sản phẩm</CardTitle>
-            {isEditing && (
-              <Button size="sm" variant="outline" onClick={handleAddDescription}>
-                <Plus className="h-4 w-4 mr-1" /> Thêm mô tả
-              </Button>
-            )}
           </CardHeader>
           <CardContent className="space-y-4">
             {isEditing ? (
-              (formData.description || []).map((desc, index) => (
-                <div key={desc._id || index} className="border rounded-lg p-4 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <Label>Tiêu đề {index + 1}</Label>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => handleRemoveDescription(index)}
-                    >
-                      <Trash2 className="h-4 w-4 text-destructive" />
-                    </Button>
-                  </div>
-                  <Input
-                    value={desc.title}
-                    onChange={(e) => handleDescriptionChange(index, 'title', e.target.value)}
-                    placeholder="Tiêu đề"
-                  />
-                  <div>
-                    <Label>Nội dung</Label>
-                    <Textarea
-                      value={desc.description || ''}
-                      onChange={(e) => handleDescriptionChange(index, 'description', e.target.value)}
-                      placeholder="Mô tả chi tiết"
-                      rows={5}
-                    />
-                  </div>
-                </div>
-              ))
+              <Textarea
+                value={formData.description || ''}
+                onChange={(e) => handleFieldChange('description', e.target.value)}
+                placeholder="Nhập mô tả sản phẩm"
+                rows={10}
+              />
             ) : (
-              product.description?.map((desc, index) => (
-                <div key={desc._id || index}>
-                  <h3 className="font-semibold text-lg mb-2">{desc.title}</h3>
-                  <p className="text-muted-foreground whitespace-pre-wrap">
-                    {desc.description || 'Không có mô tả'}
-                  </p>
-                </div>
-              ))
+              <p className="text-muted-foreground whitespace-pre-wrap">
+                {product.description || 'Không có mô tả'}
+              </p>
             )}
           </CardContent>
         </Card>
@@ -650,24 +534,7 @@ export default function ProductDetailPage() {
                   </dd>
                 </>
               )}
-              {}
-              {(product.specifications.movement || isEditing) && (
-                <>
-                  <dt className="font-semibold">Bộ máy:</dt>
-                  <dd>
-                    {isEditing ? (
-                      <Input
-                        value={formData.specifications?.movement || ''}
-                        onChange={(e) => handleNestedFieldChange('specifications', 'movement', e.target.value)}
-                        placeholder="VD: Quartz"
-                      />
-                    ) : (
-                      product.specifications.movement
-                    )}
-                  </dd>
-                </>
-              )}
-              {}
+
               {(product.specifications.size || isEditing) && (
                 <>
                   <dt className="font-semibold">Kích thước:</dt>
@@ -680,91 +547,6 @@ export default function ProductDetailPage() {
                       />
                     ) : (
                       product.specifications.size
-                    )}
-                  </dd>
-                </>
-              )}
-              {}
-              {(product.specifications.thickness || isEditing) && (
-                <>
-                  <dt className="font-semibold">Độ dày:</dt>
-                  <dd>
-                    {isEditing ? (
-                      <Input
-                        value={formData.specifications?.thickness || ''}
-                        onChange={(e) => handleNestedFieldChange('specifications', 'thickness', e.target.value)}
-                        placeholder="VD: 10mm"
-                      />
-                    ) : (
-                      product.specifications.thickness
-                    )}
-                  </dd>
-                </>
-              )}
-              {}
-              {(product.specifications.band_variation || isEditing) && (
-                <>
-                  <dt className="font-semibold">Loại dây:</dt>
-                  <dd>
-                    {isEditing ? (
-                      <Input
-                        value={formData.specifications?.band_variation || ''}
-                        onChange={(e) => handleNestedFieldChange('specifications', 'band_variation', e.target.value)}
-                        placeholder="VD: Dây da"
-                      />
-                    ) : (
-                      product.specifications.band_variation
-                    )}
-                  </dd>
-                </>
-              )}
-              {}
-              {(product.specifications.glass_material || isEditing) && (
-                <>
-                  <dt className="font-semibold">Chất liệu kính:</dt>
-                  <dd>
-                    {isEditing ? (
-                      <Input
-                        value={formData.specifications?.glass_material || ''}
-                        onChange={(e) => handleNestedFieldChange('specifications', 'glass_material', e.target.value)}
-                        placeholder="VD: Sapphire"
-                      />
-                    ) : (
-                      product.specifications.glass_material
-                    )}
-                  </dd>
-                </>
-              )}
-              {}
-              {(product.specifications.water_resistance_level || isEditing) && (
-                <>
-                  <dt className="font-semibold">Chống nước:</dt>
-                  <dd>
-                    {isEditing ? (
-                      <Input
-                        value={formData.specifications?.water_resistance_level || ''}
-                        onChange={(e) => handleNestedFieldChange('specifications', 'water_resistance_level', e.target.value)}
-                        placeholder="VD: 5 ATM"
-                      />
-                    ) : (
-                      product.specifications.water_resistance_level
-                    )}
-                  </dd>
-                </>
-              )}
-              {}
-              {(product.specifications.dial_shape || isEditing) && (
-                <>
-                  <dt className="font-semibold">Hình dạng mặt:</dt>
-                  <dd>
-                    {isEditing ? (
-                      <Input
-                        value={formData.specifications?.dial_shape || ''}
-                        onChange={(e) => handleNestedFieldChange('specifications', 'dial_shape', e.target.value)}
-                        placeholder="VD: Tròn"
-                      />
-                    ) : (
-                      product.specifications.dial_shape
                     )}
                   </dd>
                 </>

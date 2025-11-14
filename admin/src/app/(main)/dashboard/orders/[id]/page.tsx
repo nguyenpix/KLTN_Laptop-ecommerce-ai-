@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Order } from '@/shared/types';
 import { getOrderById, updateOrderStatus } from '@/features/orders/api';
 import { Button } from '@/shared/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';
@@ -22,7 +23,7 @@ import {
 
 
 
-const statusLabels = {
+const statusLabels: Record<string, string> = {
   pending: 'Chờ xác nhận',
   confirmed: 'Đã xác nhận',
   shipping: 'Đang giao',
@@ -30,11 +31,13 @@ const statusLabels = {
   cancelled: 'Đã hủy',
 };
 
-const paymentMethodLabels = {
+const paymentMethodLabels: Record<string, string> = {
+  cod: 'COD (Thanh toán khi nhận hàng)',
   credit_card: 'Thẻ tín dụng',
+  bank_transfer: 'Chuyển khoản ngân hàng',
   paypal: 'PayPal',
-  bank_transfer: 'Chuyển khoản',
-  cash_on_delivery: 'COD',
+  momo: 'Ví MoMo',
+  zalopay: 'ZaloPay',
 };
 
 export default function OrderDetailPage() {
@@ -163,37 +166,43 @@ export default function OrderDetailPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {order.items && order.items.map((item) => {
-                  const product = typeof item.product_id === 'object' ? item.product_id : null;
-                  return (
-                    <div key={item._id} className="flex gap-4 pb-4 border-b last:border-0">
-                      {product?.images?.mainImg?.url && (
-                        <img
-                          src={product.images.mainImg.url}
-                          alt={product.name}
-                          className="w-20 h-20 object-cover rounded"
-                        />
-                      )}
-                      <div className="flex-1">
-                        <h4 className="font-medium">{product?.name || item.product_name}</h4>
-                        <p className="text-sm text-muted-foreground">
-                          SKU: {product?.sku || 'N/A'}
-                        </p>
-                        <div className="flex items-center gap-4 mt-2">
-                          <span className="text-sm">Số lượng: {item.quantity}</span>
-                          <span className="text-sm font-medium">
-                            {item.price.toLocaleString('vi-VN')}đ
-                          </span>
+                {(!order.items || order.items.length === 0) ? (
+                  <p className="text-center text-muted-foreground py-4">
+                    Không có sản phẩm trong đơn hàng
+                  </p>
+                ) : (
+                  order.items.map((item) => {
+                    const product = typeof item.product_id === 'object' ? item.product_id : null;
+                    return (
+                      <div key={item._id} className="flex gap-4 pb-4 border-b last:border-0">
+                        {product?.images?.mainImg?.url && (
+                          <img
+                            src={product.images.mainImg.url}
+                            alt={product.name}
+                            className="w-20 h-20 object-cover rounded"
+                          />
+                        )}
+                        <div className="flex-1">
+                          <h4 className="font-medium">{product?.name || item.product_name}</h4>
+                          <p className="text-sm text-muted-foreground">
+                            SKU: {product?.sku || 'N/A'}
+                          </p>
+                          <div className="flex items-center gap-4 mt-2">
+                            <span className="text-sm">Số lượng: {item.quantity}</span>
+                            <span className="text-sm font-medium">
+                              {item.price.toLocaleString('vi-VN')}đ
+                            </span>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-medium">
+                            {(item.price * item.quantity).toLocaleString('vi-VN')}đ
+                          </p>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <p className="font-medium">
-                          {(item.price * item.quantity).toLocaleString('vi-VN')}đ
-                        </p>
-                      </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })
+                )}
               </div>
             </CardContent>
           </Card>
@@ -246,6 +255,16 @@ export default function OrderDetailPage() {
                 <p className="font-medium">
                   {order.shipping_address}
                 </p>
+                {order.shipping_district && (
+                  <p className="text-sm text-muted-foreground mt-1">
+                    {order.shipping_district}
+                  </p>
+                )}
+                {order.shipping_city && (
+                  <p className="text-sm text-muted-foreground">
+                    {order.shipping_city}
+                  </p>
+                )}
               </div>
               {order.note && (
                 <div>
@@ -265,12 +284,30 @@ export default function OrderDetailPage() {
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Phương thức:</span>
                 <span className="font-medium">
-                  {paymentMethodLabels[order.payment_method as keyof typeof paymentMethodLabels]}
+                  {paymentMethodLabels[order.payment_method] || order.payment_method}
                 </span>
               </div>
+              {order.subtotal !== undefined && (
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Tạm tính:</span>
+                  <span>{order.subtotal.toLocaleString('vi-VN')}đ</span>
+                </div>
+              )}
+              {order.discount !== undefined && order.discount > 0 && (
+                <div className="flex justify-between text-green-600">
+                  <span>Giảm giá:</span>
+                  <span>-{order.discount.toLocaleString('vi-VN')}đ</span>
+                </div>
+              )}
+              {order.shipping_fee !== undefined && (
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Phí vận chuyển:</span>
+                  <span>{order.shipping_fee.toLocaleString('vi-VN')}đ</span>
+                </div>
+              )}
               <div className="flex justify-between text-lg font-bold pt-3 border-t">
                 <span>Tổng cộng:</span>
-                <span className="">{order.total_amount.toLocaleString('vi-VN')}đ</span>
+                <span className="text-primary">{order.total_amount.toLocaleString('vi-VN')}đ</span>
               </div>
             </CardContent>
           </Card>
