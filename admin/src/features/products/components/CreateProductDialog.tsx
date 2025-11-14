@@ -99,17 +99,13 @@ export function CreateProductDialog({ open, onOpenChange }: CreateProductDialogP
   const createMutation = useMutation({
     mutationFn: createProduct,
     onSuccess: () => {
-      toast.success('Tạo sản phẩm thành công', {
-        description: 'Sản phẩm mới đã được thêm vào danh sách',
-      });
+      toast.success('Tạo sản phẩm thành công');
       queryClient.invalidateQueries({ queryKey: ['products'] });
       onOpenChange(false);
       resetForm();
     },
     onError: (error: any) => {
-      toast.error('Lỗi tạo sản phẩm', {
-        description: error.message || 'Không thể tạo sản phẩm',
-      });
+      toast.error(error.message || 'Không thể tạo sản phẩm');
     },
   });
 
@@ -190,16 +186,12 @@ export function CreateProductDialog({ open, onOpenChange }: CreateProductDialogP
   const handleSubmit = () => {
     // Validation
     if (!formData.title || !formData.name || !formData.sku || !formData.brand_id || !formData.color_id || !formData.category_id?.length) {
-      toast.error('Vui lòng điền đầy đủ thông tin', {
-        description: 'Tiêu đề, Tên sản phẩm, SKU, Brand ID, Color ID, và Category ID là bắt buộc',
-      });
+      toast.error('Vui lòng điền đầy đủ thông tin bắt buộc');
       return;
     }
 
     if (!formData.images?.mainImg?.url) {
-      toast.error('Vui lòng thêm hình ảnh chính', {
-        description: 'Sản phẩm cần có ít nhất 1 hình ảnh',
-      });
+      toast.error('Vui lòng thêm hình ảnh chính cho sản phẩm');
       return;
     }
 

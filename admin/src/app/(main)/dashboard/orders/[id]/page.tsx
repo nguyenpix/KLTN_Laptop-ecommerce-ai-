@@ -61,9 +61,7 @@ export default function OrderDetailPage() {
       queryClient.invalidateQueries({ queryKey: ['orders'] });
     },
     onError: (error: any) => {
-      toast.error('Lỗi cập nhật trạng thái đơn hàng', {
-        description: error.message,
-      });
+      toast.error(error.message || 'Lỗi cập nhật trạng thái đơn hàng');
     },
   });
 

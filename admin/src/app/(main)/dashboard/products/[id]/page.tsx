@@ -76,9 +76,7 @@ export default function ProductDetailPage() {
       return updateProduct(id, formattedData);
     },
     onSuccess: () => {
-      toast.success('Cập nhật sản phẩm thành công', {
-        description: 'Thông tin sản phẩm đã được lưu',
-      });
+      toast.success('Cập nhật sản phẩm thành công');
       
       queryClient.invalidateQueries({ queryKey: ['product', id] });
       queryClient.invalidateQueries({ queryKey: ['products'] });
@@ -86,9 +84,7 @@ export default function ProductDetailPage() {
       setHasChanges(false);
     },
     onError: (error: any) => {
-      toast.error('Lỗi cập nhật sản phẩm', {
-        description: error.message || 'Không thể cập nhật sản phẩm',
-      });
+      toast.error(error.message || 'Không thể cập nhật sản phẩm');
     },
   });
 

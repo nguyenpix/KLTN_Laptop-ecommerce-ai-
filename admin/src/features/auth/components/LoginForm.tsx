@@ -29,15 +29,11 @@ const LoginForm = () => {
   const onSubmit = (data: LoginFormValues) => {
     login(data, {
       onSuccess: (res) => {
-        toast.success(`Chào mừng ${res.data.user.name || res.data.user.email}!`, {
-          description: "Đăng nhập thành công!",
-        });
+        toast.success(`Chào mừng ${res.data.user.name || res.data.user.email}! Đăng nhập thành công`);
         navigate('/');
       },
       onError: (error) => {
-        toast.error("Đăng nhập thất bại", {
-          description: error.message || "Email hoặc mật khẩu không đúng.",
-        });
+        toast.error(error.message || "Đăng nhập thất bại. Email hoặc mật khẩu không đúng");
       },
     });
   };
