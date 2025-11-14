@@ -39,6 +39,7 @@ export const register = async (req, res) => {
       message: 'User registered successfully',
       data: {
         user: {
+          _id: user._id,
           id: user._id,
           name: user.name,
           email: user.email,
@@ -94,12 +95,14 @@ export const login = async (req, res) => {
       message: 'Đăng Nhập Thành Công',
       data: {
         user: {
+          _id: user._id,
           id: user._id,
           name: user.name,
           email: user.email,
           phone: user.phone,
           address: user.address,
-          avatar_url: user.avatar_url
+          avatar_url: user.avatar_url,
+          role: user.role
         },
         token
       }

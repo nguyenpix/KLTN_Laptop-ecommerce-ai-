@@ -6,7 +6,7 @@ import {
   updateColor,
   deleteColor,
 } from '../../controllers/colorController.js';
-import { authenticateToken } from '../../middlewares/auth.js';
+import { authenticateToken, adminAuth } from '../../middlewares/auth.js';
 
 const router = express.Router();
 
@@ -14,9 +14,9 @@ const router = express.Router();
 router.get('/', getColors);
 router.get('/:id', getColorById);
 
-// Protected routes (assuming admin access is checked within authenticateToken or a future middleware)
-router.post('/', authenticateToken, createColor);
-router.put('/:id', authenticateToken, updateColor);
-router.delete('/:id', authenticateToken, deleteColor);
+// Protected routes - Admin only
+router.post('/', adminAuth, createColor);
+router.put('/:id', adminAuth, updateColor);
+router.delete('/:id', adminAuth, deleteColor);
 
 export default router;

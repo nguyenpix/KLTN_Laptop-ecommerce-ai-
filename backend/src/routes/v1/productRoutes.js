@@ -6,7 +6,7 @@ import {
   updateProduct,
   deleteProduct
 } from '../../controllers/productController.js';
-import { authenticateToken } from '../../middlewares/auth.js';
+import { authenticateToken, adminAuth } from '../../middlewares/auth.js';
 
 const router = express.Router();
 
@@ -14,9 +14,9 @@ const router = express.Router();
 router.get('/', getProducts);
 router.get('/:id', getProductById);
 
-// yêu cầu xác thưcj
-router.post('/', authenticateToken, createProduct);
-router.put('/:id', authenticateToken, updateProduct);
-router.delete('/:id', authenticateToken, deleteProduct);
+// yêu cầu xác thực admin
+router.post('/', adminAuth, createProduct);
+router.put('/:id', adminAuth, updateProduct);
+router.delete('/:id', adminAuth, deleteProduct);
 
 export default router;

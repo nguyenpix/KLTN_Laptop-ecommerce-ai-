@@ -1,0 +1,43 @@
+# Netlify configuration for Admin Panel - Next.js deployment
+
+[build]
+  # Build command
+  command = "npm run build"
+  
+  # Directory that contains the deploy-ready HTML files and assets
+  publish = ".next"
+
+[build.environment]
+  # Node version
+  NODE_VERSION = "20"
+
+# Essential for Next.js App Router
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# Redirects and rewrites for Next.js routing
+[[redirects]]
+  from = "/*"
+  to = "/:splat"
+  status = 200
+  force = false
+
+# Headers for security and performance
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+# Cache static assets
+[[headers]]
+  for = "/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/_next/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"

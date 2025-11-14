@@ -73,11 +73,7 @@ async function generateRecommendationEmbeddings() {
 
         // Create recommendation text
         const recText = textChunker.createRecommendationText(product);
-        console.log(`📝 Text length: ${recText.length} chars`);
-        console.log(`📄 Preview: ${recText.substring(0, 100)}...`);
-
-        // Generate embedding
-        console.log(`⏳ Creating embedding...`);
+        c
         const embedding = await embeddingService.createEmbedding(recText);
 
         // Update product

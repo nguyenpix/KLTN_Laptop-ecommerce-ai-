@@ -227,16 +227,6 @@ async function main() {
 
     await checkExistingIndexes(db);
     printIndexInstructions();
-
-    console.log('═══════════════════════════════════════════════════════════════════════');
-    console.log('🎯 NEXT STEPS');
-    console.log('═══════════════════════════════════════════════════════════════════════\n');
-    console.log('1. ⏳ Tạo Vector Search Index qua Atlas UI (2-5 phút)');
-    console.log('2.  Verify: node src/scripts/testVectorSearch.js');
-    console.log('3. 🚀 Update code to use $vectorSearch');
-    console.log('4. 📊 Benchmark: node src/scripts/compareVectorSearchPerformance.js');
-    console.log('');
-
   } catch (error) {
     console.error(' Error:', error);
   } finally {

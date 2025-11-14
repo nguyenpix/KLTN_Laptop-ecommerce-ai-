@@ -6,7 +6,7 @@ import {
   updateCategory,
   deleteCategory,
 } from '../../controllers/categoryController.js';
-import { authenticateToken } from '../../middlewares/auth.js';
+import { authenticateToken, adminAuth } from '../../middlewares/auth.js';
 
 const router = express.Router();
 
@@ -14,9 +14,9 @@ const router = express.Router();
 router.get('/', getCategories);
 router.get('/:id', getCategoryById);
 
-// Protected routes (assuming admin access is checked within authenticateToken or a future middleware)
-router.post('/', authenticateToken, createCategory);
-router.put('/:id', authenticateToken, updateCategory);
-router.delete('/:id', authenticateToken, deleteCategory);
+// Protected routes - Admin only
+router.post('/', adminAuth, createCategory);
+router.put('/:id', adminAuth, updateCategory);
+router.delete('/:id', adminAuth, deleteCategory);
 
 export default router;

@@ -1,7 +1,7 @@
 import express from 'express';
 import { getBrands, getBrandById, createBrand, updateBrand, deleteBrand } from '../../controllers/brandController.js';
 
-import { authenticateToken } from '../../middlewares/auth.js';
+import { authenticateToken, adminAuth } from '../../middlewares/auth.js';
 
 const router = express.Router();
 
@@ -9,9 +9,9 @@ const router = express.Router();
 router.get('/', getBrands);
 router.get('/:id', getBrandById);
 
-// Protected routes (assuming admin access is checked within authenticateToken or a future middleware)
-router.post('/', authenticateToken, createBrand);
-router.put('/:id', authenticateToken, updateBrand);
-router.delete('/:id', authenticateToken, deleteBrand);
+// Protected routes - Admin only
+router.post('/', adminAuth, createBrand);
+router.put('/:id', adminAuth, updateBrand);
+router.delete('/:id', adminAuth, deleteBrand);
 
 export default router;
