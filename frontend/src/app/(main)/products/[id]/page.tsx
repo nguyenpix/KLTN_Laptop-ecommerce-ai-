@@ -12,7 +12,7 @@ import { useTrackInteraction } from '@/features/recommendations/hooks';
 
 // API fetcher function
 const fetchProductById = async (id: string): Promise<Product> => {
-  const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000/api/v1";
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
   const res = await fetch(`${apiUrl}/products/${id}`);
   if (!res.ok) {
     throw new Error('Network response was not ok');
