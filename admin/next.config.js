@@ -1,19 +1,10 @@
-
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
   typescript: {
     ignoreBuildErrors: true,
-  },
-  swcMinify: true,
-  productionBrowserSourceMaps: false,
-  reactCompilationMode: "concurrent",
-  experimental: {
-    optimizePackageImports: ["@radix-ui/react-*"],
-    scrollRestoration: false,
   },
   images: {
     remotePatterns: [
@@ -31,10 +22,6 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  onDemandEntries: {
-    maxInactiveAge: 60 * 1000,
-    pagesBufferLength: 5,
-  },
 };
 
-export default nextConfig;
+module.exports = nextConfig;
