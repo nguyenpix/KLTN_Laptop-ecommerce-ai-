@@ -10,8 +10,10 @@ const nextConfig: NextConfig = {
   },
   swcMinify: true,
   productionBrowserSourceMaps: false,
+  reactCompilationMode: "concurrent",
   experimental: {
     optimizePackageImports: ["@radix-ui/react-*"],
+    scrollRestoration: false,
   },
   images: {
     remotePatterns: [
@@ -28,6 +30,10 @@ const nextConfig: NextConfig = {
         pathname: "**",
       },
     ],
+  },
+  onDemandEntries: {
+    maxInactiveAge: 60 * 1000,
+    pagesBufferLength: 5,
   },
 };
 
