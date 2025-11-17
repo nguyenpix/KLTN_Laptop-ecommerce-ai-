@@ -8,6 +8,8 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  swcMinify: true,
+  productionBrowserSourceMaps: false,
   experimental: {
     optimizePackageImports: ["@radix-ui/react-*"],
   },
