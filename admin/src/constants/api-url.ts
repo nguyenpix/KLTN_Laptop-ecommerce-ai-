@@ -26,6 +26,7 @@ export const NEWS_ENDPOINTS = {
   DETAIL: (id: string) => `${API_BASE_URL}/news/${id}`,
   CREATE: `${API_BASE_URL}/news`,
   UPDATE: (id: string) => `${API_BASE_URL}/news/${id}`,
+  DELETE: (id: string) => `${API_BASE_URL}/news/${id}`,
 } as const;
 
 

@@ -27,7 +27,7 @@ export const useUpdateOrderStatus = () => {
 
   return useMutation({
     mutationFn: ({ id, status }: { id: string; status: OrderStatus }) =>
-      updateOrderStatus(id, status),
+      updateOrderStatus({ id, status }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['orders'] });
       toast.success('Cập nhật trạng thái đơn hàng thành công');

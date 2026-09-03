@@ -1,10 +1,9 @@
 import express from 'express';
-import recommendationController from '../../controllers/recommendationController.js';
-import { auth } from '../../middlewares/auth.js';
+import { forwardToAIService } from '../../middlewares/aiServiceProxy.js';
 
 const router = express.Router();
 
-router.get('/', auth, recommendationController.getRecommendations);
-
+// Forward all recommendation requests to AI Microservice (:8000)
+router.use('/', forwardToAIService('/recommendations'));
 
 export default router;

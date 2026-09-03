@@ -194,42 +194,67 @@ export const ChatBox = () => {
                 >
                   <p className="text-sm whitespace-pre-wrap">{message.content}</p>
                   
+                  {/* Message timestamp */}
+                  <div
+                    className={`mt-1.5 text-[10px] ${
+                      message.role === 'user' ? 'text-white/75 text-right' : 'text-gray-400 text-left'
+                    }`}
+                  >
+                    {message.createdAt
+                      ? new Date(message.createdAt).toLocaleTimeString('vi-VN', {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })
+                      : ''}
+                  </div>
+
                   {/* Show referenced products */}
                   {message.referenced_products &&
                     message.referenced_products.length > 0 && (
                       <div className="mt-3 space-y-2">
                         {message.referenced_products
-                          .filter((ref) => ref.product_id && ref.product_id._id)
-                          .slice(0, 2)
-                          .map((ref) => (
-                            <a
-                              key={ref.product_id._id}
-                              href={`/products/${ref.product_id._id}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="flex gap-2 rounded-lg bg-white p-2.5 shadow-sm hover:shadow-md transition-all border border-transparent hover:border-blue-200 cursor-pointer group"
-                            >
-                              {ref.product_id.images?.[0] && (
-                                <img
-                                  src={ref.product_id.images[0]}
-                                  alt={ref.product_id.name}
-                                  className="h-14 w-14 rounded object-cover flex-shrink-0"
-                                />
-                              )}
-                              <div className="flex-1 min-w-0">
-                                <p className="text-xs font-medium text-gray-900 truncate group-hover:text-blue-600 transition-colors">
-                                  {ref.product_id.name}
-                                </p>
-                                <p className="text-sm text-blue-600 font-bold mt-0.5">
-                                  {ref.product_id.price?.toLocaleString('vi-VN') || '0'}đ
-                                </p>
-                                <div className="flex items-center gap-1 text-xs text-gray-500 mt-1 group-hover:text-blue-600 transition-colors">
-                                  <ExternalLink className="h-3 w-3" />
-                                  <span>Xem chi tiết</span>
+                          .filter((ref) => ref.product_id && (ref.product_id._id || typeof ref.product_id === 'string'))
+                          .slice(0, 3)
+                          .map((ref) => {
+                            const pId = typeof ref.product_id === 'string' ? ref.product_id : ref.product_id._id;
+                            const pName = typeof ref.product_id === 'object' ? ref.product_id.name : 'Laptop';
+                            const pPrice = typeof ref.product_id === 'object' ? ref.product_id.price : 0;
+                            const pImg = typeof ref.product_id === 'object' && ref.product_id.images?.[0] ? ref.product_id.images[0] : null;
+
+                            return (
+                              <a
+                                key={pId}
+                                href={`/products/${pId}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex gap-2.5 items-center rounded-xl bg-white p-2.5 shadow-sm hover:shadow-md transition-all border border-gray-100 hover:border-blue-400 cursor-pointer group text-left"
+                              >
+                                {pImg ? (
+                                  <img
+                                    src={pImg}
+                                    alt={pName}
+                                    className="h-14 w-14 rounded-lg object-contain bg-gray-50 p-1 flex-shrink-0 border border-gray-100"
+                                  />
+                                ) : (
+                                  <div className="h-14 w-14 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0 text-blue-500 font-bold text-xs">
+                                    Laptop
+                                  </div>
+                                )}
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-xs font-semibold text-gray-900 truncate group-hover:text-blue-600 transition-colors">
+                                    {pName}
+                                  </p>
+                                  <p className="text-xs text-blue-600 font-bold mt-0.5">
+                                    {pPrice ? pPrice.toLocaleString('vi-VN') + 'đ' : 'Liên hệ'}
+                                  </p>
+                                  <div className="flex items-center gap-1 text-[11px] text-blue-600 font-medium mt-1">
+                                    <span>Xem chi tiết máy</span>
+                                    <ExternalLink className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
+                                  </div>
                                 </div>
-                              </div>
-                            </a>
-                          ))}
+                              </a>
+                            );
+                          })}
                       </div>
                     )}
                 </div>

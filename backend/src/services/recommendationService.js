@@ -181,8 +181,11 @@ class RecommendationService {
       if (this.useVectorSearch && userEmbedding) {
         try {
           candidates = await this.getContentBasedCandidatesVectorSearch(userEmbedding, limit);
-          console.log(` Content-based (Vector Search): ${candidates.length} candidates`);
-          return candidates;
+          if (candidates && candidates.length > 0) {
+            console.log(` Content-based (Vector Search): ${candidates.length} candidates`);
+            return candidates;
+          }
+          console.log('⚠️ Vector Search trả về 0 kết quả (có thể do môi trường Local/chưa có Atlas Search Index), chuyển sang tính cosine similarity thủ công...');
         } catch (error) {
           console.log('⚠️ Vector Search thất bại, đang chuyển sang tính toán thủ công:', error.message);
           // Dự phòng: Chuyển sang tính toán thủ công bên dưới
@@ -515,14 +518,48 @@ class RecommendationService {
         return this.applyPopularityRanking(candidates, finalLimit);
       }
 
+      // Tối ưu hóa: Preload batch embeddings của tất cả candidate và interacted products
+      const productIdsToLoad = new Set([
+        ...candidates.map(c => c.productId.toString()),
+        ...userInteractions.map(i => i.productId.toString())
+      ]);
+
+      const loadedProducts = await Product.find({
+        _id: { $in: Array.from(productIdsToLoad) }
+      }).select('_id embedding').lean();
+
+      const embeddingMap = new Map();
+      loadedProducts.forEach(p => {
+        if (p.embedding && Array.isArray(p.embedding)) {
+          embeddingMap.set(p._id.toString(), p.embedding);
+        }
+      });
+
       const rankedCandidates = [];
 
       for (const candidate of candidates) {
-        const collaborativeScore = await this.calculateCollaborativeScore(
-          candidate.productId,
-          userInteractions
-        );
+        let totalScore = 0;
+        let totalWeight = 0;
+        const targetEmb = embeddingMap.get(candidate.productId.toString());
 
+        for (const interaction of userInteractions) {
+          const interEmb = embeddingMap.get(interaction.productId.toString());
+          let similarity = 0;
+
+          if (candidate.productId.toString() === interaction.productId.toString()) {
+            similarity = 1.0;
+          } else if (targetEmb && interEmb) {
+            similarity = this.cosineSimilarity(targetEmb, interEmb);
+          }
+
+          if (similarity > 0.1) {
+            const implicitRating = interaction.weight;
+            totalScore += similarity * implicitRating;
+            totalWeight += similarity;
+          }
+        }
+
+        const collaborativeScore = totalWeight > 0 ? totalScore / totalWeight : 0;
         const finalScore = (candidate.content_score * 0.7) + (collaborativeScore * 0.3);
 
         rankedCandidates.push({
@@ -534,7 +571,6 @@ class RecommendationService {
 
       rankedCandidates.sort((a, b) => b.final_score - a.final_score);
       
-      console.log(` Đã áp dụng lọc cộng tác`);
       return rankedCandidates.slice(0, finalLimit);
 
     } catch (error) {

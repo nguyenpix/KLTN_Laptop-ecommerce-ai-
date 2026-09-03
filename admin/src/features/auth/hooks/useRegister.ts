@@ -9,8 +9,9 @@ export function useRegister() {
   return useMutation<AuthResponse, Error, RegisterPayload>({
     mutationFn: registerApi,
     onSuccess: (data) => {
-      
-      login(data.token, data.user);
+      if (data.data) {
+        login(data.data.user, data.data.token);
+      }
     },
   });
 }

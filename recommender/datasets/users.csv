@@ -1,0 +1,57 @@
+user_id,name,email,address,total_interactions,total_purchases
+"6914018db8d9d9ea54857a42","Test User","admin@gmail.com","",0,0
+"68e37500fb43e827078c759c","Nguyễn Đăng Nguyển","mer1@gmail.com","mer1@gmail.com",0,0
+"68e5331e5186f04dcdf2e9f6","Nguyễn Văn B","mer2@gmail.com","90 Đỗ Bí, Phường Phú Thạnh, Tân Phú, Hồ Chí Minh",0,0
+"6a27ed55b6d7638a2acaa654","Đăng Nguyển Nguyễn","mer4@gmail.com","57 Phạm Văn Thuận, P. Tân Tiến, TP. Biên Hòa, Đồng Nai",0,0
+"6a7fc9164585d7fd0f495064","Phạm Viết Quân","mer3@gmail.com","Khu phố 3, Tiến Thành, Đồng Nai",0,0
+"6a83085d4d4fb77855083406","Admin","admin@laptop.com","Admin Address",0,0
+"6a833391cee036cbf121a825","Lý Thanh Huyền","lythanhhuyen311@simuser.vn","110 Đường số 26, Nha Trang",10,1
+"6a833392cee036cbf121a827","Nguyễn Kim Châu","nguyenkimchau967@simuser.vn","20 Đường số 20, Đồng Nai",11,0
+"6a833392cee036cbf121a829","Hồ Đức Kiên","hoduckien940@simuser.vn","175 Đường số 2, Bình Dương",46,1
+"6a833392cee036cbf121a82b","Lý Tuấn Phúc","lytuanphuc824@simuser.vn","77 Đường số 8, TP. Hồ Chí Minh",27,1
+"6a833392cee036cbf121a82d","Dương Văn Hùng","duongvanhung115@simuser.vn","58 Đường số 23, Hà Nội",27,1
+"6a833392cee036cbf121a82f","Nguyễn Trọng Đạt","nguyentrongdat871@simuser.vn","27 Đường số 18, Đà Nẵng",18,1
+"6a833392cee036cbf121a831","Nguyễn Đức Long","nguyenduclong427@simuser.vn","133 Đường số 7, TP. Hồ Chí Minh",22,1
+"6a833392cee036cbf121a833","Dương Hương Tâm","duonghuongtam574@simuser.vn","36 Đường số 2, Bình Dương",11,0
+"6a833393cee036cbf121a835","Trần Thành Hùng","tranthanhhung319@simuser.vn","151 Đường số 1, Huế",17,1
+"6a833393cee036cbf121a837","Đỗ Phương Quỳnh","dophuongquynh682@simuser.vn","57 Đường số 8, TP. Hồ Chí Minh",23,1
+"6a833393cee036cbf121a839","Đặng Hương Hà","danghuongha735@simuser.vn","55 Đường số 15, Huế",33,0
+"6a833393cee036cbf121a83b","Dương Đức Huy","duongduchuy725@simuser.vn","114 Đường số 30, Nha Trang",7,0
+"6a833393cee036cbf121a83d","Đỗ Tuấn Tùng","dotuantung360@simuser.vn","90 Đường số 5, Bình Dương",11,0
+"6a833393cee036cbf121a83f","Trần Phương Linh","tranphuonglinh454@simuser.vn","38 Đường số 23, Huế",11,0
+"6a833393cee036cbf121a841","Hoàng Ánh Vy","hoanganhvy659@simuser.vn","29 Đường số 27, Hà Nội",12,0
+"6a833393cee036cbf121a843","Vũ Văn Hiếu","vuvanhieu476@simuser.vn","10 Đường số 9, Hải Phòng",17,1
+"6a833394cee036cbf121a845","Lý Quốc Dũng","lyquocdung303@simuser.vn","162 Đường số 5, Cần Thơ",10,0
+"6a833394cee036cbf121a847","Hồ Quốc Tùng","hoquoctung899@simuser.vn","25 Đường số 4, Cần Thơ",11,0
+"6a833394cee036cbf121a849","Hồ Thùy Quỳnh","hothuyquynh334@simuser.vn","76 Đường số 16, Nha Trang",16,0
+"6a833394cee036cbf121a84b","Dương Văn Long","duongvanlong603@simuser.vn","173 Đường số 23, Cần Thơ",29,0
+"6a833394cee036cbf121a84d","Nguyễn Ngọc Thảo","nguyenngocthao425@simuser.vn","80 Đường số 4, Nha Trang",13,0
+"6a833394cee036cbf121a84f","Bùi Tuấn Dũng","buituandung103@simuser.vn","49 Đường số 10, Cần Thơ",17,1
+"6a833394cee036cbf121a851","Võ Hương Yến","vohuongyen104@simuser.vn","4 Đường số 5, Cần Thơ",33,1
+"6a833395cee036cbf121a853","Nguyễn Minh Tùng","nguyenminhtung929@simuser.vn","169 Đường số 12, Đồng Nai",29,0
+"6a833395cee036cbf121a855","Võ Phương Anh","vophuonganh464@simuser.vn","53 Đường số 12, Đồng Nai",6,0
+"6a833395cee036cbf121a857","Bùi Trọng Kiên","buitrongkien661@simuser.vn","84 Đường số 7, Đồng Nai",14,1
+"6a833395cee036cbf121a859","Huỳnh Văn Huy","huynhvanhuy503@simuser.vn","146 Đường số 2, Nha Trang",12,1
+"6a833395cee036cbf121a85b","Hoàng Trọng Lâm","hoangtronglam142@simuser.vn","45 Đường số 3, Hà Nội",19,1
+"6a833395cee036cbf121a85d","Trần Hải Hiếu","tranhaihieu780@simuser.vn","98 Đường số 18, TP. Hồ Chí Minh",39,0
+"6a833395cee036cbf121a85f","Võ Hương Hoa","vohuonghoa512@simuser.vn","42 Đường số 17, Huế",22,1
+"6a833396cee036cbf121a861","Lý Hoàng Bảo","lyhoangbao475@simuser.vn","28 Đường số 1, Cần Thơ",25,1
+"6a833396cee036cbf121a863","Vũ Anh Hùng","vuanhhung672@simuser.vn","138 Đường số 29, Cần Thơ",4,0
+"6a833396cee036cbf121a865","Bùi Ánh Quỳnh","buianhquynh134@simuser.vn","153 Đường số 28, Đà Nẵng",8,0
+"6a833396cee036cbf121a867","Lý Tuấn Kiên","lytuankien612@simuser.vn","117 Đường số 1, Huế",16,1
+"6a833396cee036cbf121a869","Phan Kim Châu","phankimchau316@simuser.vn","142 Đường số 29, Cần Thơ",27,1
+"6a833396cee036cbf121a86b","Đỗ Thành Sơn","dothanhson320@simuser.vn","144 Đường số 12, Hà Nội",17,1
+"6a833396cee036cbf121a86d","Phan Hải Hiếu","phanhaihieu352@simuser.vn","20 Đường số 21, Hà Nội",5,0
+"6a833396cee036cbf121a86f","Nguyễn Mỹ Vy","nguyenmyvy768@simuser.vn","180 Đường số 30, Nha Trang",11,0
+"6a833397cee036cbf121a871","Vũ Đức Phúc","vuducphuc898@simuser.vn","3 Đường số 15, Bình Dương",16,0
+"6a833397cee036cbf121a873","Vũ Thị Yến","vuthiyen214@simuser.vn","18 Đường số 26, Nha Trang",16,0
+"6a833397cee036cbf121a875","Vũ Văn Hiếu","vuvanhieu516@simuser.vn","176 Đường số 17, Đồng Nai",43,1
+"6a833397cee036cbf121a877","Vũ Mai Mai","vumaimai330@simuser.vn","97 Đường số 23, Hải Phòng",18,0
+"6a833397cee036cbf121a879","Ngô Anh Sơn","ngoanhson327@simuser.vn","112 Đường số 24, Cần Thơ",24,1
+"6a833397cee036cbf121a87b","Hoàng Đức Tùng","hoangductung355@simuser.vn","85 Đường số 18, Nha Trang",7,0
+"6a833397cee036cbf121a87d","Dương Thùy Huyền","duongthuyhuyen822@simuser.vn","68 Đường số 21, Huế",5,0
+"6a833398cee036cbf121a87f","Bùi Thùy Yến","buithuyyen846@simuser.vn","72 Đường số 15, Hải Phòng",15,1
+"6a833398cee036cbf121a881","Bùi Trọng Huy","buitronghuy390@simuser.vn","82 Đường số 3, Bình Dương",21,0
+"6a833398cee036cbf121a883","Hồ Ánh Châu","hoanhchau482@simuser.vn","5 Đường số 11, Bình Dương",25,0
+"6a833398cee036cbf121a885","Hồ Mai Vy","homaivy709@simuser.vn","41 Đường số 12, Hà Nội",12,0
+"6a833398cee036cbf121a887","Đặng Tuấn Huy","dangtuanhuy123@simuser.vn","159 Đường số 23, Bình Dương",14,0

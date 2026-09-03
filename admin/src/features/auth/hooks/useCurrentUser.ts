@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
-import { meApi } from "../api"
+import { getCurrentUserApi } from "../api"
 import { useAuthStore } from "@/store/authStore"
 
 export function useCurrentUser() {
@@ -7,7 +7,7 @@ export function useCurrentUser() {
 
   return useQuery({
     queryKey: ["currentUser", token],
-    queryFn: () => meApi(token!),
+    queryFn: () => getCurrentUserApi(token!),
     enabled: !!token, 
   })
 }

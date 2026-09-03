@@ -12,7 +12,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
       <h1 className="text-2xl font-bold mb-2">{product.name}</h1>
       <p className="text-sm text-muted-foreground mb-4">{product.title}</p>
       <p className="text-gray-700 mb-2">SKU: {product.sku}</p>
-      <p className="text-gray-700 mb-2">Thương hiệu: {product.brand}</p>
+      <p className="text-gray-700 mb-2">Thương hiệu: {typeof product.brand_id === 'object' ? product.brand_id?.name : 'N/A'}</p>
       <p className="text-3xl font-bold text-primary mb-4">{product.price.toLocaleString('vi-VN')}đ</p>
       <p className="text-gray-700 mb-2">Tồn kho: {product.stock}</p>
       <p className="text-gray-700 mb-4 whitespace-pre-wrap">Mô tả: {product.description}</p>

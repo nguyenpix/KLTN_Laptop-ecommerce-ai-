@@ -147,7 +147,7 @@ export default function OrdersPage() {
                         </TableCell>
                         <TableCell>
                           <Badge variant="outline">
-                            {statusLabels[order.status] || order.status}
+                            {statusLabels[order.status as keyof typeof statusLabels] || order.status}
                           </Badge>
                         </TableCell>
                         <TableCell>

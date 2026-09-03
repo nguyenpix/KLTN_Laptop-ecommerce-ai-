@@ -27,7 +27,7 @@ const ProductCard = ({ product, layout = "grid", badge }: ProductCardProps) => {
   const isWishlisted = isInWishlist(product._id);
 
   const renderStars = (rating: number = 0) => {
-    const stars = [];
+    const stars: React.ReactNode[] = [];
     for (let i = 1; i <= 5; i++) {
       stars.push(
         <Star
