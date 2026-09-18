@@ -43,10 +43,11 @@ async def track_interaction(
     doc["product_id"] = str(doc["product_id"])
 
     # Update in-memory R_matrix if present
-    if rec_engine.is_ready and user_id in rec_engine.user_id_to_idx and str(req.product_id) in rec_engine.item_id_to_idx:
-        u_idx = rec_engine.user_id_to_idx[user_id]
-        i_idx = rec_engine.item_id_to_idx[str(req.product_id)]
-        rec_engine.R_matrix[u_idx, i_idx] = max(rec_engine.R_matrix[u_idx, i_idx], float(weight))
+    if hasattr(rec_engine, "R_matrix") and rec_engine.R_matrix is not None:
+        if rec_engine.is_ready and user_id in rec_engine.user_id_to_idx and str(req.product_id) in rec_engine.item_id_to_idx:
+            u_idx = rec_engine.user_id_to_idx[user_id]
+            i_idx = rec_engine.item_id_to_idx[str(req.product_id)]
+            rec_engine.R_matrix[u_idx, i_idx] = max(rec_engine.R_matrix[u_idx, i_idx], float(weight))
 
     return InteractionResponse(
         success=True,

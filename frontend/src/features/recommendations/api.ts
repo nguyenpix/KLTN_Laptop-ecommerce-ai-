@@ -6,6 +6,7 @@ import type {
   TrackFeedbackPayload,
   TrackOrderPayload,
   UserInteractionsResponse,
+  SimilarProductsResponse,
 } from './types';
 
 /**
@@ -69,6 +70,35 @@ class RecommendationsAPI {
       return data;
     } catch (error) {
       console.error('Error fetching recommendations:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * 💻 GET SIMILAR PRODUCTS
+   * Gợi ý laptop tương tự về cấu hình phần cứng từ Item Tower của mô hình AI
+   * 
+   * @param productId - ID sản phẩm cần tìm tương tự
+   * @param limit - Số lượng gợi ý (default: 5)
+   */
+  async getSimilarProducts(productId: string, limit: number = 5): Promise<SimilarProductsResponse> {
+    try {
+      const response = await fetch(
+        `${this.baseURL}/recommendations/similar/${productId}?limit=${limit}`,
+        {
+          method: 'GET',
+          headers: this.getHeaders(),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data: SimilarProductsResponse = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error fetching similar products:', error);
       throw error;
     }
   }

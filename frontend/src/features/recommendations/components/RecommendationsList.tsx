@@ -7,26 +7,22 @@ import ProductCard from '@/features/products/components/ProductCard';
 
 interface RecommendationsListProps {
   limit?: number;
+  productId?: string; // Nếu có: hiển thị laptop tương tự từ Item Tower của mô hình AI
   title?: string;
   showMetadata?: boolean;
 }
 
 /**
  * 📋 COMPONENT: RecommendationsList
- * Container cho danh sách recommendations
- * 
- * Features:
- * - Fetch recommendations tự động
- * - Loading & error states
- * - Auto-track interactions
- * - Hiển thị embedding metadata
+ * Container cho danh sách recommendations (Cá nhân hóa hoặc Laptop tương tự)
  */
 export function RecommendationsList({
   limit = 10,
+  productId,
   title = 'Sản phẩm dành riêng cho bạn',
   showMetadata = true,
 }: RecommendationsListProps) {
-  const { recommendations, isLoading, error, metadata, refetch } = useRecommendations({ limit });
+  const { recommendations, isLoading, error, metadata, refetch } = useRecommendations({ limit, productId });
   const { trackView, toggleLike, trackAddToCart } = useTrackInteraction();
 
   const handleView = React.useCallback(
@@ -129,37 +125,53 @@ export function RecommendationsList({
 
       {/* Recommendations Grid */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {recommendations.map((recommendation) => {
-          // Transform recommendation thành Product type cho ProductCard
-          // Backend giờ chỉ trả về lightweight data (productId, name, price, image, brand)
+        {recommendations.map((recommendation: any) => {
+          const pId = recommendation._id?.toString() || recommendation.productId || recommendation.product_id || '';
+          const pName = recommendation.name || recommendation.title || 'Laptop';
+          const imgUrl = recommendation.images?.mainImg?.url || recommendation.image || '/placeholder.jpg';
+          const brandName = recommendation.brand_id?.name || recommendation.brand || '';
+          const matchPercent = 
+            recommendation.hybrid_score?.match_percentage
+            || recommendation.similarity?.match_percentage
+            || (recommendation.hybrid_score?.final_score !== undefined
+                ? Math.round(recommendation.hybrid_score.final_score * 100)
+                : (recommendation.similarity?.score !== undefined
+                    ? Math.round(recommendation.similarity.score * 100)
+                    : (recommendation.final_score !== undefined
+                        ? Math.round(recommendation.final_score * 100)
+                        : (recommendation.similarity_score !== undefined
+                            ? Math.round(recommendation.similarity_score * 100)
+                            : 90))));
+
           const productForCard = {
-            _id: recommendation.productId,
-            id: 0,
-            title: recommendation.name,
-            name: recommendation.name,
-            description: '',
-            price: recommendation.price,
-            sku: '',
+            _id: pId,
+            id: recommendation.id || 0,
+            title: pName,
+            name: pName,
+            description: recommendation.description || '',
+            price: recommendation.price || 0,
+            sku: recommendation.sku || '',
             images: {
               mainImg: {
-                url: recommendation.image || '/placeholder.jpg',
-                alt_text: recommendation.name,
+                url: imgUrl,
+                alt_text: pName,
               },
-              sliderImg: [],
+              sliderImg: recommendation.images?.sliderImg || [],
             },
-            specifications: {},
-            color: '',
-            brand: recommendation.brand || '',
-            faqs: [],
-            part_number: '',
-            series: '',
-            category_id: [],
+            specifications: recommendation.specifications || {},
+            color: recommendation.color || '',
+            brand: brandName,
+            faqs: recommendation.faqs || [],
+            part_number: recommendation.part_number || '',
+            series: recommendation.series || '',
+            category_id: recommendation.category_id || [],
           };
           
           return (
             <ProductCard 
-              key={recommendation.productId} 
+              key={pId} 
               product={productForCard} 
+              badge={`${matchPercent}% Match`}
             />
           );
         })}

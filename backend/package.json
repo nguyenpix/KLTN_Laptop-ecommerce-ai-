@@ -17,11 +17,7 @@
     "production": "npm run build && node ./build/src/server.js",
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
-    "seed": "node src/scripts/seedData.js",
-    "seed:interactions": "node src/scripts/seedInteractions.js",
-    "dataset:generate": "node src/scripts/generateRealisticDataset.js",
-    "dataset:export": "node src/scripts/exportMLDataset.js",
-    "dataset:test": "node src/scripts/testRecommendationQuality.js"
+    "seed": "node src/scripts/seedData.js"
   },
   "keywords": [],
   "license": "ISC",

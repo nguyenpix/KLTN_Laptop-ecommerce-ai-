@@ -40,7 +40,10 @@ const ProductCard = ({ product, layout = "grid", badge }: ProductCardProps) => {
   };
 
   const getBadgeColor = (badgeText?: string) => {
-    if (!badgeText) return "bg-blue-500";
+    if (!badgeText) return "bg-blue-600";
+    if (badgeText.includes('%') || badgeText.includes('Match')) {
+      return "bg-gradient-to-r from-blue-600 to-indigo-600 font-semibold shadow-sm";
+    }
     const colors: Record<string, string> = {
       "CHARLIE_YT": "bg-orange-500",
       "BRAVO_YT": "bg-red-500",
@@ -49,7 +52,7 @@ const ProductCard = ({ product, layout = "grid", badge }: ProductCardProps) => {
       "DELTA_YT": "bg-blue-500",
       "Custom": "bg-orange-500",
     };
-    return colors[badgeText] || "bg-blue-500";
+    return colors[badgeText] || "bg-blue-600";
   };
 
   if (layout === "list") {
@@ -204,8 +207,8 @@ const ProductCard = ({ product, layout = "grid", badge }: ProductCardProps) => {
       <CardFooter className="p-3 pt-0 flex flex-col items-start gap-2">
         {/* Price */}
         <div className="w-full">
-          <p className="text-base font-bold text-gray-900">
-            ${product.price.toLocaleString("en-US")}
+          <p className="text-base font-bold text-blue-600">
+            {product.price.toLocaleString("vi-VN")} ₫
           </p>
         </div>
       </CardFooter>

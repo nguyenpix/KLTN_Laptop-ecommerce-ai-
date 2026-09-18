@@ -30,11 +30,14 @@ export function RecommendationCard({
   onAddToCart,
 }: RecommendationCardProps) {
   // Format mới: recommendation chứa trực tiếp productId, name, price, image, brand
-  const { productId, name, price, image, brand, final_score, reason } = recommendation;
+  const productId = recommendation.productId || recommendation.product_id || '';
+  const { name, price, brand, reason } = recommendation;
+  const imageUrl = recommendation.image || recommendation.images?.mainImg?.url || '/placeholder.jpg';
+  const finalScore = recommendation.final_score ?? recommendation.similarity_score ?? 0.95;
 
   React.useEffect(() => {
     // Track view khi card được render
-    if (onView) {
+    if (onView && productId) {
       onView(productId);
     }
   }, [productId, onView]);
@@ -48,14 +51,14 @@ export function RecommendationCard({
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
-    if (onAddToCart) {
+    if (onAddToCart && productId) {
       onAddToCart(productId, price);
     }
   };
 
   const handleLike = (e: React.MouseEvent) => {
     e.preventDefault();
-    if (onLike) {
+    if (onLike && productId) {
       onLike(productId);
     }
   };
@@ -64,13 +67,13 @@ export function RecommendationCard({
     <div className="group relative flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-shadow hover:shadow-lg">
       {/* Score Badge */}
       <div className="absolute right-2 top-2 z-10 rounded-full bg-blue-600 px-2 py-1 text-xs font-semibold text-white">
-        {Math.round(final_score * 100)}% Match
+        {Math.round(finalScore * 100)}% Match
       </div>
 
       {/* Product Image */}
       <Link href={`/products/${productId}`} className="relative aspect-square overflow-hidden bg-gray-100">
         <Image
-          src={image || '/placeholder.jpg'}
+          src={imageUrl}
           alt={name}
           fill
           className="object-cover object-center group-hover:scale-105 transition-transform duration-300"

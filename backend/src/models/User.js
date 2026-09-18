@@ -35,6 +35,36 @@ const userSchema = new mongoose.Schema({
     enum: ['user', 'admin'],
     default: 'user'
   },
+  
+  // ════════════════════════════════════════════════════════════════════
+  // USER PROFILE VECTORS FOR HYBRID RECOMMENDATION
+  // ════════════════════════════════════════════════════════════════════
+  
+  // Vector Profile phản ánh hành vi ngầm từ ALS (Weighted Average + L2 Norm)
+  user_cf_vector: {
+    type: [Number],
+    default: undefined
+  },
+
+  // Vector Profile phản ánh sở thích cấu hình phần cứng từ SBERT (384-dim)
+  user_content_vector: {
+    type: [Number],
+    default: undefined
+  },
+
+  // Phân tích thống kê sở thích người dùng (cập nhật theo thời gian thực)
+  profile_preferences: {
+    top_brands: [{ type: String }],
+    top_categories: [{ type: String }],
+    price_affinity: {
+      min: { type: Number, default: 0 },
+      max: { type: Number, default: 0 },
+      avg: { type: Number, default: 0 }
+    },
+    total_interactions: { type: Number, default: 0 },
+    last_calculated_at: { type: Date }
+  },
+
   created_at: {
     type: Date,
     default: Date.now

@@ -5,6 +5,7 @@ import ProductCard from "@/features/products/components/ProductCard";
 import { useProducts } from "@/features/products/hook/useProducts";
 import { useBrands } from "@/features/products/hook/useBrands";
 import { Product } from "@/features/products/types";
+import { RecommendationsList } from "@/features/recommendations";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -42,6 +43,15 @@ export default function HomePage() {
           products={newProducts?.data || []}
           viewAllLink="/products?tags=New"
         />
+
+        {/* AI Personalized Recommendations */}
+        <section className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-gray-100">
+          <RecommendationsList 
+            limit={8}
+            title="Gợi ý dành riêng cho bạn (Recommendations)"
+            showMetadata={false}
+          />
+        </section>
 
         {/* MSI */}
         <ProductSection

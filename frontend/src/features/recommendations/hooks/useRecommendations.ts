@@ -6,6 +6,7 @@ import type { ProductRecommendation, RecommendationMetadata } from '../types';
 
 interface UseRecommendationsOptions {
   limit?: number;
+  productId?: string; // Khi có productId: lấy laptop tương tự từ Item Tower của mô hình AI
   enabled?: boolean; // Cho phép enable/disable fetch
   refetchOnMount?: boolean;
 }
@@ -20,23 +21,12 @@ interface UseRecommendationsReturn {
 
 /**
  * 🎯 HOOK: useRecommendations
- * Lấy personalized recommendations cho user
- * 
- * Features:
- * - Lazy initialization (backend tự động tạo profile nếu chưa có)
- * - Auto-refetch on mount (optional)
- * - Manual refetch
- * - Loading & error states
- * 
- * @example
- * ```tsx
- * const { recommendations, isLoading, refetch } = useRecommendations({ limit: 10 });
- * ```
+ * Lấy danh sách gợi ý từ mô hình AI (Cá nhân hóa cho User hoặc Laptop tương tự theo Product ID)
  */
 export function useRecommendations(
   options: UseRecommendationsOptions = {}
 ): UseRecommendationsReturn {
-  const { limit = 10, enabled = true, refetchOnMount = true } = options;
+  const { limit = 10, productId, enabled = true, refetchOnMount = true } = options;
 
   const [recommendations, setRecommendations] = useState<ProductRecommendation[]>([]);
   const [metadata, setMetadata] = useState<RecommendationMetadata | null>(null);
@@ -50,13 +40,29 @@ export function useRecommendations(
     setError(null);
 
     try {
-      const response = await recommendationsAPI.getRecommendations(limit);
-      
-      if (response.success) {
-        setRecommendations(response.data.recommendations);
-        setMetadata(response.data.embedding_metadata || null);
+      if (productId) {
+        // Gợi ý sản phẩm tương tự dựa trên Item Tower / Hybrid Sim
+        const simRes = await recommendationsAPI.getSimilarProducts(productId, limit);
+        if (simRes.success) {
+          const simList = Array.isArray(simRes.data)
+            ? simRes.data
+            : (simRes.data?.similar_products || []);
+          setRecommendations(simList);
+        } else {
+          throw new Error('Failed to fetch similar products');
+        }
       } else {
-        throw new Error('Failed to fetch recommendations');
+        // Gợi ý cá nhân hóa dựa trên mô hình Hybrid / Two-Tower
+        const response = await recommendationsAPI.getRecommendations(limit);
+        if (response.success) {
+          const list = Array.isArray(response.data)
+            ? response.data
+            : (response.data?.recommendations || []);
+          setRecommendations(list);
+          setMetadata(response.data?.embedding_metadata || (response as any).metadata || null);
+        } else {
+          throw new Error('Failed to fetch recommendations');
+        }
       }
     } catch (err) {
       const error = err instanceof Error ? err : new Error('Unknown error');
@@ -72,7 +78,7 @@ export function useRecommendations(
       fetchRecommendations();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [limit, enabled]);
+  }, [limit, productId, enabled]);
 
   return {
     recommendations,

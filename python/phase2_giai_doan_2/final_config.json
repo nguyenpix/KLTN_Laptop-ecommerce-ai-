@@ -1,0 +1,11 @@
+{
+  "cf_type": "ALS",
+  "cf_factors": 8,
+  "cf_regularization": 0.3,
+  "content_model": "all-MiniLM-L6-v2",
+  "content_dim": 384,
+  "suggested_alpha": 0.1,
+  "ndcg10_content_only": 0.12767000093732586,
+  "ndcg10_cf_only": 0.11133077824113262,
+  "ndcg10_hybrid_suggested_alpha": 0.16568867251724262
+}

@@ -57,25 +57,36 @@ const productSchema = new mongoose.Schema({
   category_id: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: true }],
   
   // ════════════════════════════════════════════════════════════════════
-  // EMBEDDINGS SYSTEM
+  // HYBRID RECOMMENDATION SYSTEM VECTORS (ALS + SBERT)
   // ════════════════════════════════════════════════════════════════════
   
-  // 1. RECOMMENDATION SYSTEM EMBEDDING
-  // Dùng để: Tìm sản phẩm tương tự, gợi ý sản phẩm
-  // Input: Specifications + Price + Brand + Category
-  embedding: {
+  // 1. COLLABORATIVE FILTERING VECTOR (ALS - Implicit Feedback)
+  // Dùng để: Đại diện cho sức hút và định vị của laptop trong mắt cộng đồng người dùng
+  // Thuật toán: Implicit ALS Matrix Factorization
+  item_cf_vector: {
+    type: [Number],
+    default: undefined
+  },
+  cf_metadata: {
+    model: { type: String, default: 'implicit-als' },
+    dimensions: { type: Number },
+    generated_at: Date
+  },
+
+  // 2. CONTENT-BASED FILTERING VECTOR (Sentence-BERT - Hardware Specs)
+  // Dùng để: Hiểu đặc tính kỹ thuật phần cứng (CPU, GPU, RAM, Display), triệt tiêu Cold-Start sản phẩm mới
+  // Thuật toán: Sentence-BERT (SBERT)
+  item_content_vector: {
     type: [Number],
     default: undefined,
     validate: {
       validator: function(v) {
-        return !v || v.length === 384; // paraphrase-multilingual-MiniLM-L12-v2
+        return !v || v.length === 384; // SBERT standard dimensions
       },
-      message: 'Recommendation embedding must have 384 dimensions'
+      message: 'Item content vector must have 384 dimensions'
     }
   },
-  
-  // Metadata cho recommendation embedding
-  recommendation_metadata: {
+  content_metadata: {
     model: { 
       type: String, 
       default: 'sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2' 
@@ -87,10 +98,12 @@ const productSchema = new mongoose.Schema({
       default: ['specs', 'price', 'brand', 'category']
     }
   },
+
+  // ════════════════════════════════════════════════════════════════════
+  // RAG CHATBOT EMBEDDINGS SYSTEM
+  // ════════════════════════════════════════════════════════════════════
   
-  // 2. RAG CHATBOT SUMMARY EMBEDDING
-  // Dùng để: Quick filter - lọc nhanh sản phẩm liên quan trước khi deep search
-  // Input: Summary của toàn bộ thông tin (name + price + specs nổi bật + mô tả ngắn)
+  // RAG CHATBOT SUMMARY EMBEDDING
   rag_embedding: {
     type: [Number],
     default: undefined,
@@ -102,9 +115,7 @@ const productSchema = new mongoose.Schema({
     }
   },
   
-  // 3. RAG CHATBOT DETAILED CHUNKS
-  // Dùng để: Deep search - tìm thông tin chi tiết, chính xác
-  // Input: Từng đoạn nhỏ của description, specs, FAQs
+  // RAG CHATBOT DETAILED CHUNKS
   document_chunks: [{
     content: {
       type: String,
@@ -132,9 +143,7 @@ const productSchema = new mongoose.Schema({
         default: 0
       },
       char_count: Number,
-      // Chỉ có khi type = 'faq'
       question: String,
-      // Priority cho ranking (cao hơn = quan trọng hơn)
       priority: {
         type: Number,
         default: 5,
@@ -144,7 +153,6 @@ const productSchema = new mongoose.Schema({
     }
   }],
   
-  // Metadata chung cho RAG embeddings
   embedding_metadata: {
     model: { 
       type: String, 
@@ -154,7 +162,6 @@ const productSchema = new mongoose.Schema({
     total_chunks: { type: Number, default: 0 },
     generated_at: Date,
     description_length: Number,
-    // Version để tracking khi update model
     version: { type: String, default: '1.0' }
   },
   
@@ -165,18 +172,18 @@ const productSchema = new mongoose.Schema({
 // INDEXES FOR PERFORMANCE
 // ════════════════════════════════════════════════════════════════════
 
-// Index cho recommendation system
-productSchema.index({ embedding: 1 });
+// Indexes cho Hybrid Recommendation System
+productSchema.index({ item_cf_vector: 1 });
+productSchema.index({ item_content_vector: 1 });
 
-// Index cho RAG search
+// Indexes cho RAG search
 productSchema.index({ rag_embedding: 1 });
 productSchema.index({ 'document_chunks.embedding': 1 });
 productSchema.index({ 'document_chunks.metadata.type': 1 });
 productSchema.index({ 'document_chunks.metadata.priority': -1 });
 
-// Compound index cho filtering
-productSchema.index({ price: 1, embedding: 1 });
-productSchema.index({ brand_id: 1, embedding: 1 });
-productSchema.index({ category_id: 1, embedding: 1 });
+// Compound indexes cho filtering kết hợp
+productSchema.index({ price: 1, brand_id: 1, category_id: 1 });
+productSchema.index({ brand_id: 1, price: 1 });
 
 export default mongoose.model('Product', productSchema);

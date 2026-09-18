@@ -30,7 +30,7 @@ export function ProductTopBar({
     <div className="border-b sticky top-0 bg-white/95 backdrop-blur-sm z-10">
       <div className="container mx-auto flex justify-between items-center py-4">
         {/* Left side: Tab buttons */}
-        <div className="flex gap-8 font-semibold">
+        <div className="flex gap-8 font-semibold text-sm">
           <button
             onClick={() => setActiveIndex(0)}
             className={`pb-2 transition-colors ${
@@ -39,7 +39,7 @@ export function ProductTopBar({
                 : "text-gray-500 hover:text-black"
             }`}
           >
-            About Product
+            Tổng quan
           </button>
           <button
             onClick={() => setActiveIndex(1)}
@@ -49,7 +49,7 @@ export function ProductTopBar({
                 : "text-gray-500 hover:text-black"
             }`}
           >
-            Details
+            Thông số kỹ thuật
           </button>
           <button
             onClick={() => setActiveIndex(2)}
@@ -59,7 +59,7 @@ export function ProductTopBar({
                 : "text-gray-500 hover:text-black"
             }`}
           >
-            Specs
+            Chi tiết sản phẩm
           </button>
         </div>
 

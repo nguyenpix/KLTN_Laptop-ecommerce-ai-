@@ -7,19 +7,34 @@ export interface RecommendationMetadata {
 }
 
 /**
- * ProductRecommendation - Format mới (lightweight)
- * Backend chỉ trả về info cơ bản, client tự fetch details nếu cần
+ * ProductRecommendation - Định dạng sản phẩm gợi ý trả về từ Model AI
  */
 export interface ProductRecommendation {
   productId: string;
+  product_id?: string;
+  id?: number;
   name: string;
+  title?: string;
   price: number;
-  image?: string; // URL của mainImg
-  brand?: string; // Tên brand
-  content_score: number;
-  collaborative_score?: number;
-  final_score: number;
+  image?: string;
+  images?: {
+    mainImg?: {
+      url: string;
+      alt_text?: string;
+    };
+    sliderImg?: Array<{
+      url: string;
+      alt_text?: string;
+    }>;
+  };
+  brand?: string;
+  category?: string;
+  score?: number;
+  similarity_score?: number;
+  final_score?: number;
+  algorithm?: string;
   reason?: string;
+  specifications?: Record<string, any>;
 }
 
 export interface RecommendationsResponse {
@@ -27,9 +42,19 @@ export interface RecommendationsResponse {
   data: {
     recommendations: ProductRecommendation[];
     algorithm: string;
-    user_id: string;
+    user_id?: string | null;
+    total: number;
+    is_cold_start?: boolean;
     generated_at: string;
     embedding_metadata?: RecommendationMetadata;
+  };
+}
+
+export interface SimilarProductsResponse {
+  success: boolean;
+  data: {
+    similar_products: ProductRecommendation[];
+    count: number;
   };
 }
 
