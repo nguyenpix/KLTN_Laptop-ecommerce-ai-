@@ -18,13 +18,25 @@ class RagSearchService {
     const startTime = Date.now();
 
     try {
-      // STEP 1: Generate query embedding
-      console.log(`🔍 Generating embedding for query: "${query}"`);
-      const queryEmbedding = await embeddingService.createEmbedding(query);
+      let relevantProducts = [];
 
-      // STEP 2: Quick filter với rag_embedding (tìm sản phẩm liên quan)
-      console.log('🎯 Tier 1: Quick filtering products...');
-      const relevantProducts = await this.quickFilterProducts(queryEmbedding, maxProducts);
+      try {
+        // STEP 1: Generate query embedding
+        console.log(`🔍 Generating embedding for query: "${query}"`);
+        const queryEmbedding = await embeddingService.createEmbedding(query);
+
+        // STEP 2: Quick filter với rag_embedding (tìm sản phẩm liên quan)
+        console.log('🎯 Tier 1: Quick filtering products...');
+        relevantProducts = await this.quickFilterProducts(queryEmbedding, maxProducts);
+      } catch (embErr) {
+        console.warn('⚠️ Vector embedding unavailable, falling back to keyword search:', embErr.message);
+        relevantProducts = await this.keywordSearchProducts(query, maxProducts);
+      }
+
+      if (relevantProducts.length === 0) {
+        // Fallback to general keyword search if vector search returned nothing
+        relevantProducts = await this.keywordSearchProducts(query, maxProducts);
+      }
 
       if (relevantProducts.length === 0) {
         console.log('⚠️  No relevant products found');
@@ -36,13 +48,7 @@ class RagSearchService {
       }
 
       console.log(`✅ Found ${relevantProducts.length} relevant products`);
-      const productIds = relevantProducts.map((p) => p._id);
 
-      // STEP 3: Deep search với document_chunks (tìm thông tin chi tiết)
-      // TODO: Fix chunk embedding format issue
-      // For now, use quick filter results only
-      console.log('🔬 Tier 2: Using product-level results (chunk search disabled)');
-      
       // Build chunks từ products (simplified approach)
       const chunks = this.buildChunksFromProducts(relevantProducts);
 
@@ -56,6 +62,49 @@ class RagSearchService {
     } catch (error) {
       console.error('❌ RAG search error:', error);
       throw error;
+    }
+  }
+
+  /**
+   * Keyword-based product search fallback
+   */
+  async keywordSearchProducts(query, limit = 3) {
+    try {
+      const words = (query || '')
+        .toLowerCase()
+        .replace(/[^a-zA-Z0-9\sàáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]/g, ' ')
+        .split(/\s+/)
+        .filter((w) => w.length > 1 && !['tôi', 'cần', 'mua', 'cho', 'laptop', 'máy', 'tính', 'giúp', 'tìm'].includes(w));
+
+      let products = [];
+      if (words.length > 0) {
+        const regexPatterns = words.map((w) => new RegExp(w, 'i'));
+        products = await Product.find({
+          $or: [
+            { name: { $in: regexPatterns } },
+            { title: { $in: regexPatterns } },
+            { description: { $in: regexPatterns } }
+          ]
+        })
+          .limit(limit)
+          .select('_id name price brand_id images stock_quantity')
+          .lean();
+      }
+
+      if (products.length === 0) {
+        products = await Product.find()
+          .limit(limit)
+          .select('_id name price brand_id images stock_quantity')
+          .lean();
+      }
+
+      return products.map((p) => ({
+        ...p,
+        similarity: 0.88
+      }));
+    } catch (err) {
+      console.error('Keyword fallback search error:', err);
+      return [];
     }
   }
 

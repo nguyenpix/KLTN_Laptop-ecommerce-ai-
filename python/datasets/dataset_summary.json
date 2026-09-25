@@ -1,0 +1,18 @@
+{
+  "generated_at": "2026-09-23T15:13:55.469Z",
+  "total_products_in_catalog": 398,
+  "products_with_interactions": 398,
+  "catalog_coverage_percentage": "100.00%",
+  "total_users": 56,
+  "total_interactions": 2918,
+  "matrix_sparsity": "86.91%",
+  "train_interactions_count": 2334,
+  "test_interactions_count": 584,
+  "breakdown_by_type": {
+    "view": 1593,
+    "like": 652,
+    "add_to_cart": 255,
+    "purchase": 54,
+    "search_click": 364
+  }
+}
