@@ -18,17 +18,20 @@ export const getProductFeedbacks = async (req, res) => {
             });
         }
 
-        const feedbacks = await Feedback.find({ product_id: productId })
-            .populate('user_id', 'username email')
+        // Chỉ lấy các feedback có đánh giá thực sự (rating > 0), bỏ qua bản ghi chỉ lưu wishlist
+        const reviewFilter = { product_id: productId, rating: { $gt: 0 } };
+
+        const feedbacks = await Feedback.find(reviewFilter)
+            .populate('user_id', 'name email avatar_url')
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit);
 
-        const total = await Feedback.countDocuments({ product_id: productId });
+        const total = await Feedback.countDocuments(reviewFilter);
 
-        // Calculate average rating
+        // Calculate average rating (chỉ tính các bản ghi có rating > 0)
         const ratingStats = await Feedback.aggregate([
-            { $match: { product_id: product._id } },
+            { $match: { product_id: product._id, rating: { $gt: 0 } } },
             {
                 $group: {
                     _id: null,
@@ -111,13 +114,27 @@ export const createFeedback = async (req, res) => {
             });
         }
 
-        // Check if user already reviewed this product
+        // Check if user already reviewed/wishlisted this product
         const existingFeedback = await Feedback.findOne({
             user_id,
             product_id
         });
 
         if (existingFeedback) {
+            // Nếu trước đó chỉ là wishlist (rating === 0) và nay user gửi review thật -> cập nhật thay vì báo lỗi
+            if (!isWishlistOnly && existingFeedback.rating === 0) {
+                existingFeedback.rating = rating;
+                existingFeedback.comment = comment;
+                if (wishlist !== undefined) existingFeedback.wishlist = wishlist;
+                await existingFeedback.save();
+                await existingFeedback.populate('user_id', 'name email avatar_url');
+                await existingFeedback.populate('product_id', 'title name price images');
+                return res.status(200).json({
+                    success: true,
+                    message: 'Feedback updated successfully',
+                    data: existingFeedback
+                });
+            }
             return res.status(400).json({
                 success: false,
                 message: 'You have already reviewed this product. Use update instead.'
@@ -136,8 +153,8 @@ export const createFeedback = async (req, res) => {
         await feedback.save();
 
         // Populate user info before sending response
-        await feedback.populate('user_id', 'username email');
-        await feedback.populate('product_id', 'name price images');
+        await feedback.populate('user_id', 'name email avatar_url');
+        await feedback.populate('product_id', 'title name price images');
 
         res.status(201).json({
             success: true,
@@ -171,8 +188,8 @@ export const updateFeedback = async (req, res) => {
             });
         }
 
-        // Check if user owns this feedback
-        if (feedback.user_id.toString() !== user_id) {
+        // Check if user owns this feedback (so sánh string với string!)
+        if (feedback.user_id.toString() !== user_id.toString()) {
             return res.status(403).json({
                 success: false,
                 message: 'You are not authorized to update this feedback'
@@ -193,7 +210,7 @@ export const updateFeedback = async (req, res) => {
         if (wishlist !== undefined) feedback.wishlist = wishlist;
 
         await feedback.save();
-        await feedback.populate('user_id', 'username email');
+        await feedback.populate('user_id', 'name email avatar_url');
 
         res.status(200).json({
             success: true,
@@ -226,8 +243,8 @@ export const deleteFeedback = async (req, res) => {
             });
         }
 
-        // Check if user owns this feedback
-        if (feedback.user_id.toString() !== user_id) {
+        // Check if user owns this feedback (so sánh string với string!)
+        if (feedback.user_id.toString() !== user_id.toString()) {
             return res.status(403).json({
                 success: false,
                 message: 'You are not authorized to delete this feedback'
@@ -297,14 +314,20 @@ export const getWishlistFromFeedbacks = async (req, res) => {
             user_id,
             wishlist: true
         })
-            .populate('product_id', 'name price images brand specifications')
+            .populate({
+                path: 'product_id',
+                select: 'title name price images brand_id specifications stock',
+                populate: { path: 'brand_id', select: 'name' }
+            })
             .sort({ createdAt: -1 });
+
+        const validWishlist = wishlistFeedbacks.filter(item => item.product_id != null);
 
         res.status(200).json({
             success: true,
             data: {
-                wishlist: wishlistFeedbacks,
-                count: wishlistFeedbacks.length
+                wishlist: validWishlist,
+                count: validWishlist.length
             }
         });
     } catch (error) {
@@ -333,8 +356,8 @@ export const toggleWishlist = async (req, res) => {
             });
         }
 
-        // Check if user owns this feedback
-        if (feedback.user_id.toString() !== user_id) {
+        // Check if user owns this feedback (so sánh string với string!)
+        if (feedback.user_id.toString() !== user_id.toString()) {
             return res.status(403).json({
                 success: false,
                 message: 'You are not authorized to update this feedback'

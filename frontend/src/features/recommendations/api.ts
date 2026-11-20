@@ -240,12 +240,22 @@ class RecommendationsAPI {
 
   /**
    * 📈 GET USER INTERACTIONS HISTORY
-   * Lấy lịch sử tương tác của user
+   * Lấy lịch sử tương tác của user (có phân trang và lọc theo loại hành vi)
    */
-  async getUserInteractions(): Promise<UserInteractionsResponse> {
+  async getUserInteractions(params?: {
+    page?: number;
+    limit?: number;
+    type?: string;
+  }): Promise<UserInteractionsResponse> {
     try {
+      const searchParams = new URLSearchParams();
+      if (params?.page) searchParams.set('page', String(params.page));
+      if (params?.limit) searchParams.set('limit', String(params.limit));
+      if (params?.type && params.type !== 'all') searchParams.set('type', params.type);
+      const qs = searchParams.toString() ? `?${searchParams.toString()}` : '';
+
       const response = await fetch(
-        `${this.baseURL}/interactions/history`,
+        `${this.baseURL}/interactions/history${qs}`,
         {
           method: 'GET',
           headers: this.getHeaders(),
@@ -258,7 +268,7 @@ class RecommendationsAPI {
 
       return await response.json();
     } catch (error) {
-      console.error('Error fetching user interactions:', error);
+      console.warn('Error fetching user interactions:', error instanceof Error ? error.message : error);
       throw error;
     }
   }

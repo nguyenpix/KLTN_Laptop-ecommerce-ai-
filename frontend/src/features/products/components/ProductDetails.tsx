@@ -1,7 +1,9 @@
 'use client';
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useQuery } from '@tanstack/react-query';
 import { Product } from '@/features/products/types';
+import { fetchProductReviews } from './ProductReviews';
 import { Button } from '@/shared/components/ui/button';
 import { 
   ShoppingCart, 
@@ -37,6 +39,14 @@ export function ProductDetails({ product, onScrollToSpecs }: ProductDetailsProps
   const isWishlisted = isInWishlist(product._id);
   const [quantity, setQuantity] = useState(1);
   const [showMorePromos, setShowMorePromos] = useState(false);
+
+  const { data: reviewData } = useQuery({
+    queryKey: ['productReviews', product._id],
+    queryFn: () => fetchProductReviews(product._id),
+    enabled: !!product._id,
+  });
+  const avgRating = Number(reviewData?.data?.stats?.averageRating || 0);
+  const totalReviews = reviewData?.data?.stats?.totalFeedbacks || 0;
 
   // Key highlights extracted for the summary box
   const highlights = [
@@ -75,7 +85,8 @@ export function ProductDetails({ product, onScrollToSpecs }: ProductDetailsProps
           <span>SKU: <strong className="text-gray-700">{part_number || sku || 'NK394W'}</strong></span>
           <span>•</span>
           <span className="text-amber-500 font-medium flex items-center gap-1">
-            ★★★★★ <span className="text-gray-500">(0 đánh giá)</span>
+            {totalReviews > 0 ? `${avgRating.toFixed(1)} ★` : '★'}
+            <span className="text-gray-500">({totalReviews} đánh giá)</span>
           </span>
         </div>
       </div>

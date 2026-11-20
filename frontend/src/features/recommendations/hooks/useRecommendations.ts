@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { recommendationsAPI } from '../api';
+import { useAuthStore } from '@/store/authStore';
 import type { ProductRecommendation, RecommendationMetadata } from '../types';
 
 interface UseRecommendationsOptions {
@@ -27,6 +28,7 @@ export function useRecommendations(
   options: UseRecommendationsOptions = {}
 ): UseRecommendationsReturn {
   const { limit = 10, productId, enabled = true, refetchOnMount = true } = options;
+  const token = useAuthStore((state) => state.token);
 
   const [recommendations, setRecommendations] = useState<ProductRecommendation[]>([]);
   const [metadata, setMetadata] = useState<RecommendationMetadata | null>(null);
@@ -78,7 +80,7 @@ export function useRecommendations(
       fetchRecommendations();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [limit, productId, enabled]);
+  }, [limit, productId, enabled, token]);
 
   return {
     recommendations,

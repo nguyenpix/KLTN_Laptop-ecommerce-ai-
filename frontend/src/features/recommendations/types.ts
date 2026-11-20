@@ -107,21 +107,32 @@ export interface TrackOrderPayload {
  */
 export interface UserInteraction {
   _id: string;
+  interactionId?: string;
   userId: string;
   productId: {
     _id: string;
+    title?: string;
     name: string;
-    images: {
-      mainImg: {
+    sku?: string;
+    brand_id?: { _id?: string; name?: string } | string;
+    images?: {
+      mainImg?: {
         url: string;
       };
     };
     price: number;
     salePrice?: number;
-  };
-  type: 'view' | 'like' | 'add_to_cart' | 'remove_from_cart' | 'rating' | 'purchase';
+  } | null;
+  type: 'view' | 'like' | 'add_to_cart' | 'remove_from_cart' | 'rating' | 'purchase' | 'search_click';
   weight: number;
-  metadata?: Record<string, unknown>;
+  metadata?: {
+    duration?: number;
+    rating_value?: number;
+    quantity?: number;
+    price?: number;
+    source?: string;
+    [key: string]: unknown;
+  };
   createdAt: string;
 }
 
@@ -129,10 +140,15 @@ export interface UserInteractionsResponse {
   success: boolean;
   data: {
     interactions: UserInteraction[];
+    stats?: {
+      total: number;
+      byType: Record<string, number>;
+    };
     pagination: {
       current: number;
       pages: number;
       total: number;
+      limit?: number;
     };
   };
 }

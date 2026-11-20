@@ -1,6 +1,8 @@
 import mongoose from 'mongoose';
 import Product from '../models/Product.js';
 
+const escapeRegex = (str) => String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 //  Tạo sản phẩm mới
 export const createProduct = async (req, res) => {
   try {
@@ -12,12 +14,29 @@ export const createProduct = async (req, res) => {
   }
 };
 
-//  Lấy danh sách sản phẩm (có thể phân trang)
+//  Lấy danh sách sản phẩm (hỗ trợ phân trang, tìm kiếm, lọc cấu hình phần cứng)
 export const getProducts = async (req, res) => {
   try {
-    const { page = 1, limit = 20, fields, sort, tags, category, brand, color, minPrice, maxPrice } = req.query;
+    const {
+      page = 1,
+      limit = 20,
+      fields,
+      sort,
+      tags,
+      category,
+      brand,
+      color,
+      minPrice,
+      maxPrice,
+      search,
+      cpu,
+      ram,
+      gpu,
+      storage,
+    } = req.query;
 
     const filters = {};
+    const andConditions = [];
 
     if (brand) {
       filters.brand_id = brand;
@@ -41,7 +60,55 @@ export const getProducts = async (req, res) => {
 
     // Xử lý lọc cho tags (tìm sản phẩm chứa TẤT CẢ các tags được cung cấp)
     if (tags) {
-        filters.tags = { $all: tags.split(',') };
+      filters.tags = { $all: tags.split(',') };
+    }
+
+    // Tìm kiếm toàn văn theo tên, tiêu đề, mã SKU hoặc part_number
+    if (search && String(search).trim()) {
+      const safeSearch = escapeRegex(String(search).trim());
+      const searchRegex = new RegExp(safeSearch, 'i');
+      andConditions.push({
+        $or: [
+          { title: searchRegex },
+          { name: searchRegex },
+          { sku: searchRegex },
+          { part_number: searchRegex },
+        ],
+      });
+    }
+
+    // Lọc theo thông số phần cứng (CPU, RAM, GPU, Ổ cứng)
+    if (cpu && String(cpu).trim()) {
+      const cpuRegex = new RegExp(escapeRegex(String(cpu).trim()), 'i');
+      andConditions.push({
+        $or: [{ 'specifications.cpu': cpuRegex }, { 'specifications.processor': cpuRegex }],
+      });
+    }
+
+    if (ram && String(ram).trim()) {
+      const ramRegex = new RegExp(escapeRegex(String(ram).trim()), 'i');
+      andConditions.push({ 'specifications.ram': ramRegex });
+    }
+
+    if (gpu && String(gpu).trim()) {
+      const gpuRegex = new RegExp(escapeRegex(String(gpu).trim()), 'i');
+      andConditions.push({
+        $or: [{ 'specifications.gpu': gpuRegex }, { 'specifications.graphics': gpuRegex }],
+      });
+    }
+
+    if (storage && String(storage).trim()) {
+      const storageRegex = new RegExp(escapeRegex(String(storage).trim()), 'i');
+      andConditions.push({
+        $or: [
+          { 'specifications.storage': storageRegex },
+          { 'specifications.storage_capacity': storageRegex },
+        ],
+      });
+    }
+
+    if (andConditions.length > 0) {
+      filters.$and = andConditions;
     }
 
     let query = Product.find(filters);
@@ -57,23 +124,23 @@ export const getProducts = async (req, res) => {
     // 3. Chọn trường (Field Limiting)
     const populatePaths = ['brand_id', 'color_id', 'category_id'];
     if (fields) {
-        const fieldsArray = fields.split(',');
-        const mainSelectFields = new Set(fieldsArray.map(f => f.split('.')[0]));
-        query = query.select(Array.from(mainSelectFields).join(' '));
+      const fieldsArray = fields.split(',');
+      const mainSelectFields = new Set(fieldsArray.map((f) => f.split('.')[0]));
+      query = query.select(Array.from(mainSelectFields).join(' '));
 
-        populatePaths.forEach(path => {
-            const subFields = fieldsArray
-                .filter(f => f.startsWith(path + '.'))
-                .map(f => f.substring(path.length + 1));
+      populatePaths.forEach((path) => {
+        const subFields = fieldsArray
+          .filter((f) => f.startsWith(path + '.'))
+          .map((f) => f.substring(path.length + 1));
 
-            if (subFields.length > 0) {
-                query = query.populate({ path: path, select: subFields.join(' ') });
-            } else if (fieldsArray.includes(path)) {
-                query = query.populate(path);
-            }
-        });
+        if (subFields.length > 0) {
+          query = query.populate({ path: path, select: subFields.join(' ') });
+        } else if (fieldsArray.includes(path)) {
+          query = query.populate(path);
+        }
+      });
     } else {
-        populatePaths.forEach(path => query = query.populate(path));
+      populatePaths.forEach((path) => (query = query.populate(path)));
     }
 
     // Đếm tổng số lượng sản phẩm khớp với bộ lọc (trước khi phân trang)
@@ -89,7 +156,8 @@ export const getProducts = async (req, res) => {
     res.status(200).json({
       success: true,
       total: count,
-      page: parseInt(page),
+      page: parseInt(page, 10),
+      limit: parseInt(limit, 10),
       totalPages: Math.ceil(count / limit),
       data: products,
     });
@@ -101,23 +169,20 @@ export const getProducts = async (req, res) => {
 //  Lấy chi tiết sản phẩm theo ID (dùng _id - MongoDB ObjectId)
 export const getProductById = async (req, res) => {
   try {
-    // Validate ObjectId
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-      return res.status(400).json({ 
-        success: false, 
-        message: "ID sản phẩm không hợp lệ" 
+      return res.status(400).json({
+        success: false,
+        message: 'ID sản phẩm không hợp lệ',
       });
     }
 
     let query = Product.findById(req.params.id);
 
-    // Xử lý lựa chọn trường và populate có điều kiện
     if (req.query.fields) {
       const fieldsArray = req.query.fields.split(',');
       const fieldsString = fieldsArray.join(' ');
       query = query.select(fieldsString);
 
-      // Chỉ populate những trường được yêu cầu
       if (fieldsArray.includes('brand_id')) {
         query = query.populate('brand_id');
       }
@@ -128,14 +193,13 @@ export const getProductById = async (req, res) => {
         query = query.populate('category_id');
       }
     } else {
-      // Mặc định: populate tất cả nếu không có chỉ định
-      query = query.populate("brand_id").populate("color_id").populate("category_id");
+      query = query.populate('brand_id').populate('color_id').populate('category_id');
     }
 
     const product = await query.lean();
 
     if (!product) {
-      return res.status(404).json({ success: false, message: "Không tìm thấy sản phẩm" });
+      return res.status(404).json({ success: false, message: 'Không tìm thấy sản phẩm' });
     }
 
     res.status(200).json({ success: true, data: product });
@@ -144,16 +208,52 @@ export const getProductById = async (req, res) => {
   }
 };
 
-//  Cập nhật sản phẩm
+//  Cập nhật sản phẩm (làm sạch payload, chặn stock/price âm, hỗ trợ runValidators)
 export const updateProduct = async (req, res) => {
   try {
-    const product = await Product.findByIdAndUpdate(req.params.id, req.body, {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ success: false, message: 'ID sản phẩm không hợp lệ' });
+    }
+
+    const updateData = { ...req.body };
+    delete updateData._id;
+    delete updateData.createdAt;
+    delete updateData.updatedAt;
+    delete updateData.__v;
+
+    if (updateData.stock !== undefined && Number(updateData.stock) < 0) {
+      return res.status(400).json({ success: false, message: 'Số lượng tồn kho không được âm' });
+    }
+    if (updateData.price !== undefined && Number(updateData.price) < 0) {
+      return res.status(400).json({ success: false, message: 'Giá sản phẩm không được âm' });
+    }
+
+    // Chuẩn hóa các trường tham chiếu nếu client lỡ gửi object đã populate
+    if (updateData.brand_id && typeof updateData.brand_id === 'object' && updateData.brand_id._id) {
+      updateData.brand_id = updateData.brand_id._id;
+    }
+    if (Array.isArray(updateData.color_id)) {
+      updateData.color_id = updateData.color_id[0];
+    }
+    if (updateData.color_id && typeof updateData.color_id === 'object' && updateData.color_id._id) {
+      updateData.color_id = updateData.color_id._id;
+    }
+    if (Array.isArray(updateData.category_id)) {
+      updateData.category_id = updateData.category_id.map((c) =>
+        c && typeof c === 'object' && c._id ? c._id : c
+      );
+    }
+
+    const product = await Product.findByIdAndUpdate(req.params.id, updateData, {
       new: true,
       runValidators: true,
-    });
+    })
+      .populate('brand_id')
+      .populate('color_id')
+      .populate('category_id');
 
     if (!product) {
-      return res.status(404).json({ success: false, message: "Không tìm thấy sản phẩm" });
+      return res.status(404).json({ success: false, message: 'Không tìm thấy sản phẩm' });
     }
 
     res.status(200).json({ success: true, data: product });
@@ -168,10 +268,10 @@ export const deleteProduct = async (req, res) => {
     const product = await Product.findByIdAndDelete(req.params.id);
 
     if (!product) {
-      return res.status(404).json({ success: false, message: "Không tìm thấy sản phẩm" });
+      return res.status(404).json({ success: false, message: 'Không tìm thấy sản phẩm' });
     }
 
-    res.status(200).json({ success: true, message: "Xóa sản phẩm thành công" });
+    res.status(200).json({ success: true, message: 'Xóa sản phẩm thành công' });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

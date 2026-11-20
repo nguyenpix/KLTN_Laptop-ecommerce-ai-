@@ -1,0 +1,832 @@
+
+=== PAGE 7 ===
+MỤC LỤC
+Chương 1. Cơ sở lý thuyết và lý do chọn đề tài..................................................
+1.1. Cơ sở lý
+thuyết..............................................................................10
+1.1.1. Giới thiệu Website thương mại điện tử................................................
+1.1.2. Tổng quan về cổng thanh toán trực tuyến...........................................
+1.1.3. Tổng quan về cổng thanh toán VNPAY...............................................
+1.2. Lý do chọn đề tài.........................................................................17
+1.2.1. Giới thiệu về đề tài..............................................................................
+1.2.2. Lý do chọn đề tài.................................................................................
+1.2.3. Mục đích chọn đề tài...........................................................................
+1.2.4. Thu thập dữ liệu...................................................................................
+1.2.5. Phát biểu bài toán................................................................................
+1.2.6. Mô tả yêu cầu người dùng...................................................................
+Chương 2. PHÂN TÍCH và THIẾT KẾ HỆ THỐNG.......................................
+2.1. Phân tích hệ thống.......................................................................22
+2.1.1. Mô tả hệ thống.....................................................................................
+2.1.2. Yêu cầu chức năng...............................................................................
+2.1.3. Yêu cầu phi chức năng.........................................................................
+2.2. Thiết kế hệ thống.........................................................................25
+2.2.1. Biểu đồ use-case..................................................................................
+2.2.2. Biểu đồ trạng thái................................................................................
+2.2.3. Biểu đồ hoạt động................................................................................
+2.2.4. Biểu đồ tuần tự....................................................................................
+2.2.5. Thiết kế cơ sở dữ liệu...........................................................................
+Chương 3. TRIỂN KHAI XÂY DỰNG WEBSITE BÁN HÀNG
+TÍCH HỢP CổNG THANH TOÁN ONLINE VNPAY.....................................
+3.1. Giới thiệu chung......................................................................... 71
+3.1.1. Mục Tiêu Triển Khai............................................................................
+3.1.2. Công Cụ và Công Nghệ Sử Dụng........................................................
+3.2. Môi trường phát triển................................................................. 71
+3.2.1. Cấu Hình Máy Chủ..............................................................................
+3.2.2. Thiết Lập Cơ Sở Dữ Liệu.....................................................................
+3.2.3. Tích Hợp Cổng Thanh Toán VNPAY...................................................
+3.3. Kết quả xây dựng........................................................................73
+3.3.1. Kết quả xây dựng website với chức năng dành cho admin.................
+3.3.2. Kết quả xây dựng chức năng dành cho khách hàng............................
+Tài liệu tham khảo.................................................................................................
+6
+ Downloaded by Nguy?n ??ng (nguyendangnguyen1606@gmail.com)
+ Scan to open on Studeersnel
+lOMoARcPSD|16137695
+
+=== PAGE 13 ===
+LỜI NÓI ĐẦU
+Hiện nay trên thế giới thương mại điện tử đang phát triển rất mạnh mẽ. Kỹ thuật số 
+giúp chúng ta tiết kiệm đáng kể các chi phí nhờ chi phí vận chuyển trung gian, chi phí giao 
+dịch và đặc biệt là giúp tiết kiệm thời gian để con người đầu tư vào các hoạt động khác. Hơn 
+nữa thương mại điện tử còn giúp con người có thể tìm kiếm tự động theo nhiều mục đích khác
+nhau, tự động cung cấp thông tin theo nhu cầu và sở thích của con người. Giờ đây, con người 
+có thể ngồi tại nhà để mua sắm mọi thứ theo ý muốn và các website bán hàng trên mạng sẽ 
+giúp ta làm được điều đó. Chính vì vậy trong đồ án này tôi chọn đề tài về: “Xây dựng Website
+bán hàng tích hợp cổng thanh toán VNPAY”. Đề tài được lựa chọn với mong muốn tạo ra một
+giải pháp thanh toán trực tuyến tiện lợi, an toàn và bảo mật cho người dùng. Trong khuôn khổ
+đề tài này, tôi sẽ trình bày quá trình thiết kế và phát triển một website thương mại điện tử, 
+đồng thời tích hợp cổng thanh toán VNPay, một trong những giải pháp thanh toán phổ biến 
+nhất hiện nay. Để hiểu rõ hơn về các yếu tố công nghệ của vấn đề việc nghiên cứu thực hiện 
+đồ án tốt nghiệp với đề tài “Xây dựng Website bán hàng tích hợp cổng thanh toán VNPAY.” 
+nhằm tìm hiểu và triển khai nội dung của đề tài sẽ bao gồm các phần chính như phân tích yêu 
+cầu, thiết kế giao diện, phát triển backend, tích hợp hệ thống thanh toán, kiểm thử và triển 
+khai. Mỗi phần sẽ được trình bày chi tiết với các bước thực hiện cụ thể và kết quả đạt được.
+Mục tiêu đặt ra khi thực hiện đồ án là:
+1. Hiểu rõ về các khái niệm và công nghệ liên quan đến website và cổng  thanh
+toán VNPAY.
+2. Triển khai xây dựng website tích hợp cổng thanh toán VNPAY
+Với mục tiêu đặt ra như vậy, những nội dung và kết quả nghiên cứu chính của đồ án 
+được trình bày trong ba chương như sau:
+Chương 1: Quản lý danh tính số
+Chương 2: Công nghệ xác thực sử dụng chứng thư số
+Chương 3: Triển khai xác thực chứng thư số sử dụng Keycloak
+Phần kết luận đưa ra những đánh giá về những kết quả đạt được và những khó khăn 
+gặp phải trong quá trình nghiên cứu thực hiện đồ án.
+12
+ Downloaded by Nguy?n ??ng (nguyendangnguyen1606@gmail.com)
+ Scan to open on Studeersnel
+lOMoARcPSD|16137695
+
+=== PAGE 22 ===
+1.2.1. Giới thiệu về đề tài
+Trong thời đại kỹ thuật số hiện nay, thương mại điện tử (TMĐT) đã t rở thành một
+phần không thể thiếu trong cuộc sống hàng ngày của chúng ta. Sự bùng nổ của internet và các
+thiết bị di động đã làm thay đổi cách chúng ta mua sắm, thanh toán và  tương tác với doanh
+nghiệp. Tuy nhiên, để thành công trong lĩnh vực TMĐT, các doanh nghiệp cần phải có một hệ
+thống thanh toán trực tuyến an toàn, tiện lợi và hiệu quả. Đây chính là lý do khiến việc nghiên
+cứu và phát triển các giải pháp tích hợp cổng thanh toán trực tuyến  như VNPAY trở nên vô
+cùng cần thiết. 
+Trong bối cảnh cạnh tranh khốc liệt và yêu cầu ngày càng cao của người tiêu dùng,
+các doanh nghiệp cần không ngừng cải tiến và áp dụng những giải pháp mới để duy trì và phát
+triển. Đề tài này hy vọng sẽ là một nguồn tài liệu hữu ích, cung cấ p những kiến thức cần thiết
+và gợi ý các hướng đi cụ thể cho việc xây dựng và tối ưu hóa các hệ  thống TMĐT, từ đó góp
+phần vào sự thành công của các doanh nghiệp trong thời đại số
+1.2.2. Lý do chọn đề tài
+Đề tài "Xây dựng website thương mại điện tử tích hợp cổng tha nh toán online
+VNPAY" được chọn vì phản ánh xu hướng phát triển mạnh mẽ trong lĩnh vự c kinh doanh và
+công nghệ hiện nay. Với sự bùng nổ của internet và các thiết bị di động, thư ơng mại điện tử
+(TMĐT) đã trở thành một phần không thể thiếu trong cuộc sống hàng ngày, thay đổi  cách
+chúng ta mua sắm, thanh toán và tương tác với doanh nghiệp. Việt Nam hiện nằm trong nhóm
+các quốc gia có tốc độ tăng trưởng TMĐT nhanh nhất thế giới, với doanh thu dự kiến đạt
+hàng tỷ USD mỗi năm.
+Cổng thanh toán trực tuyến như VNPAY đóng vai trò quan trọng trong việc nâng cao
+trải nghiệm người dùng và tối ưu hóa quy trình kinh doanh. VNPAY là một trong những cổng
+thanh toán phổ biến nhất tại Việt Nam, được nhiều ngân hàng và doanh nghi ệp tin dùng nhờ
+vào sự đa dạng trong phương thức thanh toán và tính bảo mật cao. Việc  nghiên cứu và phát
+triển các giải pháp tích hợp cổng thanh toán trực tuyến không chỉ giúp  doanh nghiệp tối ưu
+hóa quy trình kinh doanh mà còn góp phần thúc đẩy sự phát triển của TMĐT tại Việt Nam.
+1.2.3. Mục đích chọn đề tài
+Mục đích chính của đề tài "Xây dựng website thương mại điện tử tích hợp cổng thanh
+toán online VNPAY" là nhằm nâng cao trải nghiệm người dùng, tăng cường bảo mật cho các
+giao dịch trực tuyến, và tối ưu hóa quy trình kinh doanh cho doanh nghiệp.
+Ngoài ra, đề tài cũng nhằm mục đích giảm thiểu rủi ro và chi phí cho doanh  nghiệp
+bằng cách sử dụng các giải pháp thanh toán điện tử hiện đại. Việc  tích hợp cổng thanh toán
+VNPAY vào hệ thống không chỉ giúp doanh nghiệp quản lý đơn hàng, thanh toán và  dữ liệu
+21
+ Downloaded by Nguy?n ??ng (nguyendangnguyen1606@gmail.com)
+ Scan to open on Studeersnel
+lOMoARcPSD|16137695
+
+=== PAGE 26 ===
+CHƯƠNG 2. PHÂN TÍCH VÀ THIẾT KẾ HỆ THỐNG
+Trong chương này, chúng ta sẽ đi sâu vào việc phân tích và thiết kế hệ  thống cho
+website thương mại điện tử tích hợp cổng thanh toán online VNPA Y. Mục tiêu chính là xác
+định các yêu cầu hệ thống, phân tích chi tiết các chức năng cần t hiết, và từ đó thiết kế một hệ
+thống hoàn chỉnh đáp ứng các yêu cầu đó. Việc phân tích và thiết kế kỹ lưỡng sẽ giúp đảm
+bảo rằng hệ thống có thể hoạt động hiệu quả, ổn định, và đáp ứng tốt nhu cầu của người dùng
+cũng như doanh nghiệp.
+2.1. Phân tích hệ thống
+Phân tích hệ thống là bước đầu tiên và quan trọng trong quá trình phát tri ển hệ thống.
+Bước này giúp chúng ta hiểu rõ hơn về các yêu cầu, mục tiêu, và c ác yếu tố cần thiết để xây
+dựng một hệ thống hoàn chỉnh.
+2.1.1. Mô tả hệ thống
+Website bán hàng hỗ trợ quản lý thông tin đơn hàng, quản lý thông tin khá ch hàng,
+quản lý sản phẩm, quản lý danh mục, quản lý thương hiệu. Từng chức nă ng này đều có thao
+tác thêm, sửa, xóa và tìm kiếm. Hơn nữa, hệ thống còn tích hợp khả năng thống kê, thanh toán
+online VNPAY …Hệ thống website thương mại điện tử tích hợp cổng t hanh toán VNPAY sẽ
+được thiết kế để mang lại trải nghiệm mua sắm trực tuyến an toàn, tiện lợi và hiệu quả, đồng
+thời hỗ trợ quản lý và phát triển kinh doanh cho cửa hàng một cách tối ưu.
+2.1.2. Yêu cầu chức năng
+Dựa trên các yêu cầu đã mô tả ở trên, chúng ta phân tích và xác định các chức
+năng cụ thể mà hệ thống cần có.
+2.1.2.1 Về phía khách hàng tiêu dùng
+1. Đăng ký và Đăng nhập:
+ Đăng ký tài khoản: Người tiêu dùng có thể tạo tài khoản mới bằng email hoặc
+số điện thoại.
+ Đăng nhập: Người tiêu dùng có thể đăng nhập vào tài khoản của mình để truy
+cập các tính năng cá nhân.
+2. Tìm kiếm và Duyệt Sản Phẩm:
+ Tìm kiếm sản phẩm: Hỗ trợ tìm kiếm theo từ khóa, danh mục, giá, thương hiệu.
+ Lọc sản phẩm: Người dùng có thể lọc sản phẩm theo nhiều tiêu chí khác nhau
+như giá, đánh giá, độ phổ biến.
+25
+ Downloaded by Nguy?n ??ng (nguyendangnguyen1606@gmail.com)
+ Scan to open on Studeersnel
+lOMoARcPSD|16137695
+
+=== PAGE 27 ===
+ Xem chi tiết sản phẩm: Cung cấp thông tin chi tiết về sản phẩm, hình ảnh, mô
+tả, đánh giá từ khách hàng.
+3. Quản lý Giỏ Hàng:
+ Thêm vào giỏ hàng: Người dùng có thể thêm sản phẩm vào giỏ hàng từ trang
+danh mục hoặc trang chi tiết sản phẩm.
+ Xem giỏ hàng : Cho phép người dùng xem và chỉnh sửa giỏ hàng trước khi
+thanh toán.
+ Xóa sản phẩm khỏi giỏ hàng : Người dùng có thể xóa sản phẩm không mong
+muốn khỏi giỏ hàng.
+4. Thanh Toán:
+ Chọn phương thức thanh toán: Hỗ trợ nhiều phương thức thanh toán bao gồm
+thẻ tín dụng, thẻ ghi nợ, QR Code và ví điện tử thông qua VNPAY.
+ Xác nhận đơn hàng : Gửi thông báo xác nhận đơn hàng qua email hoặc SMS
+sau khi thanh toán thành công.
+5. Theo dõi Đơn Hàng:
+ Lịch sử đơn hàng: Người dùng có thể xem lịch sử mua sắm của mình, bao gồm
+thông tin về các đơn hàng đã đặt, trạng thái giao hàng và các giao dị ch thanh
+toán.
+ Theo dõi giao hàng : Cung cấp thông tin theo dõi quá trình giao hàng của các
+đơn hàng đã đặt.
+2.1.2.2 Về phía quản trị
+1. Quản lý Sản Phẩm:
+ Thêm/Sửa/Xóa sản phẩm : Người quản lý có thể thêm mới sản phẩm, chỉnh sửa
+thông tin sản phẩm và xóa sản phẩm khỏi hệ thống.
+ Quản lý danh mục sản phẩm : Tạo và quản lý các danh mục sản phẩm để sắp xếp
+và hiển thị sản phẩm một cách khoa học.
+2. Quản lý Kho Hàng:
+ Theo dõi tồn kho: Cập nhật và theo dõi số lượng sản phẩm trong kho.
+ Cảnh báo tồn kho: Hệ thống gửi cảnh báo khi số lượng sản phẩm trong kho thấp
+hơn mức quy định.
+3. Quản lý Đơn Hàng:
+ Xem và xử lý đơn hàng: Người quản lý có thể xem chi tiết các đơn hàng, cập nhật
+trạng thái đơn hàng (đã xử lý, đang giao, đã hoàn thành).
+ Quản lý hoàn trả: Xử lý các yêu cầu hoàn trả hàng từ khách hàng.
+4. Quản lý Khách Hàng:
+26
+ Downloaded by Nguy?n ??ng (nguyendangnguyen1606@gmail.com)
+ Scan to open on Studeersnel
+lOMoARcPSD|16137695
+
+=== PAGE 28 ===
+ Quản lý thông tin khách hàng : Lưu trữ và quản lý thông tin khách hàng, bao gồm
+lịch sử mua sắm và thông tin liên hệ.
+ Chăm sóc khách hàng: Gửi email hoặc tin nhắn chăm sóc khách hàng, khuyến mãi
+đặc biệt.
+5. Quản lý Thanh Toán:
+ Theo dõi giao dịch : Xem và theo dõi các giao dịch thanh toán qua VNPAY, bao
+gồm chi tiết thanh toán và trạng thái giao dịch.
+ Báo cáo doanh thu: Tạo các báo cáo doanh thu theo ngày, tuần, tháng, và năm để
+đánh giá hiệu quả kinh doanh.
+6. Bảo mật và Phân quyền:
+ Quản lý người dùng hệ thống : Tạo, chỉnh sửa và phân quyền cho các người dùng
+quản trị hệ thống.
+ Kiểm soát truy cập: Đảm bảo chỉ những người dùng được phân quyền mới có thể
+truy cập và chỉnh sửa các phần quan trọng của hệ thống.
+7. Báo cáo và Phân tích:
+ Báo cáo doanh số bán hàng: Cung cấp các báo cáo chi tiết về doanh số bán hàng,
+sản phẩm bán chạy.
+Hình 2-2: Biểu đồ phân cấp chức năng
+2.1.3. Yêu cầu phi chức năng
+Yêu cầu phi chức năng là các tiêu chí mà hệ thống phải tuân thủ để đảm bảo tính ổn định, bảo
+mật, hiệu suất và trải nghiệm người dùng. Các yêu cầu phi chức năng là  rất quan trọng vì
+chúng ảnh hưởng đến chất lượng tổng thể của hệ thống và mức độ hài lòng c ủa người dùng.
+27
+ Downloaded by Nguy?n ??ng (nguyendangnguyen1606@gmail.com)
+ Scan to open on Studeersnel
+lOMoARcPSD|16137695
+
+=== PAGE 29 ===
+Ngoài các yêu cầu chức năng, hệ thống cũng cần đáp ứng các yêu cầu phi chức năng để đảm
+bảo hiệu suất, bảo mật và trải nghiệm người dùng tốt:
+ Hiệu suất: Hệ thống phải xử lý nhanh chóng và mượt mà, ngay cả khi có lượng
+lớn người dùng truy cập cùng một lúc.
+ Bảo mật: Hệ thống phải đảm bảo an toàn cho dữ liệu khách hàng và gi ao dịch
+trực tuyến. Cần có các biện pháp bảo mật như SSL, mã hóa dữ liệu,  và bảo vệ
+chống lại các cuộc tấn công mạng.
+ Khả năng bảo trì: Hệ thống phải dễ dàng bảo trì và cập nhật, với mã nguồn rõ
+ràng và tài liệu đầy đủ.
+ Tính thân thiện với người dùng: Giao diện người dùng phải trực quan và dễ sử
+dụng, cung cấp trải nghiệm tốt cho cả khách hàng.
+Bằng cách đảm bảo các yêu cầu phi chức năng này, hệ thống website t hương mại điện
+tử tích hợp cổng thanh toán VNPAY sẽ không chỉ đáp ứng được các c hức năng cần thiết mà
+còn đảm bảo một trải nghiệm người dùng tốt, an toàn, hiệu quả và ổn định.
+2.2. Thiết kế hệ thống
+Sau khi đã phân tích chi tiết các yêu cầu chức năng và phi chức nă ng. Quá trình tiếp
+theo sẽ thiết kế hệ thống bao gồm việc xây dựng các biểu đồ và mô hình  để minh họa cách
+thức hệ thống hoạt động, tương tác giữa các thành phần và các luồng công vi ệc. Điều này sẽ
+giúp đảm bảo rằng hệ thống được phát triển một cách có cấu trúc và dễ  dàng bảo trì, mở rộng
+trong tương lai.
+2.2.1. Biểu đồ use-case
+Biểu đồ Use-Case (Use-Case Diagram) là một công cụ quan trọng trong  việc thiết kế
+hệ thống, giúp mô tả các chức năng mà hệ thống cung cấp từ góc nhìn của người dùng. 
+Xác định các tác nhân (Actor): Tác nhân là một bộ phận bên ngoài hệ thống  nhưng có
+tương tác với hệ thống. Nó chính là đối tượng mà hệ thống phục vụ hoặc cầ n cung cấp dữ
+liệu. trong hệ thống Website bán hàng cần bao gồm các tác nhân sau: 
+Tác nhân Vai trò
+Khách hàng Thực hiện công việc quản lý giỏ hàng, thông tin cá nhân, thanh toán.
+Quản trị Thực hiện quản lý khách hàng, đơn hàng, sản phẩm, doanh thu.
+VNPAY Thực hiện xác thực giao dịch.
+Bảng 2-1 Mô tả các tác nhân
+28
+ Downloaded by Nguy?n ??ng (nguyendangnguyen1606@gmail.com)
+ Scan to open on Studeersnel
+lOMoARcPSD|16137695
+
+=== PAGE 31 ===
+2.2.1.1 Biểu đồ use-cate tổng quát
+Hình 2-3.biểu đồ use-case tổng quát
+2.2.1.2 Biểu đồ use-case quản lý giỏ hàng
+Hình 2-4.biểu đồ use-case quản lý giỏ hàng
+Mô tả chi tiết ca sử dụng con:
+Ca sử dụng “thêm sản phẩm vào giỏ hàng”
+30
+ Downloaded by Nguy?n ??ng (nguyendangnguyen1606@gmail.com)
+ Scan to open on Studeersnel
+lOMoARcPSD|16137695
+
+=== PAGE 34 ===
+4. Hệ thống ghi nhận thông tin vừa xóa giỏ. 
+5. Hệ thống hiển thị dữ liệu vừa xóa lên màn hình.
+Biến thể Biến thể A1: Thông tin đăng kí, đăng nhập không hợp lệ. 
+1. Hệ thống phát thông báo thông tin đăng kí, đăng nhập sai. 
+2. Hệ thống trả về trạng thái trước đó. 
+Biến thể A2: Sản phẩm cập nhật vào vi phạm kiểm tra dữ liệu. 
+1. Hệ thống phát thông báo sản phẩm xóa không thoả. 
+2. Hệ thống trả về trạng thái trước đó.
+Ngoại lệ Ngoại lệ E1: Lỗi không thể thực thi câu lệnh cập nhật mới.
+1. Hệ thống phát thông báo đã xảy ra lỗi trong quá trình xóa 
+2. Hệ thống huỷ thao tác xóa. 
+3. Hệ thống trả về trạng thái trước đó.
+Bảng 2-5. Mô tả chi tiết xóa sản phẩm ra giỏ hàng
+2.2.1.3 Biểu đồ use – case quản lý thông tin cá nhân
+Hình 2-5.Biểu đồ use – case quản lý thông tin cá nhân
+Mô tả Chi tiết ca sử dụng con:
+Ca sử dụng “chỉnh sửa thông tin cá nhân”:
+Tên Use case UC4
+Mô tả Chỉnh sửa thông tin cá nhân .
+Sự kiện kích hoạt Click nút “Chỉnh sửa” trên màn hình “Trang cá nhân”.
+Actors Khách hàng.
+Use-Case liên quan Tài khoản và thông tin đăng kí, đăng nhập hợp lệ.
+33
+ Downloaded by Nguy?n ??ng (nguyendangnguyen1606@gmail.com)
+ Scan to open on Studeersnel
+lOMoARcPSD|16137695
+
+=== PAGE 36 ===
+việc kiểm tra dữ liệu thì thực hiện biến thể A2. 
+3. Click nút “ xóa ”. Nếu phát hiện lỗi khi xóa mới thì thực hiện
+ngoại lệ E1 
+4. Hệ thống ghi nhận thông tin xóa. 
+5. Hệ thống hiển thị dữ liệu vừa xóa lên màn hình.
+Biến thể Biến thể A1: Thông tin đăng kí, đăng nhập không hợp lệ. 
+1. Hệ thống phát thông báo thông tin đăng kí, đăng nhập sai. 
+2. Hệ thống trả về trạng thái trước đó. 
+Biến thể A2: Xóa tài khoản vào vi phạm kiểm tra dữ liệu. 
+1. Hệ thống phát thông báo xóa không thoả. 
+2. Hệ thống trả về trạng thái trước đó.
+Ngoại lệ Ngoại lệ E1: Lỗi không thể thực thi câu lệnh cập nhật mới. 
+1. Hệ thống phát thông báo đã xảy ra lỗi trong quá trình xóa 
+2. Hệ thống huỷ thao tác xóa.
+3. Hệ thống trả về trạng thái trước đó.
+Bảng 2-7.Mô tả chi tiết về xóa tài khoản.
+2.2.1.4 Biểu đồ use-case quản lý sản phẩm
+Hình 2-6.Biểu đồ use-case quản lý sản phẩm
+Mô tả chi tiết ca sử dụng con
+Ca sử dụng “ tìm sản phẩm”:
+35
+ Downloaded by Nguy?n ??ng (nguyendangnguyen1606@gmail.com)
+ Scan to open on Studeersnel
+lOMoARcPSD|16137695
+
+=== PAGE 40 ===
+4. Hệ thống ghi nhận xóa phẩm vừa sửa. 
+5. Hệ thống hiển thị dữ liệu vừa cập nhật lên màn hình.
+Biến thể Biến thể A1: Thông tin đăng kí, đăng nhập không hợp lệ. 
+1. Hệ thống phát thông báo thông tin đăng kí, đăng nhập sai. 
+2. Hệ thống trả về trạng thái trước đó. 
+Biến thể A2: Sản phẩm xóa vào vi phạm kiểm tra dữ liệu. 
+1. Hệ thống phát thông báo thông tin xóa sản phẩm vào không
+thoả.
+2. Hệ thống trả về trạng thái trước đó.
+Ngoại lệ Ngoại lệ E1: Lỗi không thể thực thi câu lệnh cập nhật mới. 
+1. Hệ thống phát thông báo đã xảy ra lỗi trong quá trình xóa 
+2. Hệ thống huỷ thao tác sửa. 
+3. Hệ thống trả về trạng thái trước đó.
+Bảng 2-11.Mô tả chi tiết xóa sản phẩm.
+2.2.1.5 Biểu đồ use – case quản lý danh mục.
+Hình 2-7.Biểu đồ use – case quản lý danh mục
+39
+ Downloaded by Nguy?n ??ng (nguyendangnguyen1606@gmail.com)
+ Scan to open on Studeersnel
+lOMoARcPSD|16137695
+
+=== PAGE 44 ===
+A2. 
+3. Click nút “xóa”. Nếu phát hiện lỗi khi xóa danh mục mới thì
+thực hiện ngoại lệ E1 
+4. Hệ thống ghi nhận xóa danh mục vừa sửa. 
+5. Hệ thống hiển thị dữ liệu vừa cập nhật lên màn hình.
+Biến thể Biến thể A1: Thông tin đăng kí, đăng nhập không hợp lệ. 
+1. Hệ thống phát thông báo thông tin đăng kí, đăng nhập sai. 
+2. Hệ thống trả về trạng thái trước đó.
+Biến thể A2: danh mục xóa vào vi phạm kiểm tra dữ liệu. 
+1. Hệ thống phát thông báo thông tin xóa danh mục vào không
+thoả. 
+2. Hệ thống trả về trạng thái trước đó.
+Ngoại lệ Ngoại lệ E1: Lỗi không thể thực thi câu lệnh cập nhật mới.
+1. Hệ thống phát thông báo đã xảy ra lỗi trong quá trình xóa 
+2. Hệ thống huỷ thao tác xóa. 
+3. Hệ thống trả về trạng thái trước đó.
+Bảng 2-15.Mô tả chi tiết xóa danh mục
+2.2.1.6 Biểu đồ use – case quản lý đơn hàng
+Hình 2-8.Biểu đồ use – case quản lý đơn hàng
+Mô tả Chi tiết ca sử dụng con
+43
+ Downloaded by Nguy?n ??ng (nguyendangnguyen1606@gmail.com)
+ Scan to open on Studeersnel
+lOMoARcPSD|16137695
+
+=== PAGE 46 ===
+Use-Case liên quan Tài khoản và thông tin đăng kí, đăng nhập hợp lệ.
+Tiền điều kiện Hệ thống hoạt động ổn định.
+Hậu điều kiện 1. Đăng kí xong Đăng nhập vào hệ thống. Nếu thông tin đăng
+nhập không hợp lệ thì thực hiện biến thể A1. 
+2. thêm đơn hàng “Quản lý đơn hàng > đơn hàng> Thao tác
+chung”. Chọn sản vào thông tin cần thêm. Nếu các sản phẩm
+thêm vào vi phạm việc kiểm tra dữ liệu thì thực hiện biến thể
+A2. 
+3. Click nút “ cập nhật ”. Nếu phát hiện lỗi khi cập nhật mới thì
+thực hiện ngoại lệ E1 
+4. Hệ thống ghi nhận đơn hàng vừa thêm. 
+5. Hệ thống hiển thị dữ liệu vừa cập nhật lên màn hình.
+Biến thể Biến thể A1: Thông tin đăng kí, đăng nhập không hợp lệ. 
+1. Hệ thống phát thông báo thông tin đăng kí, đăng nhập sai. 
+2. Hệ thống trả về trạng thái trước đó. 
+Biến thể A2: Đơn hàng tìm vào vi phạm kiểm tra dữ liệu. 
+1. Hệ thống phát thông báo thông tin đơn hàng đơn hàng vào
+không thoả. 
+2. Hệ thống trả về trạng thái trước đó.
+Ngoại lệ Ngoại lệ E1: Lỗi không thể thực thi câu lệnh cập nhật mới. 
+1. Hệ thống phát thông báo đã xảy ra lỗi trong quá trình thêm 
+2. Hệ thống huỷ thao tác cập nhật. 
+3. Hệ thống trả về trạng thái trước đó.
+Bảng 2-17.Mô tả chi tiết cập nhật đơn hàng.
+2.2.1.7 Biểu đồ use – case quản lý khách hàng.
+45
+ Downloaded by Nguy?n ??ng (nguyendangnguyen1606@gmail.com)
+ Scan to open on Studeersnel
+lOMoARcPSD|16137695
+
+=== PAGE 49 ===
+2. Hệ thống huỷ thao tác cập nhật. 
+3. Hệ thống trả về trạng thái trước đó
+Bảng 2-19.Mô tả chi tiết cập nhật khách hàng
+2.2.1.8 Biểu đồ use-case thanh toán online VNPAY
+Hình 2-10. Biểu đồ use-case  thanh toán online VNPAY
+Mô tả Chi tiết ca sử dụng con
+Ca sử dụng “xác thực thanh toán”:
+Tên Use case UC18
+Mô tả Thanh toán giao dịch
+Sự kiện kích hoạt Click nút “thanh toán” trên màn hình “giỏ hàng”.
+Actors Khách hàng.
+Use-Case liên quan Tài khoản và thông tin đăng kí, đăng nhập hợp lệ.
+Tiền điều kiện Hệ thống hoạt động ổn định.
+Hậu điều kiện 1. Đăng kí xong Đăng nhập vào hệ thống. Nếu thông tin đăng
+nhập không hợp lệ thì thực hiện biến thể A1. 
+2. Tìm khách hàng “màn hình chính> giỏ hàng”. Chọn sản phẩm
+thanh toán. Chọn phương thức thanh toán. Chọn thanh toán
+online bằng VNPAY. Nếu các khách hàng tìm vào vi phạm
+việc kiểm tra dữ liệu thì thực hiện biến thể A2. 
+3. Click nút “ Thanh toán ”. Nếu phát hiện lỗi khi tìm khách hàng
+48
+ Downloaded by Nguy?n ??ng (nguyendangnguyen1606@gmail.com)
+ Scan to open on Studeersnel
+lOMoARcPSD|16137695
+
+=== PAGE 50 ===
+mới thì thực hiện ngoại lệ E1 
+4. Hệ thống yêu cầu nhập mã OTP được gửi đến
+5. Hệ thống ghi nhận khách hàng vừa Thanh toán. 
+6. Hệ thống hiển thị dữ liệu vừa cập nhật lên màn hình.
+Biến thể Biến thể A1: Thông tin đăng kí, đăng nhập không hợp lệ. 
+1. Hệ thống phát thông báo thông tin đăng kí, đăng nhập sai.
+2. Hệ thống trả về trạng thái trước đó.
+Biến thể A2: Đơn hàng tìm vào vi phạm kiểm tra dữ liệu.
+1. Hệ thống phát thông báo thông tin tìm khách hàng vào không
+thoả mãn.
+2. Hệ thống trả về trạng thái trước đó.
+Ngoại lệ Ngoại lệ E1: Lỗi không thể thực thi câu lệnh cập nhật mới. 
+1. Hệ thống phát thông báo đã xảy ra lỗi trong quá trình tìm 
+2. Hệ thống huỷ thao tác tìm.
+3. Hệ thống trả về trạng thái trước đó.
+Hình 2-11. mô tả use-case thanh toán online VNPAY
+2.2.2. Biểu đồ trạng thái
+2.2.2.1 Biểu đồ trạng thái quản lý thông tin cá nhân
+Chỉnh sửa thông tin cá nhân, và xóa tài khoản
+49
+ Downloaded by Nguy?n ??ng (nguyendangnguyen1606@gmail.com)
+ Scan to open on Studeersnel
+lOMoARcPSD|16137695
+
+=== PAGE 51 ===
+Hình 2-12. biểu đồ Chỉnh sửa thông tin cá nhân, và xóa tài khoản
+- Mô tả:
+o khởi động chương trình sau đó thực hiện như trên.
+o Chọn chỉnh sửa thông tin.
+o Chỉnh sửa họ tên, avatar, …. Hệ thống sẽ hiện mục cần chỉnh sửa.
+o Thông tin chỉnh sửa theo yêu cầu và thông báo thành công, hoặc nếu không
+thành công thì sẽ hiện lỗi thông báo.
+o khởi động chương trình sau đó thực hiện như trên.
+o Chọn xóa tài khoản.
+o Xóa tài khoản, …. Hệ thống sẽ hiện lên chỗ xóa.
+o Thông tin xóa theo yêu cầu và thông báo thành công, hoặc nếu không thành
+công thì sẽ hiện lỗi thông báo.
+2.2.2.2 Biểu đồ trạng thái quản lý giỏ hàng
+Thêm giỏ hàng, xóa giỏ hàng, cập nhật giỏ hàng:
+50
+ Downloaded by Nguy?n ??ng (nguyendangnguyen1606@gmail.com)
+ Scan to open on Studeersnel
+lOMoARcPSD|16137695
+
+=== PAGE 52 ===
+Hình 2-13. Biểu đồ trạng thái Thêm giỏ hàng, xóa giỏ hàng, cập nhật giỏ hàng
+- Mô tả thêm sản phẩm:
+o khởi động chương trình sau đó thực hiện như trên.
+o Chọn thêm thông thông tin.
+o Thêm các sản phẩm vào giỏ …. Hệ thống sẽ hiện mục cần thêm.
+o Thêm vào giỏ hàng theo yêu cầu và thông báo thành công, hoặc nếu không
+thành công thì sẽ hiện lỗi thông báo.
+- Mô tả cập nhật giỏ hàng:
+o khởi động chương trình sau đó thực hiện như trên.
+o Chọn sản phẩm cần cập nhật trong giỏ.
+o Cập nhật sản phẩm vào giỏ …. Hệ thống sẽ hiện lên chỗ cập nhật.
+o Thông tin cập nhật theo yêu cầu và thông báo thành công, hoặc nếu không
+thành công thì sẽ hiện lỗi thông báo.
+- Mô tả xóa sản phẩm khỏi giỏ hàng:
+o khởi động chương trình sau đó thực hiện như trên.
+o Chọn sản phẩm cần xóa trong giỏ.
+o Cập nhật xóa vào giỏ …. Hệ thống sẽ hiện lên chỗ cập nhật.
+o Thông tin xóa theo yêu cầu và thông báo thành công, hoặc nếu không thành
+công thì sẽ hiện lỗi thông báo.
+2.2.2.3 Biểu đồ trạng thái quản lý đơn hàng
+51
+ Downloaded by Nguy?n ??ng (nguyendangnguyen1606@gmail.com)
+ Scan to open on Studeersnel
+lOMoARcPSD|16137695
+
+=== PAGE 53 ===
+Cập nhật đơn hàng và hủy đơn hàng:
+Hình 2-14. Biểu đồ trạng thái cập nhật đơn hàng và hủy đơn hàng
+- Mô tả cập nhật đơn hàng:
+o khởi động chương trình sau đó thực hiện như trên.
+o Chọn cập nhật thông tin.
+o Cập nhật thông tin đơn hàng …. Hệ thống sẽ hiện mục cần cập nhật.
+o Cập nhật đơn hàng theo yêu cầu và thông báo thành công, hoặc nếu không
+thành công thì sẽ hiện lỗi thông báo.
+- Mô tả hủy đơn hàng:
+o khởi động chương trình sau đó thực hiện như trên.
+o Chọn đơn hàng cần tìm.
+o Tìm đơn hàng …. Hệ thống sẽ hiện lên hủy đơn hàng.
+o Thông tin tìm theo yêu cầu và thông báo thành công, hoặc nếu không thành
+công  thì sẽ hiện lỗi thông báo.
+2.2.2.4 Biểu đồ trạng thái quản lý sản phẩm
+Tìm sản phẩm:
+52
+ Downloaded by Nguy?n ??ng (nguyendangnguyen1606@gmail.com)
+ Scan to open on Studeersnel
+lOMoARcPSD|16137695
+
+=== PAGE 56 ===
+- Mô tả:
+o khởi động chương trình sau đó thực hiện như trên.
+o Chọn Sửa thông tin.
+o Sửa sản phẩm …. Hệ thống sẽ hiện mục cần Sửa.
+o Sản phẩm sẽ Sửa theo yêu cầu và thông báo thành công, hoặc nếu không
+thành công thì sẽ hiện lỗi thông báo.
+Xóa sản phẩm:
+Hình 2-18.Biểu đồ trạng thái xóa sản phẩm
+- Mô tả:
+o khởi động chương trình sau đó thực hiện như trên.
+o Chọn Xóa thông tin.
+o Xóa sản phẩm …. Hệ thống sẽ hiện mục cần Xóa.
+o Sản phẩm sẽ Xóa theo yêu cầu và thông báo thành công, hoặc nếu không
+thành công thì sẽ hiện lỗi thông báo.
+2.2.2.5 Biểu đồ trạng thái quản lý thương hiệu
+55
+ Downloaded by Nguy?n ??ng (nguyendangnguyen1606@gmail.com)
+ Scan to open on Studeersnel
+lOMoARcPSD|16137695
+
+=== PAGE 60 ===
+Hình 2-19.Biểu đồ trạng thái xóa thương hiệu
+- Mô tả:
+o Khởi động chương trình sau đó thực hiện như trên.
+o Chọn Xóa thông tin.
+o Xóa thương hiệu …. Hệ thống sẽ hiện mục cần Xóa.
+o Thương hiệu sẽ Xóa theo yêu cầu và thông báo thành công, hoặc nếu
+không thành công thì sẽ hiện lỗi thông báo.
+2.2.2.6  Biểu đồ trạng thái quản lý khách hàng
+Xem chi tiết khách hàng
+Hình 2-20.Biểu đồ trạng thái xem chi tiết khách hàng
+59
+ Downloaded by Nguy?n ??ng (nguyendangnguyen1606@gmail.com)
+ Scan to open on Studeersnel
+lOMoARcPSD|16137695
+
+=== PAGE 61 ===
+- Mô tả:
+o khởi động chương trình sau đó thực hiện như trên.
+o Chọn Xem chi tiết khách hàng.
+o Xem chi tiết khách hàng…. Hệ thống sẽ hiện mục cần xem.
+o Xem chi tiết khách hàng theo yêu cầu và thông báo thành công, hoặc nếu
+không thành công thì sẽ hiện lỗi thông báo.
+Tìm kiếm khách hàng
+Hình 2-21.Biểu đồ trạng thái tìm khách hàng
+- Mô tả:
+o Khởi động chương trình sau đó thực hiện như trên.
+o Chọn khách hàng cần tìm.
+o Tim khách hàng …. Hệ thống sẽ hiện lên chỗ tìm.
+o Thông tin tìm theo yêu cầu và thông báo thành công, hoặc nếu không thành
+công thì sẽ hiện lỗi thông báo.
+2.2.2.7 Biểu đồ trạng thái quản lý doanh thu
+Thống kê doanh thu
+60
+ Downloaded by Nguy?n ??ng (nguyendangnguyen1606@gmail.com)
+ Scan to open on Studeersnel
+lOMoARcPSD|16137695
+
+=== PAGE 63 ===
+- Mô tả:
+o Khởi động chương trình sau đó thực hiện như trên.
+o Chọn doanh thu cần tìm.
+o Tim doanh thu …. Hệ thống sẽ hiện lên chỗ tìm.
+o Thông tin tìm theo yêu cầu và thông báo thành công, hoặc nếu không thành
+công thì sẽ hiện lỗi thông báo.
+2.2.3. Biểu đồ hoạt động
+2.2.3.1 Biểu đồ hoạt động quản lý thông tin cá nhân
+Hình 2-24.Biểu đồ hoạt động quản lý thông tin cá nhân.
+2.2.3.2 Biểu đồ hoạt động quản lý giỏ hàng
+62
+ Downloaded by Nguy?n ??ng (nguyendangnguyen1606@gmail.com)
+ Scan to open on Studeersnel
+lOMoARcPSD|16137695
+
+=== PAGE 64 ===
+Hình 2-25.Biểu đồ hoạt động quản lý giỏ hàng.
+2.2.3.3 Biểu đồ hoạt động quản lý đơn hàng
+Hình 2-26.Biểu đồ hoạt động quản lý đơn hàng.
+63
+ Downloaded by Nguy?n ??ng (nguyendangnguyen1606@gmail.com)
+ Scan to open on Studeersnel
+lOMoARcPSD|16137695
+
+=== PAGE 65 ===
+2.2.3.4 Biểu đồ hoạt động quản lý sản phẩm
+Hình 2-27.Biểu đồ hoạt động quản lý sản phẩm.
+2.2.3.5 Biểu đồ hoạt động quản lý thương hiệu
+64
+ Downloaded by Nguy?n ??ng (nguyendangnguyen1606@gmail.com)
+ Scan to open on Studeersnel
+lOMoARcPSD|16137695
+
+=== PAGE 66 ===
+Hình 2-28.Biểu đồ hoạt động quản lý thương hiệu.
+2.2.3.6 Biểu đồ hoạt động quản lý khách hàng
+Hình 2-29.Biểu đồ hoạt động quản lý khách hàng.
+65
+ Downloaded by Nguy?n ??ng (nguyendangnguyen1606@gmail.com)
+ Scan to open on Studeersnel
+lOMoARcPSD|16137695
+
+=== PAGE 67 ===
+2.2.3.7 Biểu đồ hoạt động quản lý doanh thu
+Hình 2-30.Biểu đồ hoạt động quản lý doanh thu.
+2.2.4. Biểu đồ tuần tự 
+2.2.4.1 Biểu đồ truần tự quản lý thông tin cá nhân
+Biểu đồ tuần tự quản lý thông tin cho khách hàng
+Hình 2-31.Biểu đồ trình tự chỉnh sửa thông tin cho khách hàng
+66
+ Downloaded by Nguy?n ??ng (nguyendangnguyen1606@gmail.com)
+ Scan to open on Studeersnel
+lOMoARcPSD|16137695
+
+=== PAGE 68 ===
+Biểu đồ trình tự xóa tài khoản
+Hình 2-32.Biểu đồ trình tự xóa tài khoản.
+2.2.4.2 Biểu đồ trình tự quản lý giỏ hàng
+Biểu đồ trình tự quản lý sản phẩm giỏ hàng
+Hình 2-33.Biểu đồ trình tự quản lý sản phẩm giỏ hàng.
+2.2.4.3 Biểu đồ trình tự quản đơn hàng
+Biểu đồ trình tự xem trạng thái đơn hàng
+67
+ Downloaded by Nguy?n ??ng (nguyendangnguyen1606@gmail.com)
+ Scan to open on Studeersnel
+lOMoARcPSD|16137695
+
+=== PAGE 69 ===
+Hình 2-34.Biểu đồ trình tự xem trạng thái đơn hàng.
+Biểu đồ trình tự hủy đơn hàng
+Hình 2-35.Biểu đồ trình tự hủy đơn hàng.
+2.2.4.4 Biểu đồ trình tự quản lý sản phẩm
+Biểu đồ trình tự thêm và sửa sản phẩm
+68
+ Downloaded by Nguy?n ??ng (nguyendangnguyen1606@gmail.com)
+ Scan to open on Studeersnel
+lOMoARcPSD|16137695
+
+=== PAGE 70 ===
+Hình 2-36.Biểu đồ trình tự thêm và sửa sản phẩm.
+Biểu đồ trình tự xóa sản phẩm
+Hình 2-37.Biểu đồ trình tự xóa sản phẩm.
+2.2.4.5 Biểu đồ trình tự quản lý danh mục
+Biểu đồ trình tự thêm, sửa danh mục
+69
+ Downloaded by Nguy?n ??ng (nguyendangnguyen1606@gmail.com)
+ Scan to open on Studeersnel
+lOMoARcPSD|16137695
+
+=== PAGE 71 ===
+Hình 2-38.Biểu đồ trình tự thêm, sửa danh mục.
+Biểu đồ trình tự xóa danh mục
+Hình 2-39.Biểu đồ trình tự xóa thương hiệu.
+2.2.4.6 Biểu đồ trình tự quản lý khách hàng
+70
+ Downloaded by Nguy?n ??ng (nguyendangnguyen1606@gmail.com)
+ Scan to open on Studeersnel
+lOMoARcPSD|16137695
+
+=== PAGE 72 ===
+Biểu đồ trình tự xem chi tiết khách hàng
+Hình 2-40.Biểu đồ trình tự xem chi tiết khách hàng.
+Biểu đồ trình tự xóa người dùng
+Hình 2-41.Biểu đồ trình tự xóa người dùng.
+2.2.4.7 Biểu đồ tuần tự thanh toán online VNPAY
+Biểu đồ tuần tự thanh toán bằng VNPAY
+71
+ Downloaded by Nguy?n ??ng (nguyendangnguyen1606@gmail.com)
+ Scan to open on Studeersnel
+lOMoARcPSD|16137695
+
+=== PAGE 73 ===
+Hình 2-42. Biểu đồ tuần tự thanh toán online VNPAY
+2.2.5. Thiết kế cơ sở dữ liệu
+Thiết kế cơ sở dữ liệu là một phần quan trọng trong quá trình phát triển hệ thống, giúp quản lý
+và lưu trữ thông tin một cách hiệu quả và an toàn. Cơ sở dữ liệu phải được thiết kế sao cho hỗ
+trợ đầy đủ các chức năng của hệ thống, đồng thời đảm bảo hiệu suất, tính  toàn vẹn và khả
+năng mở rộng.
+Các bảng có trong cơ sở dữ liệu gồm:
+- Product(sản phẩm):
+Field Kiểu dữ liệu
+Id Int
+Tên sản phẩm String
+Mô tả String
+Đơn vị tiền: VND, USD Enum
+Trạng thái hiển thị: ẩn, công khai Enum
+Phân loại sản phẩm Object
+ảnh thumbnail String
+Danh sách hình ảnh mô tả
+Nơi bán String 
+Bảng 2-20. bảng Product
+72
+ Downloaded by Nguy?n ??ng (nguyendangnguyen1606@gmail.com)
+ Scan to open on Studeersnel
+lOMoARcPSD|16137695
+
+=== PAGE 76 ===
+CHƯƠNG 3. TRIỂN KHAI XÂY DỰNG WEBSITE BÁN
+HÀNG TÍCH HỢP CỔNG THANH TOÁN ONLINE
+VNPAY
+3.1. Giới thiệu chung
+3.1.1. Mục Tiêu Triển Khai
+Mục tiêu của việc triển khai xây dựng website bán hàng tích hợp cổng thanh toán online
+VNPAY là tạo ra một nền tảng thương mại điện tử hiện đại, giú p cửa hàng giày thể thao của
+chị tôi cải thiện quy trình bán hàng trực tuyến. Website không chỉ cung c ấp trải nghiệm mua
+sắm trực tuyến dễ dàng và tiện lợi cho khách hàng, mà còn hỗ trợ quản  lý hiệu quả hoạt động
+kinh doanh của cửa hàng, từ việc quản lý sản phẩm, đơn hàng đến xử lý thanh toán trực tuyến
+an toàn và nhanh chóng.
+3.1.2. Công Cụ và Công Nghệ Sử Dụng
+Trong quá trình triển khai, chúng tôi sử dụng nhiều công cụ và công nghệ để đảm bảo chất
+lượng và hiệu quả của hệ thống:
+- Ngôn ngữ lập trình: HTML, CSS, JavaScript, C#, ASP.NET
+- Framework và thư viện: ASPT.NET Core MVC
+- Cơ sở dữ liệu: MySQL
+- Công cụ phát triển: Visual Studio, Git
+- Hệ thống quản lý phiên bản: GitHub
+- Công nghệ thanh toán: VNPAY API
+Việc chọn lựa các công cụ và công nghệ này nhằm đảm bảo hệ thống có tính linh hoạt, dễ bảo
+trì, và khả năng mở rộng trong tương lai, đồng thời đáp ứng tốt nhu cầu c ủa cả người dùng
+cuối và người quản lý.
+3.2. Môi trường phát triển
+Cài đặt môi trường phát triển là bước quan trọng để đảm bảo quá trình triển khai và phát triển
+website được diễn ra suôn sẻ và hiệu quả. Trong phần này, chúng ta sẽ đi qua các bước cần
+thiết để thiết lập môi trường phát triển cho dự án xây dựng websit e bán hàng tích hợp cổng
+thanh toán online VNPAY.
+3.2.1. Cấu Hình Máy Chủ
+Máy chủ là nền tảng quan trọng để lưu trữ và chạy ứng dụng web. Để đảm bảo hiệu suất và độ
+tin cậy, việc cấu hình máy chủ cần được thực hiện kỹ lưỡng. Dư ới đây là các bước cụ thể để
+cấu hình máy chủ:
+75
+ Downloaded by Nguy?n ??ng (nguyendangnguyen1606@gmail.com)
+ Scan to open on Studeersnel
+lOMoARcPSD|16137695
+
+=== PAGE 77 ===
+Lựa chọn máy chủ:
+ Shared Hosting: Phù hợp cho các dự án nhỏ với chi phí thấp. Tuy nhiên, nó có thể
+bị giới hạn về hiệu suất và tài nguyên.
+ VPS (Virtual Private Server): Cung cấp hiệu suất tốt hơn với chi phí cao hơn. Phù
+hợp cho các dự án có quy mô trung bình.
+ Dedicated Server: Máy chủ riêng biệt cho hiệu suất cao nhất và toàn quyền kiểm
+soát. Phù hợp cho các dự án lớn.
+ Cloud Hosting: Sử dụng các dịch vụ như AWS, Microsoft Azure. Linh hoạt và có
+khả năng mở rộng dễ dàng.
+Cài đặt hệ điều hành:
+ Lựa chọn hệ điều hành : Windows Server thường được ưa chuộng cho các ứng
+dụng ASP.NET do tính tương thích cao.
+ Cài đặt cơ bản:  Cập nhật hệ điều hành, cài đặt các gói cần thiết như IIS,
+PowerShell...
+Cài đặt .NET Framework và các công cụ:
+ .NET Core SDK : Cài đặt phiên bản .NET Core phù hợp bằng cách tải từ trang
+chủ .NET.
+ Công cụ phát triển : Cài đặt Visual Studio, đảm bảo chọn các workload như
+ASP.NET và web development.
+Thiết lập SSL:
+ Let's Encrypt: Sử dụng Let's Encrypt để cài đặt chứng chỉ SSL miễn phí, đảm bảo
+kết nối HTTPS an toàn.
+3.2.2. Thiết Lập Cơ Sở Dữ Liệu
+Cơ sở dữ liệu là thành phần quan trọng của bất kỳ ứng dụng web nào. Dư ới đây là các bước
+để thiết lập cơ sở dữ liệu SQL Server cho dự án:
+Cài đặt SQL Server:
+ Cài đặt SQL Server : Sử dụng phiên bản phù hợp (SQL Server Express hoặc
+Standard) và cài đặt từ trang chủ Microsoft.
+ Cấu hình SQL Server: Thực hiện các bước cấu hình ban đầu như thiết lập mật khẩu
+sa, cấu hình tệp sqlserver.conf để tối ưu hóa hiệu suất.
+ Bảo mật SQL Server: Thiết lập firewall và các biện pháp bảo mật khác.
+Tiến hành thực hiện tạo các bảng dữ liệu như phần 2.2.5. thiết kế cơ sở dữ liệu đã nêu. Việc
+cài đặt môi trường phát triển đòi hỏi sự chuẩn bị kỹ lưỡng và sự hiểu  biết sâu về các công cụ
+và công nghệ sử dụng. Bằng cách thiết lập một môi trường phát triển đầy  đủ và tối ưu, chúng
+76
+ Downloaded by Nguy?n ??ng (nguyendangnguyen1606@gmail.com)
+ Scan to open on Studeersnel
+lOMoARcPSD|16137695
+
+=== PAGE 88 ===
+Kết luận
+Ba chương của đồ án đã thể hiện được rằng những mục tiêu đặt ra khi t hực hiện đồ án đều đã
+đạt được. Cụ thể:
+Chương 1: Đã hệ thống được những kiến thức tổng quan website thương mại điện tử. Chương
+này đã tìm hiểu và nghiên cứu các khái niệm thương mại điện tử, các nguyên tắc xây dựng,
+các quy trình cơ bản, mô hình Website thương mại điện tử. Chương này cũng chỉ ra lý do
+chọn đề tìa và lý thuyết xây dựng nên website thương mại điện tử. 
+Chương 2: Xem xét đến các công nghệ về Website cũng như trình bày nhưng phâ n tích và
+thiết kế về một website thương mại điện tử. trong chương cũng đã trì nh bày chi tiết các biểu
+đồ ca sử dụng, tuần tự, trạng thái, và biểu đồ hoạt động của các chức năng có trong trang web.
+Chương này cũng đã xây dựng và thiết kế nên cơ sở dữ liệu.
+Chương 3: Một quá trình minh họa các chức năng chính có trong trang web.
+Sở dĩ sử dụng ASP.NET là vì thư viện này cung cấp các tính năng mạnh mẽ cho việc phát
+triển trang web. Nó được hỗ trợ bởi các ứng dụng và môi trường phát triển mạnh mẽ và nhanh
+chóng.
+Dù vậy, vẫn còn một số vấn đề hạn chế. Đề tài chỉ tập trung vào vi ệc nghiên cứu các chức
+năng có trong một trang web thương mại điện tử. Vẫn còn nhiều vấn đề liên quan đến triển
+khai ứng dụng vẫn chưa được giải quyết trong đồ án. Trước hết, đồ án này mới chỉ đề cập đến
+việc tìm hiểu định nghĩa, ứng dụng các quy tắc hoạt động, xây dựng các chứ c năng đơn giản.
+Và đồ án này chỉ đưa ra các vẫn đề liên quan đến phương thức thanh toán online bằng
+VNPAY. Mà không đề cập đến các phương thức thanh toán mạnh mẽ  khác những không bao
+gồm trong đề tài này. 
+Việc giải quyết những điểm tồn tại này cũng chính là hướng phát triển tương lai của đồ án
+như:
+ Tích hợp thêm các cổng thanh toán phổ biến khác như PayPal, Stripe, Momo,
+ZaloPay, và các ví điện tử khác.
+ Hỗ trợ thanh toán bằng thẻ tín dụng, thẻ ghi nợ và chuyển khoản ngân hàng.
+87
+ Downloaded by Nguy?n ??ng (nguyendangnguyen1606@gmail.com)
+ Scan to open on Studeersnel
+lOMoARcPSD|16137695

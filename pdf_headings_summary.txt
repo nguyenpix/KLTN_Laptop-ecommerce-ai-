@@ -1,0 +1,107 @@
+Chương 2. PHÂN TÍCH và THIẾT KẾ HỆ THỐNG.......................................
+2.1. Phân tích hệ thống.......................................................................22
+2.1.1. Mô tả hệ thống.....................................................................................
+2.1.2. Yêu cầu chức năng...............................................................................
+2.1.3. Yêu cầu phi chức năng.........................................................................
+2.2. Thiết kế hệ thống.........................................................................25
+2.2.1. Biểu đồ use-case..................................................................................
+2.2.2. Biểu đồ trạng thái................................................................................
+2.2.3. Biểu đồ hoạt động................................................................................
+2.2.4. Biểu đồ tuần tự....................................................................................
+2.2.5. Thiết kế cơ sở dữ liệu...........................................................................
+Chương 2: Công nghệ xác thực sử dụng chứng thư số
+CHƯƠNG 2. PHÂN TÍCH VÀ THIẾT KẾ HỆ THỐNG
+2.1. Phân tích hệ thống
+2.1.1. Mô tả hệ thống
+2.1.2. Yêu cầu chức năng
+2.1.2.1 Về phía khách hàng tiêu dùng
+2.1.2.2 Về phía quản trị
+Hình 2-2: Biểu đồ phân cấp chức năng
+2.1.3. Yêu cầu phi chức năng
+2.2. Thiết kế hệ thống
+2.2.1. Biểu đồ use-case
+Bảng 2-1 Mô tả các tác nhân
+2.2.1.1 Biểu đồ use-cate tổng quát
+Hình 2-3.biểu đồ use-case tổng quát
+2.2.1.2 Biểu đồ use-case quản lý giỏ hàng
+Hình 2-4.biểu đồ use-case quản lý giỏ hàng
+Mô tả chi tiết ca sử dụng con:
+Ca sử dụng “thêm sản phẩm vào giỏ hàng”
+Bảng 2-5. Mô tả chi tiết xóa sản phẩm ra giỏ hàng
+2.2.1.3 Biểu đồ use – case quản lý thông tin cá nhân
+Hình 2-5.Biểu đồ use – case quản lý thông tin cá nhân
+Mô tả Chi tiết ca sử dụng con:
+Ca sử dụng “chỉnh sửa thông tin cá nhân”:
+Bảng 2-7.Mô tả chi tiết về xóa tài khoản.
+2.2.1.4 Biểu đồ use-case quản lý sản phẩm
+Hình 2-6.Biểu đồ use-case quản lý sản phẩm
+Mô tả chi tiết ca sử dụng con
+Ca sử dụng “ tìm sản phẩm”:
+Bảng 2-11.Mô tả chi tiết xóa sản phẩm.
+2.2.1.5 Biểu đồ use – case quản lý danh mục.
+Hình 2-7.Biểu đồ use – case quản lý danh mục
+Bảng 2-15.Mô tả chi tiết xóa danh mục
+2.2.1.6 Biểu đồ use – case quản lý đơn hàng
+Hình 2-8.Biểu đồ use – case quản lý đơn hàng
+Mô tả Chi tiết ca sử dụng con
+Bảng 2-17.Mô tả chi tiết cập nhật đơn hàng.
+2.2.1.7 Biểu đồ use – case quản lý khách hàng.
+Bảng 2-19.Mô tả chi tiết cập nhật khách hàng
+2.2.1.8 Biểu đồ use-case thanh toán online VNPAY
+Hình 2-10. Biểu đồ use-case  thanh toán online VNPAY
+Mô tả Chi tiết ca sử dụng con
+Ca sử dụng “xác thực thanh toán”:
+Hình 2-11. mô tả use-case thanh toán online VNPAY
+2.2.2. Biểu đồ trạng thái
+2.2.2.1 Biểu đồ trạng thái quản lý thông tin cá nhân
+Hình 2-12. biểu đồ Chỉnh sửa thông tin cá nhân, và xóa tài khoản
+2.2.2.2 Biểu đồ trạng thái quản lý giỏ hàng
+Hình 2-13. Biểu đồ trạng thái Thêm giỏ hàng, xóa giỏ hàng, cập nhật giỏ hàng
+2.2.2.3 Biểu đồ trạng thái quản lý đơn hàng
+Hình 2-14. Biểu đồ trạng thái cập nhật đơn hàng và hủy đơn hàng
+2.2.2.4 Biểu đồ trạng thái quản lý sản phẩm
+Hình 2-18.Biểu đồ trạng thái xóa sản phẩm
+2.2.2.5 Biểu đồ trạng thái quản lý thương hiệu
+Hình 2-19.Biểu đồ trạng thái xóa thương hiệu
+2.2.2.6  Biểu đồ trạng thái quản lý khách hàng
+Hình 2-20.Biểu đồ trạng thái xem chi tiết khách hàng
+Hình 2-21.Biểu đồ trạng thái tìm khách hàng
+2.2.2.7 Biểu đồ trạng thái quản lý doanh thu
+2.2.3. Biểu đồ hoạt động
+2.2.3.1 Biểu đồ hoạt động quản lý thông tin cá nhân
+Hình 2-24.Biểu đồ hoạt động quản lý thông tin cá nhân.
+2.2.3.2 Biểu đồ hoạt động quản lý giỏ hàng
+Hình 2-25.Biểu đồ hoạt động quản lý giỏ hàng.
+2.2.3.3 Biểu đồ hoạt động quản lý đơn hàng
+Hình 2-26.Biểu đồ hoạt động quản lý đơn hàng.
+2.2.3.4 Biểu đồ hoạt động quản lý sản phẩm
+Hình 2-27.Biểu đồ hoạt động quản lý sản phẩm.
+2.2.3.5 Biểu đồ hoạt động quản lý thương hiệu
+Hình 2-28.Biểu đồ hoạt động quản lý thương hiệu.
+2.2.3.6 Biểu đồ hoạt động quản lý khách hàng
+Hình 2-29.Biểu đồ hoạt động quản lý khách hàng.
+2.2.3.7 Biểu đồ hoạt động quản lý doanh thu
+Hình 2-30.Biểu đồ hoạt động quản lý doanh thu.
+2.2.4. Biểu đồ tuần tự
+2.2.4.1 Biểu đồ truần tự quản lý thông tin cá nhân
+Hình 2-31.Biểu đồ trình tự chỉnh sửa thông tin cho khách hàng
+Hình 2-32.Biểu đồ trình tự xóa tài khoản.
+2.2.4.2 Biểu đồ trình tự quản lý giỏ hàng
+Hình 2-33.Biểu đồ trình tự quản lý sản phẩm giỏ hàng.
+2.2.4.3 Biểu đồ trình tự quản đơn hàng
+Hình 2-34.Biểu đồ trình tự xem trạng thái đơn hàng.
+Hình 2-35.Biểu đồ trình tự hủy đơn hàng.
+2.2.4.4 Biểu đồ trình tự quản lý sản phẩm
+Hình 2-36.Biểu đồ trình tự thêm và sửa sản phẩm.
+Hình 2-37.Biểu đồ trình tự xóa sản phẩm.
+2.2.4.5 Biểu đồ trình tự quản lý danh mục
+Hình 2-38.Biểu đồ trình tự thêm, sửa danh mục.
+Hình 2-39.Biểu đồ trình tự xóa thương hiệu.
+2.2.4.6 Biểu đồ trình tự quản lý khách hàng
+Hình 2-40.Biểu đồ trình tự xem chi tiết khách hàng.
+Hình 2-41.Biểu đồ trình tự xóa người dùng.
+2.2.4.7 Biểu đồ tuần tự thanh toán online VNPAY
+Hình 2-42. Biểu đồ tuần tự thanh toán online VNPAY
+2.2.5. Thiết kế cơ sở dữ liệu
+Bảng 2-20. bảng Product
+Chương 2: Xem xét đến các công nghệ về Website cũng như trình bày nhưng phâ n tích và

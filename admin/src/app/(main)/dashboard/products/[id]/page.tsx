@@ -10,14 +10,30 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui
 import { Badge } from '@/shared/components/ui/badge';
 import { Input } from '@/shared/components/ui/input';
 import { Textarea } from '@/shared/components/ui/textarea';
-import { Label } from '@/shared/components/ui/label';
-import { 
-  Edit, ArrowLeft, Package, DollarSign, Hash, Tag, MapPin, User, 
-  Save, X, Plus, Trash2, Check 
+import {
+  Edit, ArrowLeft, Package, DollarSign, Hash, Tag,
+  Save, X, Plus,
 } from 'lucide-react';
 import { useRouter, useParams } from 'next/navigation';
 import { toast } from '@/hooks/use-toast';
 import Image from 'next/image';
+
+const SPEC_FIELDS: Array<{ key: keyof Product['specifications']; label: string; placeholder: string }> = [
+  { key: 'cpu', label: 'CPU', placeholder: 'VD: Intel Core i7-13700H' },
+  { key: 'gpu', label: 'GPU', placeholder: 'VD: NVIDIA GeForce RTX 4060' },
+  { key: 'npu', label: 'NPU', placeholder: 'VD: Intel AI Boost' },
+  { key: 'ram', label: 'RAM', placeholder: 'VD: 16GB DDR5' },
+  { key: 'storage', label: 'Ổ cứng', placeholder: 'VD: 512GB SSD M.2 NVMe' },
+  { key: 'storage_type', label: 'Loại ổ cứng', placeholder: 'VD: SSD NVMe' },
+  { key: 'storage_capacity', label: 'Dung lượng ổ cứng', placeholder: 'VD: 1TB' },
+  { key: 'display', label: 'Màn hình', placeholder: 'VD: 15.6" FHD 144Hz IPS' },
+  { key: 'battery', label: 'Pin', placeholder: 'VD: 4-cell 70Wh' },
+  { key: 'os', label: 'Hệ điều hành', placeholder: 'VD: Windows 11 Home' },
+  { key: 'ports', label: 'Cổng kết nối', placeholder: 'VD: USB-C, HDMI, Thunderbolt 4' },
+  { key: 'connectivity', label: 'Kết nối không dây', placeholder: 'VD: Wi-Fi 6E, Bluetooth 5.3' },
+  { key: 'weight', label: 'Trọng lượng', placeholder: 'VD: 1.8 kg' },
+  { key: 'size', label: 'Kích thước', placeholder: 'VD: 354 x 251 x 22 mm' },
+];
 
 export default function ProductDetailPage() {
   const params = useParams();
@@ -35,7 +51,6 @@ export default function ProductDetailPage() {
     enabled: !!id,
   });
 
-  
   const { data: categoriesData } = useQuery({
     queryKey: ['categories'],
     queryFn: getCategories,
@@ -49,7 +64,6 @@ export default function ProductDetailPage() {
   const categories = categoriesData || [];
   const colors = colorsData || [];
 
-  
   useEffect(() => {
     if (product && !isEditing) {
       setFormData(product);
@@ -57,27 +71,30 @@ export default function ProductDetailPage() {
     }
   }, [product, isEditing]);
 
-  
   const updateMutation = useMutation({
     mutationFn: (data: Partial<Product>) => {
-      
+      const { _id, createdAt, updatedAt, ...rest } = data as any;
+      const colorVal = Array.isArray(rest.color_id)
+        ? rest.color_id[0]
+        : typeof rest.color_id === 'object' && rest.color_id && '_id' in rest.color_id
+          ? rest.color_id._id
+          : rest.color_id;
+
       const formattedData: Partial<ProductFormData> = {
-        ...data,
-        category_id: Array.isArray(data.category_id) 
-          ? data.category_id.map(cat => typeof cat === 'string' ? cat : cat._id)
+        ...rest,
+        category_id: Array.isArray(rest.category_id)
+          ? rest.category_id.map((cat: any) => (typeof cat === 'string' ? cat : cat._id))
           : undefined,
-        color_id: typeof data.color_id === 'object' && data.color_id && '_id' in data.color_id
-          ? data.color_id._id
-          : data.color_id,
-        brand_id: typeof data.brand_id === 'object' && data.brand_id && '_id' in data.brand_id
-          ? data.brand_id._id
-          : data.brand_id,
+        color_id: colorVal,
+        brand_id:
+          typeof rest.brand_id === 'object' && rest.brand_id && '_id' in rest.brand_id
+            ? rest.brand_id._id
+            : rest.brand_id,
       };
       return updateProduct(id, formattedData);
     },
     onSuccess: () => {
       toast.success('Cập nhật sản phẩm thành công');
-      
       queryClient.invalidateQueries({ queryKey: ['product', id] });
       queryClient.invalidateQueries({ queryKey: ['products'] });
       setIsEditing(false);
@@ -89,12 +106,12 @@ export default function ProductDetailPage() {
   });
 
   const handleFieldChange = (field: string, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
     setHasChanges(true);
   };
 
   const handleNestedFieldChange = (parent: string, field: string, value: any) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [parent]: {
         ...(prev[parent as keyof Product] as any),
@@ -107,45 +124,38 @@ export default function ProductDetailPage() {
   const handleTagChange = (index: number, value: string) => {
     const newTags = [...(formData.tags || [])];
     newTags[index] = value;
-    setFormData(prev => ({ ...prev, tags: newTags }));
+    setFormData((prev) => ({ ...prev, tags: newTags }));
     setHasChanges(true);
   };
 
   const handleAddTag = () => {
     const newTags = [...(formData.tags || []), ''];
-    setFormData(prev => ({ ...prev, tags: newTags }));
+    setFormData((prev) => ({ ...prev, tags: newTags }));
     setHasChanges(true);
   };
 
   const handleRemoveTag = (index: number) => {
     const newTags = (formData.tags || []).filter((_, i) => i !== index);
-    setFormData(prev => ({ ...prev, tags: newTags }));
+    setFormData((prev) => ({ ...prev, tags: newTags }));
     setHasChanges(true);
   };
 
   const handleCategoryToggle = (categoryId: string) => {
-    const currentCategories = Array.isArray(formData.category_id) 
-      ? formData.category_id.map(cat => typeof cat === 'string' ? cat : cat._id)
+    const currentCategories = Array.isArray(formData.category_id)
+      ? formData.category_id.map((cat) => (typeof cat === 'string' ? cat : cat._id))
       : [];
-    
+
     const newCategories = currentCategories.includes(categoryId)
-      ? currentCategories.filter((id) => id !== categoryId)
+      ? currentCategories.filter((catId) => catId !== categoryId)
       : [...currentCategories, categoryId];
-    
-    setFormData(prev => ({ ...prev, category_id: newCategories as any }));
+
+    setFormData((prev) => ({ ...prev, category_id: newCategories as any }));
     setHasChanges(true);
   };
 
-  const handleColorToggle = (colorId: string) => {
-    const currentColors = Array.isArray(formData.color_id) 
-      ? formData.color_id.map(col => typeof col === 'string' ? col : col._id)
-      : [];
-    
-    const newColors = currentColors.includes(colorId)
-      ? currentColors.filter((id) => id !== colorId)
-      : [...currentColors, colorId];
-    
-    setFormData(prev => ({ ...prev, color_id: newColors as any }));
+  // Schema Product quy định color_id là 1 ObjectId đơn -> chọn đơn (single-select)
+  const handleColorSelect = (colorId: string) => {
+    setFormData((prev) => ({ ...prev, color_id: colorId }));
     setHasChanges(true);
   };
 
@@ -191,50 +201,45 @@ export default function ProductDetailPage() {
     );
   }
 
-  
   const getCategoryNames = () => {
     if (!product.category_id) return 'Chưa phân loại';
-    
-    // category_id có thể là array hoặc single value
     if (Array.isArray(product.category_id)) {
       if (product.category_id.length === 0) return 'Chưa phân loại';
       return product.category_id
-        .map(cat => typeof cat === 'string' ? cat : cat.name)
+        .map((cat) => (typeof cat === 'string' ? cat : cat.name))
         .join(', ');
     }
-    
-    // Nếu là single value
     if (typeof product.category_id === 'object' && product.category_id && 'name' in product.category_id) {
       return (product.category_id as any).name;
     }
-    
     return typeof product.category_id === 'string' ? product.category_id : 'Chưa phân loại';
   };
 
-  
   const getColorNames = () => {
     if (!product.color_id) return 'Chưa xác định';
-    
-    // color_id là object hoặc string, không phải array
     if (typeof product.color_id === 'object' && 'name' in product.color_id) {
       return product.color_id.name;
     }
-    
     return typeof product.color_id === 'string' ? product.color_id : 'Chưa xác định';
   };
 
+  const selectedColorId =
+    typeof formData.color_id === 'object' && formData.color_id && '_id' in formData.color_id
+      ? formData.color_id._id
+      : typeof formData.color_id === 'string'
+        ? formData.color_id
+        : '';
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-24">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Button 
-            variant="outline" 
-            size="sm" 
+          <Button
+            variant="outline"
+            size="sm"
             onClick={async () => {
-              
               await queryClient.invalidateQueries({ queryKey: ['products'] });
               await queryClient.refetchQueries({ queryKey: ['products'] });
-              
               router.push('/dashboard/products');
               router.refresh();
             }}
@@ -258,11 +263,9 @@ export default function ProductDetailPage() {
         </div>
         <div className="flex gap-2">
           {isEditing ? (
-            <>
-              <Button variant="outline" onClick={handleCancel}>
-                <X className="mr-2 h-4 w-4" /> Hủy
-              </Button>
-            </>
+            <Button variant="outline" onClick={handleCancel}>
+              <X className="mr-2 h-4 w-4" /> Hủy
+            </Button>
           ) : (
             <Button onClick={() => setIsEditing(true)}>
               <Edit className="mr-2 h-4 w-4" /> Chỉnh sửa
@@ -272,13 +275,11 @@ export default function ProductDetailPage() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
-        {}
         <Card>
           <CardHeader>
             <CardTitle>Hình ảnh sản phẩm</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {}
             <div className="relative aspect-square rounded-lg border overflow-hidden bg-muted">
               <Image
                 src={product.images.mainImg.url}
@@ -289,7 +290,6 @@ export default function ProductDetailPage() {
               />
             </div>
 
-            {}
             {product.images.sliderImg && product.images.sliderImg.length > 0 && (
               <div className="grid grid-cols-4 gap-2">
                 {product.images.sliderImg.map((img, index) => (
@@ -307,22 +307,21 @@ export default function ProductDetailPage() {
           </CardContent>
         </Card>
 
-        {}
         <div className="space-y-6">
           <Card>
             <CardHeader>
               <CardTitle>Thông tin cơ bản</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {}
               <div className="flex items-center gap-2">
                 <DollarSign className="h-4 w-4 text-muted-foreground" />
                 <span className="font-semibold min-w-[100px]">Giá:</span>
                 {isEditing ? (
                   <Input
                     type="number"
-                    value={formData.price || 0}
-                    onChange={(e) => handleFieldChange('price', Number(e.target.value))}
+                    min={0}
+                    value={formData.price ?? 0}
+                    onChange={(e) => handleFieldChange('price', Math.max(0, Number(e.target.value)))}
                     className="max-w-[200px]"
                   />
                 ) : (
@@ -338,8 +337,9 @@ export default function ProductDetailPage() {
                 {isEditing ? (
                   <Input
                     type="number"
-                    value={formData.stock || 0}
-                    onChange={(e) => handleFieldChange('stock', Number(e.target.value))}
+                    min={0}
+                    value={formData.stock ?? 0}
+                    onChange={(e) => handleFieldChange('stock', Math.max(0, Number(e.target.value)))}
                     className="max-w-[200px]"
                   />
                 ) : (
@@ -358,7 +358,11 @@ export default function ProductDetailPage() {
               <div className="flex items-center gap-2">
                 <Tag className="h-4 w-4 text-muted-foreground" />
                 <span className="font-semibold min-w-[100px]">Thương hiệu:</span>
-                <span>{typeof product.brand_id === 'object' && 'name' in product.brand_id ? product.brand_id.name : product.brand_id}</span>
+                <span>
+                  {typeof product.brand_id === 'object' && product.brand_id && 'name' in product.brand_id
+                    ? product.brand_id.name
+                    : String(product.brand_id || '')}
+                </span>
               </div>
 
               <div className="flex items-start gap-2">
@@ -368,11 +372,11 @@ export default function ProductDetailPage() {
                   {isEditing ? (
                     <div className="flex flex-wrap gap-2 mt-2 border rounded-md p-3">
                       {categories.map((category: any) => {
-                        const currentCategoryIds = Array.isArray(formData.category_id) 
-                          ? formData.category_id.map(cat => typeof cat === 'string' ? cat : cat._id)
+                        const currentCategoryIds = Array.isArray(formData.category_id)
+                          ? formData.category_id.map((cat) => (typeof cat === 'string' ? cat : cat._id))
                           : [];
                         const isSelected = currentCategoryIds.includes(category._id);
-                        
+
                         return (
                           <button
                             key={category._id}
@@ -384,7 +388,7 @@ export default function ProductDetailPage() {
                                 : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
                             }`}
                           >
-                            {category.category}
+                            {category.name}
                           </button>
                         );
                       })}
@@ -397,7 +401,6 @@ export default function ProductDetailPage() {
                 </div>
               </div>
 
-              {}
               <div className="flex items-start gap-2">
                 <div className="h-4 w-4 rounded-full border bg-muted mt-1" />
                 <div className="flex-1">
@@ -405,23 +408,26 @@ export default function ProductDetailPage() {
                   {isEditing ? (
                     <div className="flex flex-wrap gap-2 mt-2 border rounded-md p-3">
                       {colors.map((color: any) => {
-                        const currentColorIds = Array.isArray(formData.color_id) 
-                          ? formData.color_id.map(col => typeof col === 'string' ? col : col._id)
-                          : [];
-                        const isSelected = currentColorIds.includes(color._id);
-                        
+                        const isSelected = selectedColorId === color._id;
+
                         return (
                           <button
                             key={color._id}
                             type="button"
-                            onClick={() => handleColorToggle(color._id)}
-                            className={`px-3 py-1 rounded-full text-sm transition-colors ${
+                            onClick={() => handleColorSelect(color._id)}
+                            className={`px-3 py-1 rounded-full text-sm flex items-center gap-1.5 transition-colors ${
                               isSelected
                                 ? 'bg-primary text-primary-foreground'
                                 : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
                             }`}
                           >
-                            {color.color}
+                            {color.hex && (
+                              <span
+                                className="inline-block w-3 h-3 rounded-full border"
+                                style={{ backgroundColor: color.hex }}
+                              />
+                            )}
+                            {color.name}
                           </button>
                         );
                       })}
@@ -436,7 +442,6 @@ export default function ProductDetailPage() {
             </CardContent>
           </Card>
 
-          {}
           {((product.tags && product.tags.length > 0) || isEditing) && (
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
@@ -482,7 +487,6 @@ export default function ProductDetailPage() {
         </div>
       </div>
 
-      {}
       {(product.description || isEditing) && (
         <Card>
           <CardHeader>
@@ -505,54 +509,38 @@ export default function ProductDetailPage() {
         </Card>
       )}
 
-      {}
-      {product.specifications && Object.keys(product.specifications).length > 0 && (
+      {(isEditing || (product.specifications && Object.keys(product.specifications).length > 0)) && (
         <Card>
           <CardHeader>
             <CardTitle>Thông số kỹ thuật</CardTitle>
           </CardHeader>
           <CardContent>
-            <dl className="grid grid-cols-2 gap-4">
-              {}
-              {(product.specifications.weight || isEditing) && (
-                <>
-                  <dt className="font-semibold">Trọng lượng:</dt>
-                  <dd>
-                    {isEditing ? (
-                      <Input
-                        value={formData.specifications?.weight || ''}
-                        onChange={(e) => handleNestedFieldChange('specifications', 'weight', e.target.value)}
-                        placeholder="VD: 50g"
-                      />
-                    ) : (
-                      product.specifications.weight
-                    )}
-                  </dd>
-                </>
-              )}
-
-              {(product.specifications.size || isEditing) && (
-                <>
-                  <dt className="font-semibold">Kích thước:</dt>
-                  <dd>
-                    {isEditing ? (
-                      <Input
-                        value={formData.specifications?.size || ''}
-                        onChange={(e) => handleNestedFieldChange('specifications', 'size', e.target.value)}
-                        placeholder="VD: 40mm"
-                      />
-                    ) : (
-                      product.specifications.size
-                    )}
-                  </dd>
-                </>
-              )}
+            <dl className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {SPEC_FIELDS.map(({ key, label, placeholder }) => {
+                const value = product.specifications?.[key];
+                if (!isEditing && !value) return null;
+                return (
+                  <div key={key} className="space-y-1">
+                    <dt className="font-semibold text-sm">{label}:</dt>
+                    <dd className="text-sm text-muted-foreground">
+                      {isEditing ? (
+                        <Input
+                          value={(formData.specifications?.[key] as string) || ''}
+                          onChange={(e) => handleNestedFieldChange('specifications', key, e.target.value)}
+                          placeholder={placeholder}
+                        />
+                      ) : (
+                        value
+                      )}
+                    </dd>
+                  </div>
+                );
+              })}
             </dl>
           </CardContent>
         </Card>
       )}
 
-      {}
       {isEditing && hasChanges && (
         <div className="fixed bottom-0 left-0 right-0 bg-background border-t shadow-lg z-50">
           <div className="container mx-auto px-4 py-4 flex items-center justify-between">

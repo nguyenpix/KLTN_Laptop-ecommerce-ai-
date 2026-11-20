@@ -4,8 +4,8 @@
   "cf_regularization": 0.3,
   "content_model": "all-MiniLM-L6-v2",
   "content_dim": 384,
-  "suggested_alpha": 0.1,
-  "ndcg10_content_only": 0.12767000093732586,
-  "ndcg10_cf_only": 0.11133077824113262,
-  "ndcg10_hybrid_suggested_alpha": 0.16568867251724262
+  "suggested_alpha": 0.7,
+  "ndcg10_content_only": 0.011266602742347457,
+  "ndcg10_cf_only": 0.02227543975037799,
+  "ndcg10_hybrid_suggested_alpha": 0.024765228700616815
 }

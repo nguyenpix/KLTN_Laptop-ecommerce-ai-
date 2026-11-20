@@ -6,11 +6,13 @@ import {
   trackAddToCart,
   trackRemoveFromCart,
   trackFeedback,
-  trackOrder
+  trackOrder,
+  getUserInteractions
 } from '../../controllers/interactionController.js';
 
 const router = express.Router();
 
+router.get('/history', authenticateToken, getUserInteractions);
 router.post('/view', optionalAuth, trackView);
 router.post('/like/:productId', optionalAuth, toggleLike);
 router.post('/cart/add', optionalAuth, trackAddToCart);

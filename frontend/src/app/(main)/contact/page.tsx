@@ -3,206 +3,173 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { MapPin, Phone, Clock, Mail } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb';
+import { toast } from 'sonner';
 
 export default function ContactUsPage() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
-    message: ''
+    message: '',
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    // Add your form submission logic here
+    toast.success('Cảm ơn bạn đã liên hệ! Chúng tôi sẽ phản hồi sớm nhất.');
+    setFormData({ name: '', email: '', phone: '', message: '' });
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8">
-        {/* Breadcrumb */}
-        <Breadcrumb className="mb-6">
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link href="/">Home</Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage>Contact Us</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
+    <main className="min-h-screen bg-white">
+      <div className="container mx-auto px-4 py-6 pb-16">
+        {/* Breadcrumb — Figma Contact Us - 1 (node 133:3117) */}
+        <nav className="text-[12px] text-black mb-4 flex items-center gap-1.5">
+          <Link href="/" className="hover:text-[#0156FF]">
+            Home
+          </Link>
+          <span className="text-[#0156FF]">›</span>
+          <span>Contact Us</span>
+        </nav>
 
-        {/* Title */}
+        {/* Title & Subtitle */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-3">Contact Us</h1>
-          <p className="text-gray-600 mb-2">
+          <h1 className="text-[32px] font-semibold text-black mb-3">Contact Us</h1>
+          <p className="text-[16px] text-black font-light leading-relaxed">
             We love hearing from you, our Shop customers.
-          </p>
-          <p className="text-gray-600">
+            <br />
             Please contact us and we will make sure to get back to you as soon as we possibly can.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Contact Form */}
-          <div className="lg:col-span-2">
+        <div className="flex flex-col lg:flex-row gap-12 items-start">
+          {/* Contact Form (Left) */}
+          <div className="flex-1 w-full">
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Name and Email Row */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium mb-2">
+                  <label className="block text-[13px] font-semibold text-black mb-2">
                     Your Name <span className="text-red-500">*</span>
                   </label>
-                  <Input
+                  <input
                     type="text"
                     name="name"
                     placeholder="Your Name"
                     value={formData.name}
                     onChange={handleChange}
                     required
-                    className="w-full"
+                    className="w-full h-[50px] bg-white border border-[#A2A6B0] rounded-[4px] px-4 text-[14px] placeholder-[#A2A6B0] focus:outline-none focus:border-[#0156FF]"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-2">
+                  <label className="block text-[13px] font-semibold text-black mb-2">
                     Your Email <span className="text-red-500">*</span>
                   </label>
-                  <Input
+                  <input
                     type="email"
                     name="email"
                     placeholder="Your Name"
                     value={formData.email}
                     onChange={handleChange}
                     required
-                    className="w-full"
+                    className="w-full h-[50px] bg-white border border-[#A2A6B0] rounded-[4px] px-4 text-[14px] placeholder-[#A2A6B0] focus:outline-none focus:border-[#0156FF]"
                   />
                 </div>
               </div>
 
-              {/* Phone Number */}
-              <div>
-                <label className="block text-sm font-medium mb-2">
+              <div className="max-w-[449px]">
+                <label className="block text-[13px] font-semibold text-black mb-2">
                   Your Phone Number
                 </label>
-                <Input
+                <input
                   type="tel"
                   name="phone"
                   placeholder="Your Phone"
                   value={formData.phone}
                   onChange={handleChange}
-                  className="w-full"
+                  className="w-full h-[50px] bg-white border border-[#A2A6B0] rounded-[4px] px-4 text-[14px] placeholder-[#A2A6B0] focus:outline-none focus:border-[#0156FF]"
                 />
               </div>
 
-              {/* Message */}
               <div>
-                <label className="block text-sm font-medium mb-2">
+                <label className="block text-[13px] font-semibold text-black mb-2">
                   What&rsquo;s on your mind? <span className="text-red-500">*</span>
                 </label>
-                <Textarea
+                <textarea
                   name="message"
-                  placeholder="Jot us a note and we'll get back to you as quickly as possible"
+                  placeholder="Jot us a note and we’ll get back to you as quickly as possible"
                   value={formData.message}
                   onChange={handleChange}
                   required
-                  rows={8}
-                  className="w-full resize-none"
+                  rows={7}
+                  className="w-full bg-white border border-[#A2A6B0] rounded-[4px] p-4 text-[14px] placeholder-[#A2A6B0] focus:outline-none focus:border-[#0156FF] resize-none"
                 />
               </div>
 
-              {/* Submit Button */}
-              <Button 
-                type="submit" 
-                className="bg-blue-600 hover:bg-blue-700 text-white px-12 py-6 rounded-full text-base font-medium"
+              <button
+                type="submit"
+                className="w-[151px] h-[50px] rounded-full bg-[#0156FF] hover:bg-blue-700 text-white font-semibold text-[14px] transition-colors"
               >
                 Submit
-              </Button>
+              </button>
             </form>
           </div>
 
-          {/* Contact Information Sidebar */}
-          <div className="lg:col-span-1">
-            <div className="bg-gray-100 rounded-lg p-6 space-y-6">
-              {/* Address */}
-              <div className="flex items-start gap-3">
-                <div className="bg-white p-2 rounded-full">
-                  <MapPin className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="font-semibold mb-1">Address:</h3>
-                  <p className="text-sm text-gray-600">
-                    1234 Street Adress City Address, 1234
-                  </p>
-                </div>
+          {/* Contact Information Sidebar — Figma Rectangle 17 (#F5F7FF, 411px) */}
+          <aside className="w-full lg:w-[411px] shrink-0 bg-[#F5F7FF] p-8 space-y-6">
+            <div className="flex items-start gap-4">
+              <MapPin className="w-6 h-6 text-black shrink-0 mt-0.5" />
+              <div>
+                <h3 className="text-[18px] font-semibold text-black">Address:</h3>
+                <p className="text-[13px] text-black mt-0.5">
+                  19 Nguyễn Du, P7, Gò Vấp, TPHCM
+                </p>
               </div>
+            </div>
 
-              {/* Phone */}
-              <div className="flex items-start gap-3">
-                <div className="bg-white p-2 rounded-full">
-                  <Phone className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="font-semibold mb-1">Phone:</h3>
-                  <p className="text-sm text-gray-600">(00)1234 5678</p>
-                </div>
+            <div className="flex items-start gap-4">
+              <Phone className="w-6 h-6 text-black shrink-0 mt-0.5" />
+              <div>
+                <h3 className="text-[18px] font-semibold text-black">Phone:</h3>
+                <p className="text-[13px] text-black mt-0.5">0987556203</p>
               </div>
+            </div>
 
-              {/* Working Hours */}
-              <div className="flex items-start gap-3">
-                <div className="bg-white p-2 rounded-full">
-                  <Clock className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="font-semibold mb-1">We are open:</h3>
-                  <div className="text-sm text-gray-600 space-y-1">
-                    <p>Monday - Thursday: 9:00 AM - 5:30 PM</p>
-                    <p>Friday 9:00 AM - 6:00 PM</p>
-                    <p>Saturday: 11:00 AM - 5:00 PM</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Email */}
-              <div className="flex items-start gap-3">
-                <div className="bg-white p-2 rounded-full">
-                  <Mail className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="font-semibold mb-1">E-mail:</h3>
-                  <a 
-                    href="mailto:shop@email.com" 
-                    className="text-sm text-blue-600 hover:underline"
-                  >
-                    shop@email.com
-                  </a>
+            <div className="flex items-start gap-4">
+              <Clock className="w-6 h-6 text-black shrink-0 mt-0.5" />
+              <div>
+                <h3 className="text-[18px] font-semibold text-black">We are open:</h3>
+                <div className="text-[13px] text-black mt-0.5 space-y-0.5">
+                  <p>Monday - Thursday: 9:00 AM - 5:30 PM</p>
+                  <p>Friday 9:00 AM - 6:00 PM</p>
+                  <p>Saturday: 11:00 AM - 5:00 PM</p>
                 </div>
               </div>
             </div>
-          </div>
+
+            <div className="flex items-start gap-4">
+              <Mail className="w-6 h-6 text-black shrink-0 mt-0.5" />
+              <div>
+                <h3 className="text-[18px] font-semibold text-black">E-mail:</h3>
+                <a
+                  href="mailto:NguyenDangNguyen1606@gmail.com"
+                  className="text-[13px] text-[#0156FF] hover:underline mt-0.5 block"
+                >
+                  NguyenDangNguyen1606@gmail.com
+                </a>
+              </div>
+            </div>
+          </aside>
         </div>
       </div>
-    </div>
+    </main>
   );
 }

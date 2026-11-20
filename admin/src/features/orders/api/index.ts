@@ -25,7 +25,8 @@ export const getOrderById = async (id: string): Promise<Order> => {
   const res = await fetchWithAuth(ORDER_ENDPOINTS.DETAIL(id));
 
   if (!res.ok) {
-    throw new Error('Failed to fetch order');
+    const errData = await res.json().catch(() => ({}));
+    throw new Error(errData.message || 'Failed to fetch order');
   }
 
   const resData = await res.json();
@@ -39,7 +40,8 @@ export const updateOrderStatus = async ({ id, status }: { id: string, status: st
   });
 
   if (!res.ok) {
-    throw new Error('Failed to update order status');
+    const errData = await res.json().catch(() => ({}));
+    throw new Error(errData.message || 'Failed to update order status');
   }
 
   const resData = await res.json();

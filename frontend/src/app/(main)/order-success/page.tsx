@@ -1,35 +1,52 @@
-'use client';
+"use client";
 
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import Link from 'next/link';
-import { CheckCircle } from 'lucide-react';
+import Link from "next/link";
+import { Check } from "lucide-react";
 
 export default function OrderSuccessPage() {
   return (
-    <div className="container mx-auto py-20 flex justify-center">
-      <Card className="w-full max-w-lg text-center">
-        <CardHeader>
-          <div className="mx-auto bg-green-100 rounded-full p-4">
-            <CheckCircle className="w-16 h-16 text-green-600" />
+    <div className="min-h-screen bg-white">
+      <div className="container mx-auto px-4 py-12 max-w-[1400px]">
+        {/* Breadcrumb */}
+        <nav className="text-[12px] text-black mb-4 flex items-center gap-1.5">
+          <Link href="/" className="hover:text-[#0156FF]">
+            Home
+          </Link>
+          <span className="text-[#0156FF]">›</span>
+          <span className="text-[#A2A6B0]">Order Success</span>
+        </nav>
+
+        <div className="max-w-[680px] mx-auto bg-[#F5F7FF] p-10 md:p-14 text-center my-8">
+          <div className="w-[65px] h-[65px] rounded-full bg-[#78A962] text-white flex items-center justify-center mx-auto mb-6">
+            <Check className="w-8 h-8 stroke-[3]" />
           </div>
-          <CardTitle className="mt-6 text-3xl font-bold">Đặt hàng thành công!</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <p className="text-muted-foreground">
-            Cảm ơn bạn đã mua hàng. Đơn hàng của bạn đã được ghi nhận và sẽ sớm được xử lý.
-            Bạn có thể xem lại lịch sử mua hàng trong trang cá nhân.
+
+          <h1 className="text-[32px] font-semibold text-black mb-3">
+            Thank You For Your Purchase!
+          </h1>
+
+          <p className="text-[14px] text-[#666666] leading-[22px] mb-8 max-w-[480px] mx-auto">
+            Đơn hàng của bạn đã được ghi nhận thành công và đang được hệ thống xử
+            lý. Bạn có thể theo dõi trạng thái đơn hàng trong mục quản lý tài
+            khoản.
           </p>
-          <div className="flex justify-center gap-4">
-            <Link href="/products">
-              <Button>Tiếp tục mua sắm</Button>
+
+          <div className="flex flex-wrap items-center justify-center gap-4">
+            <Link
+              href="/products"
+              className="h-[50px] px-8 rounded-[50px] bg-[#0156FF] hover:bg-blue-700 text-white text-[14px] font-semibold inline-flex items-center justify-center transition-colors"
+            >
+              Continue Shopping
             </Link>
-            <Link href="/profile/orders">
-              <Button variant="outline">Xem lịch sử đơn hàng</Button>
+            <Link
+              href="/profile/orders"
+              className="h-[50px] px-8 rounded-[50px] border-2 border-[#0156FF] text-[#0156FF] hover:bg-[#0156FF] hover:text-white text-[14px] font-semibold inline-flex items-center justify-center transition-colors"
+            >
+              View My Orders
             </Link>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }

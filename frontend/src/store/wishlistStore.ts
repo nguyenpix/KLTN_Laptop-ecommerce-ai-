@@ -1,9 +1,9 @@
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
 import { Product } from '@/features/products/types';
-import { useAuthStore } from './authStore';
+import { useAuthStore, getUserId, isTokenExpired } from './authStore';
 import { API_URL } from '@/constants/api-url';
 import { toast } from 'sonner';
+import { recommendationsAPI } from '@/features/recommendations/api';
 
 interface WishlistItem {
   _id: string;
@@ -14,171 +14,175 @@ interface WishlistItem {
 
 interface WishlistState {
   items: WishlistItem[];
+  ownerId: string | null;
   isLoading: boolean;
   loadWishlistFromServer: () => Promise<void>;
   toggleWishlist: (productId: string) => Promise<void>;
+  resetWishlist: () => void;
   isInWishlist: (productId: string) => boolean;
   getTotalItems: () => number;
 }
 
-export const useWishlistStore = create<WishlistState>()(
-  persist(
-    (set, get) => ({
-      items: [],
-      isLoading: false,
+const authHeaders = (token: string, json = false): HeadersInit => ({
+  Authorization: `Bearer ${token}`,
+  ...(json ? { 'Content-Type': 'application/json' } : {}),
+});
 
-      loadWishlistFromServer: async () => {
-        const token = useAuthStore.getState().token;
-        if (!token) {
+/**
+ * Wishlist KHÔNG được persist xuống localStorage: dữ liệu luôn lấy từ server
+ * theo đúng tài khoản đang đăng nhập, tránh lẫn dữ liệu giữa các tài khoản.
+ */
+export const useWishlistStore = create<WishlistState>()((set, get) => ({
+  items: [],
+  ownerId: null,
+  isLoading: false,
+
+  loadWishlistFromServer: async () => {
+    const { token, user, logout } = useAuthStore.getState();
+    const userId = getUserId(user);
+    if (!token || !userId) return;
+
+    if (isTokenExpired(token)) {
+      logout();
+      return;
+    }
+
+    set({ isLoading: true });
+    try {
+      const response = await fetch(`${API_URL}/feedbacks/wishlist`, {
+        method: 'GET',
+        headers: authHeaders(token),
+      });
+
+      if (response.status === 401) {
+        logout();
+        set({ items: [], ownerId: null, isLoading: false });
+        return;
+      }
+
+      if (!response.ok) {
+        const errBody = await response.json().catch(() => ({}));
+        console.warn('Could not load wishlist:', response.status, errBody?.message || '');
+        set({ isLoading: false });
+        return;
+      }
+
+      const data = await response.json();
+      // Tránh race-condition khi user đã đổi trong lúc chờ
+      if (getUserId(useAuthStore.getState().user) !== userId) return;
+
+      const items: WishlistItem[] = (data?.data?.wishlist || []).filter(
+        (item: WishlistItem) => item && item.product_id && item.product_id._id
+      );
+      set({ items, ownerId: userId, isLoading: false });
+    } catch (error) {
+      console.warn('Network error loading wishlist:', error instanceof Error ? error.message : error);
+      set({ isLoading: false });
+    }
+  },
+
+  toggleWishlist: async (productId: string) => {
+    const { token, logout } = useAuthStore.getState();
+    if (!token || isTokenExpired(token)) {
+      if (token) logout();
+      toast.error('Vui lòng đăng nhập để thêm vào yêu thích!');
+      return;
+    }
+
+    const existingItem = get().items.find((item) => item.product_id?._id === productId);
+
+    try {
+      if (existingItem) {
+        const response = await fetch(`${API_URL}/feedbacks/wishlist/${existingItem._id}`, {
+          method: 'POST',
+          headers: authHeaders(token),
+        });
+        if (response.status === 401) {
+          logout();
+          toast.error('Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại!');
           return;
         }
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          toast.error(errorData.message || 'Không thể xóa khỏi danh sách yêu thích!');
+          return;
+        }
+        set({ items: get().items.filter((item) => item.product_id?._id !== productId) });
+        toast.success('Đã xóa khỏi danh sách yêu thích!');
+        return;
+      }
 
-        set({ isLoading: true });
-        try {
-          const response = await fetch(`${API_URL}/feedbacks/wishlist`, {
-            method: 'GET',
-            headers: {
-              'Authorization': `Bearer ${token}`,
-            },
+      // Thêm yêu thích: tìm feedback sẵn có của user cho sản phẩm này
+      const checkResponse = await fetch(`${API_URL}/feedbacks/my-feedbacks?limit=1000`, {
+        method: 'GET',
+        headers: authHeaders(token),
+      });
+      if (checkResponse.status === 401) {
+        logout();
+        toast.error('Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại!');
+        return;
+      }
+      if (!checkResponse.ok) {
+        toast.error('Không thể kiểm tra danh sách yêu thích!');
+        return;
+      }
+
+      const feedbacksData = await checkResponse.json();
+      const feedbacksList: Array<{ _id: string; product_id?: { _id?: string } | string }> = Array.isArray(feedbacksData.data)
+        ? feedbacksData.data
+        : feedbacksData.data?.feedbacks || [];
+      const existingFeedback = feedbacksList.find((f) =>
+        typeof f.product_id === 'string'
+          ? f.product_id === productId
+          : f.product_id?._id === productId
+      );
+
+      const response = existingFeedback
+        ? await fetch(`${API_URL}/feedbacks/wishlist/${existingFeedback._id}`, {
+            method: 'POST',
+            headers: authHeaders(token),
+          })
+        : await fetch(`${API_URL}/feedbacks`, {
+            method: 'POST',
+            headers: authHeaders(token, true),
+            body: JSON.stringify({ product_id: productId, rating: 0, wishlist: true }),
           });
 
-          if (!response.ok) {
-            throw new Error('Failed to load wishlist');
-          }
+      if (response.status === 401) {
+        logout();
+        toast.error('Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại!');
+        return;
+      }
 
-          const data = await response.json();
-          set({ items: data.data.wishlist, isLoading: false });
-        } catch (error) {
-          console.error("Error loading wishlist:", error);
-          set({ isLoading: false });
-        }
-      },
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        toast.error(errorData.message || 'Không thể thêm vào danh sách yêu thích!');
+        return;
+      }
 
-      toggleWishlist: async (productId: string) => {
-        const token = useAuthStore.getState().token;
-        if (!token) {
-          toast.error("Vui lòng đăng nhập để thêm vào yêu thích!");
-          return;
-        }
-
-        const state = get();
-        const existingItem = state.items.find(item => item.product_id._id === productId);
-
-        try {
-          if (existingItem) {
-            // Remove from wishlist
-            const response = await fetch(`${API_URL}/feedbacks/wishlist/${existingItem._id}`, {
-              method: 'POST',
-              headers: {
-                'Authorization': `Bearer ${token}`,
-              },
-            });
-
-            if (!response.ok) {
-              throw new Error('Failed to remove from wishlist');
-            }
-
-            const updatedItems = state.items.filter(item => item.product_id._id !== productId);
-            set({ items: updatedItems });
-            toast.success("Đã xóa khỏi danh sách yêu thích!");
-          } else {
-            // Add to wishlist - Need to create feedback first
-            // First check if feedback exists
-            const checkResponse = await fetch(`${API_URL}/feedbacks/my-feedbacks`, {
-              method: 'GET',
-              headers: {
-                'Authorization': `Bearer ${token}`,
-              },
-            });
-
-            if (!checkResponse.ok) {
-              throw new Error('Failed to check feedbacks');
-            }
-
-            const feedbacksData = await checkResponse.json();
-            // feedbacksData.data có thể là object hoặc array, cần kiểm tra
-            const feedbacksList = Array.isArray(feedbacksData.data) 
-              ? feedbacksData.data 
-              : feedbacksData.data?.feedbacks || [];
-            
-            const existingFeedback = feedbacksList.find((f: any) => 
-              f.product_id?._id === productId || f.product_id === productId
-            );
-
-            if (existingFeedback) {
-              // Toggle existing feedback
-              const response = await fetch(`${API_URL}/feedbacks/wishlist/${existingFeedback._id}`, {
-                method: 'POST',
-                headers: {
-                  'Authorization': `Bearer ${token}`,
-                },
-              });
-
-              if (!response.ok) {
-                const errorData = await response.json();
-                console.error('Toggle wishlist error:', errorData);
-                throw new Error(errorData.message || 'Failed to add to wishlist');
-              }
-
-              // Reload để đảm bảo dữ liệu chính xác
-              await get().loadWishlistFromServer();
-              toast.success("Đã thêm vào danh sách yêu thích!");
-            } else {
-              // Create new feedback with wishlist - wishlist only, no review
-              const response = await fetch(`${API_URL}/feedbacks`, {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': `Bearer ${token}`,
-                },
-                body: JSON.stringify({
-                  product_id: productId,
-                  rating: 0,
-                  wishlist: true,
-                }),
-              });
-
-              if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}));
-                console.error('Create feedback error:', errorData);
-                
-                // Nếu lỗi là đã có feedback, thử load lại và toggle
-                if (errorData.message?.includes('already reviewed')) {
-                  await get().loadWishlistFromServer();
-                  const refreshedItems = get().items;
-                  const existingItem = refreshedItems.find(item => item.product_id._id === productId);
-                  
-                  if (existingItem) {
-                    // Feedback đã tồn tại, toggle nó
-                    return get().toggleWishlist(productId);
-                  }
-                }
-                
-                throw new Error(errorData.message || 'Failed to add to wishlist');
-              }
-
-              // Reload để đảm bảo dữ liệu chính xác
-              await get().loadWishlistFromServer();
-              toast.success("Đã thêm vào danh sách yêu thích!");
-            }
-          }
-        } catch (error) {
-          console.error("Error toggling wishlist:", error);
-          toast.error("Có lỗi xảy ra. Vui lòng thử lại!");
-        }
-      },
-
-      isInWishlist: (productId: string) => {
-        return get().items.some(item => item.product_id._id === productId);
-      },
-
-      getTotalItems: () => {
-        return get().items.length;
-      },
-    }),
-    {
-      name: 'wishlist-storage',
-      storage: createJSONStorage(() => localStorage),
+      await get().loadWishlistFromServer();
+      toast.success('Đã thêm vào danh sách yêu thích!');
+      recommendationsAPI.toggleLike(productId).catch(() => {});
+    } catch (error) {
+      console.warn('Error toggling wishlist:', error instanceof Error ? error.message : error);
+      toast.error('Có lỗi xảy ra. Vui lòng thử lại!');
     }
-  )
-);
+  },
+
+  resetWishlist: () => set({ items: [], ownerId: null, isLoading: false }),
+
+  isInWishlist: (productId: string) => {
+    return get().items.some((item) => item.product_id?._id === productId);
+  },
+
+  getTotalItems: () => get().items.length,
+}));
+
+// Khi đăng xuất hoặc đổi tài khoản: xóa wishlist trong bộ nhớ
+useAuthStore.subscribe((state, prevState) => {
+  const prevId = getUserId(prevState.user);
+  const nextId = getUserId(state.user);
+  if (prevId && prevId !== nextId) {
+    useWishlistStore.getState().resetWishlist();
+  }
+});

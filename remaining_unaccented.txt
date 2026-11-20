@@ -1,0 +1,48 @@
+298: add_p("Lời đầu tiên, em xin gửi lời cảm ơn chân thành và sâu sắc nhất tới toàn thể các Thầy, Cô giáo tại Khoa Công nghệ Thông tin đã tận tình truyền đạt những kiến thức chuyên môn quý báu, phương pháp tư duy khoa học và kỹ năng thực hành cho em trong suốt những năm tháng học tập tại trường.")
+310: add_bullet(" Chuyển giao mô hình tối ưu sang triển khai thực tế trên website với tập catalog 398 laptop; kết hợp Sentence-BERT (SBERT 384 chiều) mã hóa phần cứng và Implicit ALS; xây dựng động cơ phục vụ trực tuyến (Online Serving) với thuật toán tính Profile Vector có Time-Decay và Dwell Time; giải quyết bài toán Cold-Start cho khách vãng lai bằng Session Profile Vector; tích hợp bộ lọc đa dạng hóa thương hiệu (maxPerBrand = 3).", "• Giai đoạn 2 (Triển khai Trực tuyến - Online Serving & Hybrid Architecture):")
+311: add_p("Kết quả thực nghiệm ở Giai đoạn 1 chứng minh mô hình Hybrid vượt trội toàn diện so với các mô hình đơn lẻ. Kết quả kiểm thử ở Giai đoạn 2 cho thấy hệ thống gợi ý trực tuyến hoạt động ổn định với thời gian phản hồi siêu tốc (~65ms), mang lại giá trị thực tiễn cao.")
+357: add_p("Trong kỷ nguyên số hóa, Thương mại điện tử (E-commerce) đã trở thành kênh mua sắm trọng yếu của người tiêu dùng. Trong các ngành hàng công nghệ, Laptop (Máy tính xách tay) là sản phẩm có giá trị cao, chu kỳ sử dụng dài (3-5 năm) và đòi hỏi sự am hiểu kỹ thuật cao. Một chiếc laptop phục vụ cho nhiều mục đích đa dạng: từ học tập, công việc văn phòng cơ bản, lập trình phần mềm, thiết kế đồ họa 2D/3D, biên tập video cho đến giải trí với các tựa game cấu hình cao.")
+401: add_bullet(" Đề xuất mô hình 2 giai đoạn: Giai đoạn 1 - Tìm kiếm ứng viên (Candidate Generation) và Giai đoạn 2 - Xếp hạng chi tiết (Ranking/Scoring) cho phép mở rộng hệ thống lên hàng triệu sản phẩm.", "1. Covington et al. (RecSys 2016 - Google):")
+404: add_bullet(" Công trình kinh điển về phân rã ma trận cho tập dữ liệu phản hồi ngầm (Implicit Feedback Matrix Factorization), đặt nền tảng cho thuật toán Implicit ALS.", "4. Hu, Koren & Volinsky (IEEE ICDM 2008 - Implicit ALS):")
+505: add_p("=> Kết luận Giai đoạn 1: Alpha tối ưu = 0.3 (70% Content, 30% CF) trên tập dữ liệu Amazon Reviews 2023. Lưu ý: Alpha tối ưu Giai đoạn 2 = 0.7 (70% CF, 30% Content) trên tập catalog thực tế do đặc thù phân phối tương tác khác biệt. Thử nghiệm Grid Search được thực hiện độc lập cho từng tập dữ liệu.")
+527: "    D -- Khong --> F[\"Fallback: Top Ban chay & Thinh hanh\"]\n"
+536: "    K -- Khong --> M[\"effectiveAlpha = 0.7\"]\n"
+578: add_bullet(" Endpoint POST /api/v1/recommendations/session-profile nhận danh sách sessionItems từ localStorage của client. Hệ thống tính Average SBERT Vector của các sản phẩm trong phiên. Kết quả: ngay từ lượt xem thứ 2, khách vãng lai đã nhận được gợi ý cá nhân hóa chính xác mà không cần tạo tài khoản.", "1. Session-based Cold-Start cho Khách vãng lai:")
+589: "    E[\"[5] Import vao MongoDB\\n Update cf_embedding toan bo products\\n Hot-reload khong downtime\"]\n"
+614: ["10", "Gợi ý cá nhân hóa", "Khối Hybrid Rec trên trang chủ; Khối sản phẩm tương tự trên trang chi tiết; Gợi ý Session-based cho khách vãng lai"],
+644: add_title("5.2.1. So do Use Case - Phan he Nguoi dung (Client Portal)", level=3)
+648: "    Customer[\"Khach hang da dang nhap (Customer)\"]\n"
+652: "        UC3[\"UC03: Xem Chi tiet San pham\"]\n"
+653: "        UC4[\"UC04: Quan ly Gio hang\"]\n"
+656: "        UC7[\"UC07: Danh gia & Binh luan\"]\n"
+658: "        UC9[\"UC09: Quan ly Wishlist (Yeu thich)\"]\n"
+678: "        AUC3[\"AUC03: CRUD San pham & Thong so ky thuat\"]\n"
+679: "        AUC4[\"AUC04: Quan ly Don hang & Cap nhat Trang thai\"]\n"
+680: "        AUC5[\"AUC05: Quan ly Tai khoan Nguoi dung\"]\n"
+681: "        AUC6[\"AUC06: CRUD Tin tuc & Lien ket San pham\"]\n"
+682: "        AUC7[\"AUC07: Quan ly Danh muc (Category)\"]\n"
+683: "        AUC8[\"AUC08: Quan ly Thuong hieu (Brand)\"]\n"
+684: "        AUC9[\"AUC09: Quan ly Mau sac (Color)\"]\n"
+1011: ["Rec", "POST", "/api/v1/recommendations/session-profile", "-", "Gợi ý Session-based cho khách vãng lai"],
+1026: ["Comment", "POST", "/api/v1/comments", "User", "Tạo bình luận mới (cho sản phẩm hoặc tin tức)"],
+1053: ["Chat", "POST", "/api/v1/chat/conversations/:id/messages", "Optional", "Gửi tin nhắn cho chatbot (RAG + LLM)"],
+1067: add_bullet(" Ứng dụng Next.js 15 chính dành cho khách hàng (Port 3000). src/app/(main)/ - Phân hệ người dùng (Home, Products, Cart, Checkout, Order, Wishlist, Contact, Profile). src/app/(auth)/ - Trang đăng nhập/đăng ký. src/features/ - Tổ chức theo kiến trúc FDD: auth/, products/, recommendations/, chat/.", "1. frontend/ (Website Người dùng - Port 3000):")
+1068: add_bullet(" Ứng dụng Next.js 15 RIÊNG BIỆT dành cho Quản trị viên (Port 3001). src/app/(main)/dashboard/ - Trang quản trị với các module: products/, orders/, news/. src/app/(auth)/ - Trang đăng nhập Admin riêng. Có package.json, next.config.js, tsconfig.json độc lập hoàn toàn.", "2. admin/ (Website Quản trị Admin - Port 3001):")
+1083: add_p("Middleware authenticateToken trích xuất JWT từ Authorization header (dạng Bearer <token>), xác thực bằng jwt.verify() với khóa bí mật JWT_SECRET và gán req.user = {userId, role} cho các handler tiếp theo. Middleware requireAdmin kiểm tra thêm điều kiện role === "admin" và trả về HTTP 403 Forbidden nếu vi phạm quyền truy cập.")
+1090: add_bullet(" Lọc thông số phần cứng: specifications.cpu/$regex, specifications.ram/$regex, specifications.gpu/$regex trên các trường sub-document.", "Loc thong so ky thuat (nested fields):")
+1101: add_bullet(" Banner slider quảng cáo; Khối "Gợi ý dành riêng cho bạn" (Carousel 10 laptop Hybrid Rec cá nhân hóa); Danh mục nhanh (Gaming, Văn phòng, Đồ họa, Doanh nhân); Sản phẩm bán chạy & mới nhất.", "1. Trang Chu (Home Page - /):")
+1102: add_bullet(" Sidebar bộ lọc đa tầng (Khoảng giá, Thương hiệu, CPU, RAM, GPU, Màn hình); Grid sản phẩm responsive 4 cột trên Desktop / 2 cột trên Mobile; Thanh sắp xếp giá/đánh giá; Phân trang 20 sản phẩm/trang.", "2. Trang Danh sach San pham (/products):")
+1103: add_bullet(" Bộ ảnh slider xem chi tiết; Bảng thông số kỹ thuật chuẩn hóa 8 nhóm (ProductSpecsTable); Nút Thêm giỏ hàng và Mua ngay; Khối Sản phẩm tương tự (SBERT Item-to-Item); Bình luận & FAQs Accordion.", "3. Trang Chi tiet San pham (/products/[id]):")
+1115: add_bullet(" Bảng danh sách sản phẩm có phân trang, tìm kiếm nhanh; Form CRUD đa tab (Thông tin cơ bản, Thông số kỹ thuật nhóm theo 8 nhóm, Quản lý hình ảnh); Hiển thị trạng thái vector nhúng (đã encode SBERT/CF hay chưa).", "2. Quan ly San pham (/dashboard/products):")
+1116: add_bullet(" Bảng đơn hàng với bộ lọc theo trạng thái (Badge màu sắc trực quan: xanh=confirmed, vàng=pending, đỏ=cancelled); Xem chi tiết đơn; Dropdown cập nhật trạng thái đơn hàng tuần tự.", "3. Quan ly Don hang (/dashboard/orders):")
+1117: add_bullet(" CRUD bài viết tin tức công nghệ laptop; Upload ảnh thumbnail; Liên kết các sản phẩm liên quan vào bài viết qua bảng ProductNews; Tự động tạo slug chuẩn SEO từ tiêu đề.", "4. Quan ly Tin tuc (/dashboard/news):")
+1125: add_bullet(" Module textChunker.js tách thông số kỹ thuật sản phẩm thành các text chunks có cấu trúc để xây dựng context chuẩn xác cho LLM.", "Buoc 3 - Context Building:")
+1169: ["TC_REC_01", "RecSys", "Gợi ý cho User có lịch sử xem laptop gaming", "Top-10 đề xuất chủ yếu các dòng laptop gaming", "PASS"],
+1243: add_p("Khóa luận tốt nghiệp đã hoàn thành xuất sắc toàn bộ các mục tiêu nghiên cứu và kỹ thuật đặt ra ban đầu cho cả 2 trụ cột kỹ thuật tích hợp:")
+1246: add_bullet(" Triển khai thành công Hybrid Rec Engine trên Catalog 398 laptop thực tế: SBERT 384 chiều + ALS 8 chiều, Time-Decay (T-half=30 ngày), Dwell Time, Session Profile cho Guest, New Item Cold-Start, Brand Diversity (maxPerBrand=3). Thời gian phục vụ trực tuyến siêu tốc: ~65ms.", "3. Trụ cột 2 - Giai đoạn 2 (Online Serving):")
+1255: add_bullet(" Thay thế việc ghi nhận tương tác đồng bộ bằng kiến trúc Message Queue phân tán (Apache Kafka hoặc Redis Pub/Sub) để xử lý luồng clickstream thời gian thực, phục vụ học trực tuyến (Online Learning).", "2. Real-time Event Streaming cho RecSys:")
+1280: add_bullet(" Python >= 3.10 (cho Notebook Giai doan 1 & 2)", "-")
+1284: add_bullet(" node src/scripts/importData.js  (nạp dữ liệu ban đầu cho 398 laptop)", "3.")
+1289: add_bullet(" npm run dev  (khởi chạy Next.js dev server cho website khách hàng)", "3.")
+1293: add_bullet(" npm run dev  (khởi chạy Next.js dev server cho website quản trị)", "3.")
+1305: add_bullet(" suggested_alpha: 0.7 (xac dinh qua Grid Search tren tap du lieu thuc te)", "Alpha tối ưu:")

@@ -8,6 +8,7 @@ import { ProductTopBar } from '@/features/products/components/ProductTopBar';
 import { ProductDetails } from '@/features/products/components/ProductDetails';
 import { ProductGallery } from '@/features/products/components/ProductGallery';
 import { ProductSpecsTable } from '@/features/products/components/ProductSpecsTable';
+import { ProductReviews } from '@/features/products/components/ProductReviews';
 import { renderFormattedDescription } from '@/features/products/utils/formatProductDescription';
 import { RecommendationsList } from '@/features/recommendations';
 import { useTrackInteraction } from '@/features/recommendations/hooks';
@@ -44,12 +45,12 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
   const [activeTab, setActiveTab] = useState<'specs' | 'details'>('specs');
   const specsSectionRef = useRef<HTMLDivElement>(null);
 
-  // Track product view when product loads
+  // Track product view when product loads (duration tính bằng giây)
   React.useEffect(() => {
     if (product?._id) {
-      trackView(product._id, 5000);
+      trackView(product._id, 5);
     }
-  }, [product, trackView]);
+  }, [product?._id, trackView]);
 
   const scrollToSpecs = (tab: 'specs' | 'details' = 'specs') => {
     setActiveTab(tab);
@@ -182,6 +183,9 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
             )}
           </div>
         </div>
+
+        {/* REVIEWS SECTION: Đánh giá và bình luận thực tế */}
+        <ProductReviews productId={product._id} />
 
         {/* RECOMMENDATIONS SECTION: Laptop cấu hình tương tự (AI Gợi ý) */}
         <div className="bg-white rounded-2xl p-6 lg:p-8 border border-gray-200/80 shadow-sm">

@@ -3,6 +3,7 @@ import {
   createOrder,
   getUserOrders,
   getOrderById,
+  cancelOrder,
   updateOrderStatus,
   getAllOrders
 } from '../../controllers/orderController.js';
@@ -16,6 +17,7 @@ router.use(authenticateToken);
 router.post('/', createOrder);
 router.get('/my-orders', getUserOrders);
 router.get('/:id', getOrderById);
+router.put('/:id/cancel', cancelOrder);
 router.put('/:id/status', adminAuth, updateOrderStatus); 
 router.get('/', adminAuth, getAllOrders); 
 
